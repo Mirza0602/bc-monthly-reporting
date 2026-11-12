@@ -1,0 +1,101 @@
+id,number,displayName,category,subCategory,blocked,accountType,directPosting,netChange,consolidationTranslationMethod,consolidationDebitAccount,consolidationCreditAccount,excludeFromConsolidation,lastModifiedDateTime
+f477bb49-f6bb-f111-85be-7c1e52401c43,0,BILANZ,_x0020_,,False,Heading,False,0,Average Rate (Manual),0,0,False,2026-09-29T11:09:53.53Z
+f577bb49-f6bb-f111-85be-7c1e52401c43,00,ANLAGEN,Assets,Anlagen,False,Begin_x002D_Total,False,0,Average Rate (Manual),00,00,False,2026-09-29T11:09:53.537Z
+c479bb49-f6bb-f111-85be-7c1e52401c43,0148,Aufwand für Entwicklung,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0148,0148,False,2026-09-29T11:09:53.537Z
+c679bb49-f6bb-f111-85be-7c1e52401c43,0150,Goodwill,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0150,0150,False,2026-09-29T11:09:53.543Z
+c779bb49-f6bb-f111-85be-7c1e52401c43,0170,Anzahlungen für immaterielle Anlagen,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0170,0170,False,2026-09-29T11:09:53.547Z
+ca79bb49-f6bb-f111-85be-7c1e52401c43,0200,Land ,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0200,0200,False,2026-09-29T11:09:53.547Z
+f77dbb49-f6bb-f111-85be-7c1e52401c43,0210,Abgänge während des Jahres,Assets,,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:57.403Z
+c579bb49-f6bb-f111-85be-7c1e52401c43,0220,Miet- und Pachtverhältnisse sowie ähnliche Rechte,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0220,0220,False,2026-09-29T11:09:53.547Z
+c879bb49-f6bb-f111-85be-7c1e52401c43,0260,Gebäude,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0260,0260,False,2026-09-29T11:09:53.55Z
+f67dbb49-f6bb-f111-85be-7c1e52401c43,0280,Zugänge während des Jahres,Assets,,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:57.403Z
+c979bb49-f6bb-f111-85be-7c1e52401c43,0290,Kosten für Verbesserungen an gemieteten Liegenschaften,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0290,0290,False,2026-09-29T11:09:53.55Z
+cb79bb49-f6bb-f111-85be-7c1e52401c43,0400,Geräte und Werkzeuge,Assets,Anlagen,False,Posting,True,59693,Average Rate (Manual),0400,0400,False,2026-09-29T11:09:53.55Z
+cf79bb49-f6bb-f111-85be-7c1e52401c43,0490,Kumulierte Abschreibungen,Assets,Kumulierte Abschreibungen,False,Posting,True,0,Average Rate (Manual),0490,0490,False,2026-09-29T11:09:53.553Z
+ce79bb49-f6bb-f111-85be-7c1e52401c43,0510,Leasingobjekte,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0510,0510,False,2026-09-29T11:09:53.553Z
+cd79bb49-f6bb-f111-85be-7c1e52401c43,0520,Autos und sonstige Transportmittel,Assets,Anlagen,False,Posting,True,117168,Average Rate (Manual),0520,0520,False,2026-09-29T11:09:53.557Z
+cc79bb49-f6bb-f111-85be-7c1e52401c43,0635,Computer,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0635,0635,False,2026-09-29T11:09:53.557Z
+ea79bb49-f6bb-f111-85be-7c1e52401c43,0750,Voraus bezahlte Miete,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0750,0750,False,2026-09-29T11:09:53.557Z
+d179bb49-f6bb-f111-85be-7c1e52401c43,0804,Beteiligung an Konzernunternehmen,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0804,0804,False,2026-09-29T11:09:53.56Z
+d279bb49-f6bb-f111-85be-7c1e52401c43,0814,Ausleihe an Partner oder zugehörige Parteien,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0814,0814,False,2026-09-29T11:09:53.56Z
+fb77bb49-f6bb-f111-85be-7c1e52401c43,0920,Wertpapiere,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0920,0920,False,2026-09-29T11:09:53.56Z
+ec79bb49-f6bb-f111-85be-7c1e52401c43,0940,Wandelschuldverschreibungen,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),0940,0940,False,2026-09-29T11:09:53.563Z
+d479bb49-f6bb-f111-85be-7c1e52401c43,1000,"Lagerbestände, Produkte und Ressourcen in Produktion",Assets,Lagerbestand,False,Begin_x002D_Total,False,0,Average Rate (Manual),1000,1000,False,2026-09-29T11:09:53.563Z
+f877bb49-f6bb-f111-85be-7c1e52401c43,1001,Rohstoffe,Assets,Lagerbestand,False,Posting,True,14115.5,Average Rate (Manual),1001,1001,False,2026-09-29T11:09:53.567Z
+d579bb49-f6bb-f111-85be-7c1e52401c43,1002,Hilfs- und Betriebsstoffe,Assets,Lagerbestand,False,Posting,True,0,Average Rate (Manual),1002,1002,False,2026-09-29T11:09:53.567Z
+d679bb49-f6bb-f111-85be-7c1e52401c43,1051,Produkte in Bearbeitung,Assets,Lagerbestand,False,Posting,True,0,Average Rate (Manual),1051,1051,False,2026-09-29T11:09:53.567Z
+da79bb49-f6bb-f111-85be-7c1e52401c43,1080,Ressource in Produktion,Assets,Lagerbestand,False,Begin_x002D_Total,False,0,Average Rate (Manual),1080,1080,False,2026-09-29T11:09:53.567Z
+f977bb49-f6bb-f111-85be-7c1e52401c43,1081,WIP-Projektumsätze,Assets,Lagerbestand,False,Posting,True,0,Average Rate (Manual),1081,1081,False,2026-09-29T11:09:53.57Z
+fa77bb49-f6bb-f111-85be-7c1e52401c43,1082,WIP-Projektkosten,Assets,Lagerbestand,False,Posting,True,0,Average Rate (Manual),1082,1082,False,2026-09-29T11:09:53.57Z
+db79bb49-f6bb-f111-85be-7c1e52401c43,1083,"RIF, Aufgelaufene Kosten",Assets,Lagerbestand,False,Posting,True,0,Average Rate (Manual),1083,1083,False,2026-09-29T11:09:53.573Z
+dc79bb49-f6bb-f111-85be-7c1e52401c43,1084,"RIF, fakturierte Verkäufe",Assets,Lagerbestand,False,Posting,True,0,Average Rate (Manual),1084,1084,False,2026-09-29T11:09:53.573Z
+7b7dbb49-f6bb-f111-85be-7c1e52401c43,1085,Unf. Arbeiten Fertigung,Assets,,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:56.797Z
+dd79bb49-f6bb-f111-85be-7c1e52401c43,1089,"Summe, Ressource in Produktion",Assets,Lagerbestand,False,End_x002D_Total,False,0,Average Rate (Manual),1089,1089,False,2026-09-29T11:09:53.573Z
+de79bb49-f6bb-f111-85be-7c1e52401c43,1099,"Summe, Lagerbestand, Produkte und Ressourcen in Produktion",Assets,Lagerbestand,False,End_x002D_Total,False,14115.5,Average Rate (Manual),1099,1099,False,2026-09-29T11:09:53.577Z
+f777bb49-f6bb-f111-85be-7c1e52401c43,1101,Fertigerzeugnisse,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),1101,1101,False,2026-09-29T11:09:53.577Z
+d779bb49-f6bb-f111-85be-7c1e52401c43,1102,Waren für Wiederverkauf,Assets,Anlagen,False,Posting,True,2253031,Average Rate (Manual),1102,1102,False,2026-09-29T11:09:53.577Z
+d979bb49-f6bb-f111-85be-7c1e52401c43,1178,Sonstige Lagerartikel,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),1178,1178,False,2026-09-29T11:09:53.58Z
+d879bb49-f6bb-f111-85be-7c1e52401c43,1180,Anzahlungen für Waren und Dienstleistungen,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),1180,1180,False,2026-09-29T11:09:53.58Z
+f677bb49-f6bb-f111-85be-7c1e52401c43,1200,Forderungen,Assets,Debitoren,False,Begin_x002D_Total,False,0,Average Rate (Manual),1200,1200,False,2026-09-29T11:09:53.583Z
+df79bb49-f6bb-f111-85be-7c1e52401c43,1202,"Forderungen, Inland",Assets,Debitoren,False,Posting,True,13427.37,Average Rate (Manual),1202,1202,False,2026-09-29T11:09:53.583Z
+e079bb49-f6bb-f111-85be-7c1e52401c43,1203,"Forderungen, Ausland",Assets,Debitoren,False,Posting,True,54613.7,Average Rate (Manual),1203,1203,False,2026-09-29T11:09:53.583Z
+d079bb49-f6bb-f111-85be-7c1e52401c43,1225,Langfristige Forderungen ,Assets,Debitoren,False,Posting,True,0,Average Rate (Manual),1225,1225,False,2026-09-29T11:09:53.587Z
+e879bb49-f6bb-f111-85be-7c1e52401c43,1260,Kurzfristige Forderungen gegenüber Konzernunternehmen,Assets,Debitoren,False,Posting,True,0,Average Rate (Manual),1260,1260,False,2026-09-29T11:09:53.587Z
+e279bb49-f6bb-f111-85be-7c1e52401c43,1340,Kurzfristige Forderungen gegen Personal,Assets,Debitoren,False,Posting,True,0,Average Rate (Manual),1340,1340,False,2026-09-29T11:09:53.587Z
+e179bb49-f6bb-f111-85be-7c1e52401c43,1375,Forderungen aus Verträgen,Assets,Debitoren,False,Posting,True,0,Average Rate (Manual),1375,1375,False,2026-09-29T11:09:53.59Z
+e779bb49-f6bb-f111-85be-7c1e52401c43,1400,Sonst. Umsatzsteuerforderungen,Assets,Debitoren,False,Posting,True,0,Average Rate (Manual),1400,1400,False,2026-09-29T11:09:53.59Z
+e579bb49-f6bb-f111-85be-7c1e52401c43,1403,Einkauf zu reduziertem MwSt.-Satz,Assets,Debitoren,False,Posting,True,910,Average Rate (Manual),1403,1403,False,2026-09-29T11:09:53.59Z
+e679bb49-f6bb-f111-85be-7c1e52401c43,1406,Einkauf zu normalem MwSt.-Satz,Assets,Debitoren,False,Posting,True,135077.55,Average Rate (Manual),1406,1406,False,2026-09-29T11:09:53.593Z
+e479bb49-f6bb-f111-85be-7c1e52401c43,1410,Steueransprüche,Assets,Debitoren,False,Posting,True,0,Average Rate (Manual),1410,1410,False,2026-09-29T11:09:53.593Z
+e379bb49-f6bb-f111-85be-7c1e52401c43,1480,Verrechnungskonten für Steuern und Abgaben,Assets,Debitoren,False,Posting,True,0,Average Rate (Manual),1480,1480,False,2026-09-29T11:09:53.597Z
+e979bb49-f6bb-f111-85be-7c1e52401c43,1499,"Summe, Forderungen",Assets,Debitoren,False,End_x002D_Total,False,204028.62,Average Rate (Manual),1499,1499,False,2026-09-29T11:09:53.597Z
+ed79bb49-f6bb-f111-85be-7c1e52401c43,1600,Bargeld und Bank,Assets,Bar,False,Begin_x002D_Total,False,0,Average Rate (Manual),1600,1600,False,2026-09-29T11:09:53.597Z
+fc77bb49-f6bb-f111-85be-7c1e52401c43,1610,Bar,Assets,Bar,False,Posting,True,-201229.92,Average Rate (Manual),1610,1610,False,2026-09-29T11:09:53.597Z
+ee79bb49-f6bb-f111-85be-7c1e52401c43,1810,"Geschäftskonto, Betrieb, Inland",Assets,Bar,False,Posting,False,11573.18,Average Rate (Manual),1810,1810,False,2026-09-29T11:09:53.6Z
+ef79bb49-f6bb-f111-85be-7c1e52401c43,1820,"Geschäftskonto, Betrieb, Ausland",Assets,Bar,False,Posting,False,-11573.18,Average Rate (Manual),1820,1820,False,2026-09-29T11:09:53.603Z
+f079bb49-f6bb-f111-85be-7c1e52401c43,1830,Sonstige Bankkonten ,Assets,Bar,False,Posting,True,0,Average Rate (Manual),1830,1830,False,2026-09-29T11:09:53.603Z
+f279bb49-f6bb-f111-85be-7c1e52401c43,1899,"Summe, Bargeld und Bank",Assets,Bar,False,End_x002D_Total,False,-201229.92,Average Rate (Manual),1899,1899,False,2026-09-29T11:09:53.603Z
+eb79bb49-f6bb-f111-85be-7c1e52401c43,1900,Aktiva in Form von vorausbezahlten Aufwendungen,Assets,Bar,False,Posting,True,0,Average Rate (Manual),1900,1900,False,2026-09-29T11:09:53.607Z
+d379bb49-f6bb-f111-85be-7c1e52401c43,1950,Aktive latente Steuern,Assets,Bar,False,Posting,True,0,Average Rate (Manual),1950,1950,False,2026-09-29T11:09:53.607Z
+f179bb49-f6bb-f111-85be-7c1e52401c43,1990,Einlagenzertifikat,Assets,Bar,False,Posting,True,0,Average Rate (Manual),1990,1990,False,2026-09-29T11:09:53.607Z
+fd77bb49-f6bb-f111-85be-7c1e52401c43,1999,AKTIVA GESAMT,Assets,Anlagen,False,End_x002D_Total,False,2446806.2,Average Rate (Manual),1999,1999,False,2026-09-29T11:09:53.61Z
+fe77bb49-f6bb-f111-85be-7c1e52401c43,2,Eigenkapital,Equity,Eigenkapital,False,Begin_x002D_Total,False,0,Average Rate (Manual),2,2,False,2026-09-29T11:09:53.61Z
+097abb49-f6bb-f111-85be-7c1e52401c43,2000,Eigenkapitalpartner ,Equity,Eigenkapital,False,Posting,True,0,Average Rate (Manual),2000,2000,False,2026-09-29T11:09:53.61Z
+0a7abb49-f6bb-f111-85be-7c1e52401c43,2010,Grundkapital ,Equity,Eigenkapital,False,Posting,True,0,Average Rate (Manual),2010,2010,False,2026-09-29T11:09:53.613Z
+0c7abb49-f6bb-f111-85be-7c1e52401c43,2100,Verteilungen an Anteilseigner,Equity,Verteilungen an Anteilseigner,False,Posting,True,0,Average Rate (Manual),2100,2100,False,2026-09-29T11:09:53.613Z
+f97dbb49-f6bb-f111-85be-7c1e52401c43,2720,Gewinne und Verluste,Expense,,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:57.417Z
+0b7abb49-f6bb-f111-85be-7c1e52401c43,2970,Gewinn oder Verlust aus dem Vorjahr,Equity,Eigenkapital,False,Posting,True,0,Average Rate (Manual),2970,2970,False,2026-09-29T11:09:53.617Z
+0d7abb49-f6bb-f111-85be-7c1e52401c43,2999,"Summe, Eigenkapital",Equity,Eigenkapital,False,End_x002D_Total,False,0,Average Rate (Manual),2999,2999,False,2026-09-29T11:09:53.617Z
+f379bb49-f6bb-f111-85be-7c1e52401c43,3,Verbindlichkeit,Liabilities,Verbindlichkeiten,False,Begin_x002D_Total,False,0,Average Rate (Manual),3,3,False,2026-09-29T11:09:53.617Z
+027abb49-f6bb-f111-85be-7c1e52401c43,3011,Geschätzte Lohnsteuer auf Pensionskosten,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3011,3011,False,2026-09-29T11:09:53.617Z
+017abb49-f6bb-f111-85be-7c1e52401c43,3040,Geschätzte Einkommensteuer,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3040,3040,False,2026-09-29T11:09:53.62Z
+067abb49-f6bb-f111-85be-7c1e52401c43,3079,Fonds für Urlaubsgeld,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3079,3079,False,2026-09-29T11:09:53.62Z
+f479bb49-f6bb-f111-85be-7c1e52401c43,3100,Anleihen und Schuldverschreibungen,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3100,3100,False,2026-09-29T11:09:53.623Z
+f579bb49-f6bb-f111-85be-7c1e52401c43,3120,Wandeldarlehen,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3120,3120,False,2026-09-29T11:09:53.623Z
+f679bb49-f6bb-f111-85be-7c1e52401c43,3150,Sonstige langfristige Verbindlichkeiten,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3150,3150,False,2026-09-29T11:09:53.623Z
+f779bb49-f6bb-f111-85be-7c1e52401c43,3151,Banküberziehungskredite,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3151,3151,False,2026-09-29T11:09:53.627Z
+fb79bb49-f6bb-f111-85be-7c1e52401c43,3181,Kurzfristige Banküberziehung,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3181,3181,False,2026-09-29T11:09:53.627Z
+fa79bb49-f6bb-f111-85be-7c1e52401c43,3250,Anzahlungen von Debitoren,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3250,3250,False,2026-09-29T11:09:53.627Z
+f879bb49-f6bb-f111-85be-7c1e52401c43,3301,"Verbindlichkeiten, Inland",Liabilities,Verbindlichkeiten,False,Posting,True,-103673.15,Average Rate (Manual),3301,3301,False,2026-09-29T11:09:53.63Z
+f979bb49-f6bb-f111-85be-7c1e52401c43,3302,"Verbindlichkeiten, Ausland",Liabilities,Verbindlichkeiten,False,Posting,True,-15144.2,Average Rate (Manual),3302,3302,False,2026-09-29T11:09:53.63Z
+0078bb49-f6bb-f111-85be-7c1e52401c43,3500,Sonstige Verbindlichkeiten,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3500,3500,False,2026-09-29T11:09:53.63Z
+4081bb49-f6bb-f111-85be-7c1e52401c43,3510,Firmenkreditkarten-Verrechnungskonto,Assets,Anlagen,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:59.787Z
+087abb49-f6bb-f111-85be-7c1e52401c43,3560,Laufende Darlehen,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3560,3560,False,2026-09-29T11:09:53.633Z
+fd79bb49-f6bb-f111-85be-7c1e52401c43,3700,Geschuldete Steuern,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3700,3700,False,2026-09-29T11:09:53.633Z
+037abb49-f6bb-f111-85be-7c1e52401c43,3720,Quellensteuern Mitarbeitende,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3720,3720,False,2026-09-29T11:09:53.637Z
+077abb49-f6bb-f111-85be-7c1e52401c43,3721,Kurzfristige Verbindlichkeiten gegenüber Mitarbeitern,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3721,3721,False,2026-09-29T11:09:53.637Z
+057abb49-f6bb-f111-85be-7c1e52401c43,3725,Lohn-/Gehaltspfändungen,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3725,3725,False,2026-09-29T11:09:53.637Z
+047abb49-f6bb-f111-85be-7c1e52401c43,3740,Gesetzliche Sozialabgaben,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3740,3740,False,2026-09-29T11:09:53.637Z
+007abb49-f6bb-f111-85be-7c1e52401c43,3800,Sonstige MwSt.-Verbindlichkeiten,Liabilities,Verbindlichkeiten,False,Posting,True,-31359.12,Average Rate (Manual),3800,3800,False,2026-09-29T11:09:53.87Z
+fe79bb49-f6bb-f111-85be-7c1e52401c43,3801,Verkäufe zum reduzierten MwSt.-Satz,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3801,3801,False,2026-09-29T11:09:53.64Z
+ff79bb49-f6bb-f111-85be-7c1e52401c43,3806,Verkauf zum normalen MwSt.-Satz,Liabilities,Verbindlichkeiten,False,Posting,True,-88075.18,Average Rate (Manual),3806,3806,False,2026-09-29T11:09:53.643Z
+fc79bb49-f6bb-f111-85be-7c1e52401c43,3900,Abgegrenzte Umsätze,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3900,3900,False,2026-09-29T11:09:53.643Z
+ff77bb49-f6bb-f111-85be-7c1e52401c43,3990,Sonstige antizipative Aufwendungen und Rechnungsabgrenzungsposten,Liabilities,Verbindlichkeiten,False,Posting,True,0,Average Rate (Manual),3990,3990,False,2026-09-29T11:09:53.643Z
+0178bb49-f6bb-f111-85be-7c1e52401c43,3999,"Verbindlichkeiten, gesamt",Liabilities,Verbindlichkeiten,False,End_x002D_Total,False,-238251.65,Average Rate (Manual),3999,3999,False,2026-09-29T11:09:53.647Z
+0278bb49-f6bb-f111-85be-7c1e52401c43,4,GUV,_x0020_,,False,Heading,False,0,Average Rate (Manual),4,4,False,2026-09-29T11:09:53.647Z
+0e7abb49-f6bb-f111-85be-7c1e52401c43,4000,Erlöse,Income,Einnahmen,False,Begin_x002D_Total,False,0,Average Rate (Manual),4000,4000,False,2026-09-29T11:09:53.647Z
+827dbb49-f6bb-f111-85be-7c1e52401c43,4091,"Direkte Kosten verrech., Kapazität",Cost_x0020_of_x0020_Goods_x0020_Sold,,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:56.807Z
+837dbb49-f6bb-f111-85be-7c1e52401c43,4092,"Gemeinkosten verrechnet, Kapazität",Cost_x0020_of_x0020_Goods_x0020_Sold,,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:56.807Z
+737dbb49-f6bb-f111-85be-7c1e52401c43,4093,"Einkaufsabweichung, Handel",Cost_x0020_of_x0020_Goods_x0020_Sold,,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:56.667Z
+2a7ebb49-f6bb-f111-85be-7c1e52401c43,4150,Mitarbeiterzahlungen,Liabilities,,False,Posting,True,0,Average Rate (Manual),,,False,2026-09-29T11:09:57.803Z
+167abb49-f6bb-f111-85be-7c1e52401c43,4201,Erträge aus Wertpapieren,Income,Einnahmen,False,Posting,True,26244.83,Average Rate (Manual),4201,4201,False,2026-09-29T11:09:53.873Z

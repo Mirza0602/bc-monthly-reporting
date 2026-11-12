@@ -1,0 +1,249 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'Offene Forderungen überfällig' = ```
+				// Zweck: Offene Forderungen zum Berichtsende, deren Fälligkeit vor dem Berichtsende liegt. Ein Posten, der am Berichtsende fällig ist, zählt nicht.
+				// Quelle: FactDebitorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01, Fälligkeit je Postennr aus FactDebitorenposten[Fälligkeit]. Vorzeichen wie in den Posten, Soll bleibt positiv. Leer bleibt leer.
+				VAR Bis = [Berichtsende]
+				RETURN
+					CALCULATE (
+						SUMX (
+							FILTER (
+								ADDCOLUMNS (
+									VALUES ( FactDebitorenposten[Postennr] ),
+									"@Rest", CALCULATE ( SUM ( FactDebitorenposten[Betrag] ) ),
+									"@Faellig", CALCULATE ( MAX ( FactDebitorenposten[Fälligkeit] ) )
+								),
+								VAR Rest = [@Rest]
+								VAR Faellig = [@Faellig]
+								RETURN
+									ABS ( Rest ) >= 0.01
+										&& NOT ISBLANK ( Faellig )
+										&& Faellig < Bis
+							),
+							[@Rest]
+						),
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] <= Bis
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '04 Forderungen'
+
+		measure 'Überfällig Anteil' = ```
+				// Zweck: Anteil der überfälligen offenen Forderungen an den offenen Forderungen.
+				// Quelle: DIVIDE von [Offene Forderungen überfällig] durch [Offene Forderungen]. Vorzeichen bleibt das der Beträge.
+				DIVIDE ( [Offene Forderungen überfällig], [Offene Forderungen] )
+				```
+			formatString: "0.0%"
+			displayFolder: '04 Forderungen'
+
+		measure 'Umsatz YTD' = ```
+				// Zweck: Umsatz seit Jahresanfang für die Karte auf Seite 1.
+				// Quelle: [Umsatz] mit Zeitauswahl YTD. Vorzeichen bleibt das des Umsatzes.
+				CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "YTD" )
+				```
+			formatString: "#,0"
+			displayFolder: '07 Karten'
+
+		measure 'Umsatz Δ VJ' = ```
+				// Zweck: Abweichung des Monatsumsatzes zum Vorjahr für die Karte.
+				// Quelle: [Umsatz] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+				CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '07 Karten'
+
+		measure 'Umsatz Δ VJ %' = ```
+				// Zweck: Prozentuale Abweichung des Monatsumsatzes zum Vorjahr für die Karte.
+				// Quelle: [Umsatz] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz.
+				CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Umsatz Δ Plan' = ```
+				// Zweck: Abweichung des Monatsumsatzes zum Plan für die Karte.
+				// Quelle: [Umsatz] mit Zeitauswahl Δ Plan Monat. Vorzeichen ist die Differenz.
+				CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '07 Karten'
+
+		measure 'Umsatz Δ Plan %' = ```
+				// Zweck: Prozentuale Abweichung des Monatsumsatzes zum Plan für die Karte.
+				// Quelle: [Umsatz] mit Zeitauswahl Δ Plan Monat %. Vorzeichen ist die relative Differenz.
+				CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat %" )
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Rohertrag YTD' = ```
+				// Zweck: Rohertrag seit Jahresanfang für die Karte auf Seite 1.
+				// Quelle: [Rohertrag] mit Zeitauswahl YTD. Vorzeichen bleibt das des Rohertrags.
+				CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "YTD" )
+				```
+			formatString: "#,0"
+			displayFolder: '07 Karten'
+
+		measure 'Rohertrag Δ VJ' = ```
+				// Zweck: Abweichung des Monatsrohertrags zum Vorjahr für die Karte.
+				// Quelle: [Rohertrag] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+				CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '07 Karten'
+
+		measure 'Rohertrag Δ VJ %' = ```
+				// Zweck: Prozentuale Abweichung des Monatsrohertrags zum Vorjahr für die Karte.
+				// Quelle: [Rohertrag] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz.
+				CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Rohertrag Δ Plan' = ```
+				// Zweck: Abweichung des Monatsrohertrags zum Plan für die Karte.
+				// Quelle: [Rohertrag] mit Zeitauswahl Δ Plan Monat. Vorzeichen ist die Differenz.
+				CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '07 Karten'
+
+		measure 'Rohertrag Δ Plan %' = ```
+				// Zweck: Prozentuale Abweichung des Monatsrohertrags zum Plan für die Karte.
+				// Quelle: [Rohertrag] mit Zeitauswahl Δ Plan Monat %. Vorzeichen ist die relative Differenz.
+				CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat %" )
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Rohertragsmarge YTD' = ```
+				// Zweck: Rohertragsmarge seit Jahresanfang für die Karte auf Seite 1.
+				// Quelle: [Rohertragsmarge] mit Zeitauswahl YTD. Vorzeichen steckt in den Bausteinen.
+				CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "YTD" )
+				```
+			formatString: "0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Rohertragsmarge Δ VJ' = ```
+				// Zweck: Abweichung der Monatsmarge zum Vorjahr in Prozentpunkten für die Karte.
+				// Quelle: [Rohertragsmarge] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz der Marge.
+				CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+				```
+			formatString: "0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Rohertragsmarge Δ Plan' = ```
+				// Zweck: Abweichung der Monatsmarge zum Plan in Prozentpunkten für die Karte.
+				// Quelle: [Rohertragsmarge] mit Zeitauswahl Δ Plan Monat. Vorzeichen ist die Differenz der Marge.
+				CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+				```
+			formatString: "0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'EBIT YTD' = ```
+				// Zweck: EBIT seit Jahresanfang für die Karte auf Seite 1.
+				// Quelle: [EBIT] mit Zeitauswahl YTD. Vorzeichen bleibt das des EBIT.
+				CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "YTD" )
+				```
+			formatString: "#,0"
+			displayFolder: '07 Karten'
+
+		measure 'EBIT Δ VJ' = ```
+				// Zweck: Abweichung des Monatsergebnisses zum Vorjahr für die Karte.
+				// Quelle: [EBIT] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+				CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '07 Karten'
+
+		measure 'EBIT Δ VJ %' = ```
+				// Zweck: Prozentuale Abweichung des Monatsergebnisses zum Vorjahr für die Karte.
+				// Quelle: [EBIT] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz.
+				CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'EBIT Δ Plan' = ```
+				// Zweck: Abweichung des Monatsergebnisses zum Plan für die Karte.
+				// Quelle: [EBIT] mit Zeitauswahl Δ Plan Monat. Vorzeichen ist die Differenz.
+				CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '07 Karten'
+
+		measure 'EBIT Δ Plan %' = ```
+				// Zweck: Prozentuale Abweichung des Monatsergebnisses zum Plan für die Karte.
+				// Quelle: [EBIT] mit Zeitauswahl Δ Plan Monat %. Vorzeichen ist die relative Differenz.
+				CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat %" )
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Offene Forderungen Δ VJ' = ```
+				// Zweck: Abweichung der offenen Forderungen zum Vorjahr Monat für die Karte.
+				// Quelle: [Offene Forderungen] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz. Das Vorjahr der Offenen Forderungen ist 0,00, die Prozent-Abweichung ist deshalb leer.
+				CALCULATE ( [Offene Forderungen], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '07 Karten'
+
+		measure 'Offene Forderungen Δ VJ %' = ```
+				// Zweck: Prozentuale Abweichung der offenen Forderungen zum Vorjahr Monat für die Karte.
+				// Quelle: [Offene Forderungen] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz. Das Vorjahr der Offenen Forderungen ist 0,00, die Prozent-Abweichung ist deshalb leer.
+				CALCULATE ( [Offene Forderungen], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Bestandswert Δ VJ' = ```
+				// Zweck: Abweichung des Bestandswerts zum Vorjahr Monat für die Karte.
+				// Quelle: [Bestandswert] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+				CALCULATE ( [Bestandswert], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '07 Karten'
+
+		measure 'Bestandswert Δ VJ %' = ```
+				// Zweck: Prozentuale Abweichung des Bestandswerts zum Vorjahr Monat für die Karte.
+				// Quelle: [Bestandswert] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz.
+				CALCULATE ( [Bestandswert], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '07 Karten'
+
+		measure 'Im Trendfenster' = ```
+				// Zweck: Liefert 1, wenn der letzte Tag im Filter nach dem Monatsende 13 Monate vor dem Stichtag liegt und höchstens am Monatsende des Stichtags. Sonst leer. Visual-Filter ist 1.
+				// Quelle: [Stichtag] und MAX von DimDatum[Datum]. Der Slicer wird nicht gelesen. Vorzeichen keines.
+				VAR Stich = [Stichtag]
+				VAR Letzter = MAX ( DimDatum[Datum] )
+				VAR Untergrenze = EOMONTH ( Stich, -13 )
+				VAR Obergrenze = EOMONTH ( Stich, 0 )
+				RETURN
+					IF (
+						NOT ISBLANK ( Letzter )
+							&& Letzter > Untergrenze
+							&& Letzter <= Obergrenze,
+						1
+					)
+				```
+			formatString: 0
+			displayFolder: '07 Karten'
+
+		measure 'Brücke Wert' = ```
+				// Zweck: Wert eines Schritts der GuV-Brücke. Die Summe der Schritte ist der EBIT, der Wasserfall zeigt diese Summe als Total.
+				// Quelle: SWITCH auf Bruecke[Schritt]. Vorzeichen dreht bei Wareneinsatz, Betriebsaufwand und Abschreibung.
+				SWITCH (
+					SELECTEDVALUE ( Bruecke[Schritt] ),
+					"Umsatz", [Umsatz],
+					"Wareneinsatz", - [Wareneinsatz],
+					"Betriebsaufwand", - [Betriebsaufwand],
+					"Abschreibung", - [Abschreibung],
+					"Sonstiger Ertrag und Aufwand", [Sonstiger Ertrag und Aufwand]
+				)
+				```
+			formatString: "#,0"
+			displayFolder: '07 Karten'

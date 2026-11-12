@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "bc-monthly-reporting"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "22b8092a-e1cd-408b-ae9d-48fcd37fb417"
+  }
+}

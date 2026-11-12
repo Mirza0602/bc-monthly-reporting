@@ -1,0 +1,166 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'GuV Monat' = ```
+				// Zweck: Wert der GuV-Zeile im Berichtsmonat. Jede Zeile bleibt die Definition aus 01 Basis.
+				// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Monat. Vorzeichen bleibt das der Zeile. Aufwand bleibt positiv.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Monat" ),
+					"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Monat" ),
+					"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Monat" ),
+					"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Monat" ),
+					"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Monat" ),
+					"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Monat" ),
+					"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Monat" ),
+					"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Monat" )
+				)
+				```
+			formatString: "#,0"
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV Vorjahr Monat' = ```
+				// Zweck: Wert der GuV-Zeile im Vorjahresmonat. Dieselbe Definition wie im Berichtsmonat.
+				// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Vorjahr Monat. Vorzeichen bleibt das der Zeile.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+					"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+					"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+					"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+					"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+					"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+					"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+					"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" )
+				)
+				```
+			formatString: "#,0"
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV Δ VJ' = ```
+				// Zweck: Abweichung der GuV-Zeile zum Vorjahr Monat.
+				// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+					"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+					"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+					"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+					"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+					"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+					"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+					"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+				)
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV Δ VJ %' = ```
+				// Zweck: Prozentuale Abweichung der GuV-Zeile zum Vorjahr Monat.
+				// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Δ VJ Monat %. DIVIDE durch den Vorjahresmonat, bei Vorjahr 0 leer. Die Rohertragsmarge bleibt leer.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+					"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+					"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+					"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+					"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+					"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+					"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+					"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+				)
+				```
+			formatString: "+0.0%;-0.0%;0.0%"
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV Plan (Demo) Monat' = ```
+				// Zweck: Demo-Plan der GuV-Zeile im Berichtsmonat.
+				// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Plan (Demo) Monat. Die Rohertragsmarge ruft [Rohertragsmarge] auf, der Plan bleibt die Vorjahresmarge.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+					"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+					"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+					"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+					"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+					"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+					"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+					"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" )
+				)
+				```
+			formatString: "#,0"
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV Δ Plan' = ```
+				// Zweck: Abweichung der GuV-Zeile zum Plan Monat.
+				// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Δ Plan Monat. Bei der Rohertragsmarge sind das Prozentpunkte zur Vorjahresmarge.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+					"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+					"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+					"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+					"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+					"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+					"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+					"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+				)
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV YTD' = ```
+				// Zweck: Wert der GuV-Zeile seit Jahresanfang. Dieselbe Definition wie im Berichtsmonat.
+				// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl YTD. Vorzeichen bleibt das der Zeile.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "YTD" ),
+					"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "YTD" ),
+					"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "YTD" ),
+					"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "YTD" ),
+					"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "YTD" ),
+					"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "YTD" ),
+					"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "YTD" ),
+					"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "YTD" )
+				)
+				```
+			formatString: "#,0"
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV Δ VJ YTD' = ```
+				// Zweck: Abweichung der GuV-Zeile zum Vorjahr seit Jahresanfang.
+				// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Δ VJ YTD. Vorzeichen ist die Differenz.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+					"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+					"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+					"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+					"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+					"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+					"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+					"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" )
+				)
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'Kostenart Δ VJ' = ```
+				// Zweck: Abweichung der Kostenart zum Vorjahr Monat für das Top 10. Das Visual trägt kein Zeitauswahl-Feld.
+				// Quelle: [Betriebsaufwand] mit den Items Monat und Vorjahr Monat. Die Differenz setzt beide Items selbst. Aufwand bleibt positiv.
+				VAR Aktuell =
+					CALCULATE (
+						[Betriebsaufwand],
+						Zeitauswahl[Zeitauswahl] = "Monat"
+					)
+				VAR Vorjahr =
+					CALCULATE (
+						[Betriebsaufwand],
+						Zeitauswahl[Zeitauswahl] = "Vorjahr Monat"
+					)
+				RETURN
+					Aktuell - Vorjahr
+				```
+			formatString: "+#,0;-#,0;0"
+			displayFolder: '08 GuV Seite 2'

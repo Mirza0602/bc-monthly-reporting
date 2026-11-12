@@ -1,0 +1,8 @@
+EVALUATE
+SUMMARIZECOLUMNS (
+    DimDatum[Jahr],
+    FactWertposten[Artikelpostenart],
+    "Zeilen", COUNTROWS ( FactWertposten ),
+    "KostenAnFibu", SUM ( FactWertposten[KostenAnFibu] )
+)
+ORDER BY DimDatum[Jahr], FactWertposten[Artikelpostenart]

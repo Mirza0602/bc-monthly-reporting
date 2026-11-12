@@ -1,0 +1,20 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "9b4e7c12a0d58f36e261",
+  "displayName": "03 Offene Posten",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "2d9f5b81c3e70a46b295",
+      "target": "4f1b7d03e5a92c68d417",
+      "type": "NoFilter"
+    },
+    {
+      "source": "3e0a6c92d4f81b57c306",
+      "target": "4f1b7d03e5a92c68d417",
+      "type": "NoFilter"
+    }
+  ]
+}

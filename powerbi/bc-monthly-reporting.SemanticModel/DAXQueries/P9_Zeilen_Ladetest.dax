@@ -1,0 +1,30 @@
+// P9: Zeilen im Modell gegen Snapshot 24.10.2026
+EVALUATE
+VAR T =
+    UNION (
+        ROW ( "Tabelle", "DimDatum",             "Ist", COUNTROWS ( DimDatum ),             "Erwartet", 1461 ),
+        ROW ( "Tabelle", "DimKonto",             "Ist", COUNTROWS ( DimKonto ),             "Erwartet", 221 ),
+        ROW ( "Tabelle", "DimDimensionsSet",     "Ist", COUNTROWS ( DimDimensionsSet ),     "Erwartet", 37 ),
+        ROW ( "Tabelle", "DimKunde",             "Ist", COUNTROWS ( DimKunde ),             "Erwartet", 5 ),
+        ROW ( "Tabelle", "DimLieferant",         "Ist", COUNTROWS ( DimLieferant ),         "Erwartet", 8 ),
+        ROW ( "Tabelle", "DimArtikel",           "Ist", COUNTROWS ( DimArtikel ),           "Erwartet", 80 ),
+        ROW ( "Tabelle", "FactSachposten",       "Ist", COUNTROWS ( FactSachposten ),       "Erwartet", 4384 ),
+        ROW ( "Tabelle", "FactDebitorenposten",  "Ist", COUNTROWS ( FactDebitorenposten ),  "Erwartet", 1145 ),
+        ROW ( "Tabelle", "FactKreditorenposten", "Ist", COUNTROWS ( FactKreditorenposten ), "Erwartet", 869 ),
+        ROW ( "Tabelle", "FactWertposten",       "Ist", COUNTROWS ( FactWertposten ),       "Erwartet", 878 ),
+        ROW ( "Tabelle", "FactSaldenliste",      "Ist", COUNTROWS ( FactSaldenliste ),      "Erwartet", 3315 )
+    )
+RETURN
+    ADDCOLUMNS ( T, "Differenz", [Ist] - [Erwartet] )
+ORDER BY [Differenz] DESC
+
+// Ladetest Saldenliste: muss 2.253.031,00 ergeben
+EVALUATE
+ROW (
+    "Saldo 1102 zum 30.09.2026",
+    CALCULATE (
+        SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+        FactSaldenliste[Kontonr] = "1102",
+        FactSaldenliste[periodEnd] = DATE ( 2026, 9, 30 )
+    )
+)

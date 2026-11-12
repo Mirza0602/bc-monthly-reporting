@@ -1,0 +1,183 @@
+// Prüfabfrage AP-06 Stufe B, Seite 5 Beleg. Stichtag 30.09.2026. Buchungsdatum bis zum Stichtag, ohne Monatsfilter. Die Kontrolle filtert September 2026.
+// Herleitung aus data/snapshots/2026-10-24, pandas.
+// Sachposten: Analytics incomeStatementGeneralLedgerEntries 1022 und balanceSheetGeneralLedgerEntries 3362, zusammen 4384, entryNo eindeutig.
+// Beleg: Left Join v2.0 generalLedgerEntries über entryNo = entryNumber. v2 hat 4384 Zeilen, entryNumber eindeutig, Schnitt 4384. documentNumber leer: 0.
+// documentType: _x0020_ 1706 wird null, Invoice 1658, Payment 1020. Buchungsdatum 2024-01-01 bis 2027-09-01. 48 Zeilen nach dem 30.09.2026, keine davor und keine ohne Datum.
+// [Beleg Zeilen] ohne weiteren Filter zählt Datum <= Stichtag: 4336.
+// Sachposten ohne Belegnr zählt die ganze Tabelle, auch die 48 Zeilen nach dem Stichtag. Soll 0.
+// Konto 6825 über TREATAS auf DimKonto[Kontonr]. 5 Zeilen, alle am 01.09.2026, Beträge 1200, 3800, 400, 3200 und 1400. Summe 10000.00. Deshalb sind der Wert bis zum Stichtag und der Septemberwert gleich.
+// Abteilung: DimDimensionsSet füllt fehlende Abteilung und DimensionSetID 0 mit AbteilungName "nicht zugeordnet", 21 Sets. Bis zum Stichtag 2562 Zeilen. Positive Beträge 4805971.21, negative Beträge 4744289.71, Summe 61681.50.
+// Kunde 30000: Herkunftsart Customer und Herkunftsnr 30000, 302 Zeilen. Positive Beträge 497001.80, negative Beträge 497001.80, Summe 0.00.
+// Lieferant 40000: Herkunftsart Vendor und Herkunftsnr 40000, 262 Zeilen. Positive Beträge 581536.02, negative Beträge 581536.02, Summe 0.00.
+// Artikel 1896-S: Belegnr aus FactWertposten. Verkauf documentNo, Artikelwertposten ohne Belegnr, je Eintragsnr der erste gefüllte Wert. 68 Wertposten, 21 ohne Belegnr, 41 Belegnummern, alle 41 in den Sachposten, kein Wertposten nach dem Stichtag. 455 Sachposten. Positive Beträge 1304799.14, negative Beträge 1304799.14, Summe 0.00. VALUES enthält die leere Belegnr, kein Sachposten hat eine leere Belegnr.
+// Kontrolle: Konto 6825, Kontoart Posting wird Buchung, BilanzGuV Income Statement wird GuV, vorzeichen 1, Bucket BETRIEBSAUFWAND, closingGeneralLedgerEntries 0 Zeilen. September 2026 liegt vor dem Stichtag. [Beleg Betrag] und [Betriebsaufwand] sind beide 10000.00.
+// Abweichung ist Ist minus Soll, gerundet auf 2 Stellen.
+EVALUATE
+VAR Zeilen =
+    DATATABLE (
+        "Nr", INTEGER,
+        "Zeile", STRING,
+        "Art", STRING,
+        "Merkmal", STRING,
+        "Soll", DOUBLE,
+        {
+            { 1, "Beleg Zeilen gesamt", "ZeilenGesamt", "", 4336 },
+            { 2, "Sachposten ohne Belegnr", "OhneBeleg", "", 0 },
+            { 3, "Beleg Zeilen Konto 6825", "ZeilenKonto", "6825", 5 },
+            { 4, "Beleg Betrag Konto 6825", "BetragKonto", "6825", 10000.00 },
+            { 5, "Beleg Zeilen Abteilung nicht zugeordnet", "ZeilenAbteilung", "nicht zugeordnet", 2562 },
+            { 6, "Beleg Betrag Abteilung nicht zugeordnet", "BetragAbteilung", "nicht zugeordnet", 61681.50 },
+            { 7, "Beleg Zeilen Kunde 30000", "ZeilenKunde", "30000", 302 },
+            { 8, "Beleg Betrag Kunde 30000", "BetragKunde", "30000", 0.00 },
+            { 9, "Beleg Zeilen Lieferant 40000", "ZeilenLieferant", "40000", 262 },
+            { 10, "Beleg Betrag Lieferant 40000", "BetragLieferant", "40000", 0.00 },
+            { 11, "Beleg Zeilen Artikel 1896-S", "ZeilenArtikel", "1896-S", 455 },
+            { 12, "Beleg Betrag Artikel 1896-S", "BetragArtikel", "1896-S", 0.00 },
+            { 13, "Kontrolle Beleg Betrag Konto 6825 September", "BetragSeptember", "6825", 10000.00 },
+            { 14, "Kontrolle Betriebsaufwand Konto 6825 September", "BetriebSeptember", "6825", 10000.00 }
+        }
+    )
+VAR Mit =
+    ADDCOLUMNS (
+        Zeilen,
+        "Ist",
+            VAR Artcode = [Art]
+            VAR Kenntext = [Merkmal]
+            RETURN
+                SWITCH (
+                    TRUE (),
+                    Artcode = "ZeilenGesamt",
+                        CALCULATE (
+                            [Beleg Zeilen],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( DimKonto ),
+                            REMOVEFILTERS ( DimDimensionsSet ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            REMOVEFILTERS ( DimArtikel )
+                        ),
+                    Artcode = "OhneBeleg",
+                        COUNTROWS (
+                            FILTER (
+                                ALL ( FactSachposten ),
+                                ISBLANK ( FactSachposten[Belegnr] )
+                            )
+                        ),
+                    Artcode IN { "ZeilenKonto", "BetragKonto" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "ZeilenKonto", [Beleg Zeilen],
+                                "BetragKonto", [Beleg Betrag]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( DimKonto ),
+                            REMOVEFILTERS ( DimDimensionsSet ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            TREATAS ( { Kenntext }, DimKonto[Kontonr] )
+                        ),
+                    Artcode IN { "ZeilenAbteilung", "BetragAbteilung" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "ZeilenAbteilung", [Beleg Zeilen],
+                                "BetragAbteilung", [Beleg Betrag]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( DimKonto ),
+                            REMOVEFILTERS ( DimDimensionsSet ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            TREATAS ( { Kenntext }, DimDimensionsSet[AbteilungName] )
+                        ),
+                    Artcode IN { "ZeilenKunde", "BetragKunde" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "ZeilenKunde", [Beleg Zeilen],
+                                "BetragKunde", [Beleg Betrag]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( DimKonto ),
+                            REMOVEFILTERS ( DimDimensionsSet ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            TREATAS ( { Kenntext }, DimKunde[Kundennr] )
+                        ),
+                    Artcode IN { "ZeilenLieferant", "BetragLieferant" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "ZeilenLieferant", [Beleg Zeilen],
+                                "BetragLieferant", [Beleg Betrag]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( DimKonto ),
+                            REMOVEFILTERS ( DimDimensionsSet ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            TREATAS ( { Kenntext }, DimLieferant[Lieferantennr] )
+                        ),
+                    Artcode IN { "ZeilenArtikel", "BetragArtikel" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "ZeilenArtikel", [Beleg Zeilen],
+                                "BetragArtikel", [Beleg Betrag]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( DimKonto ),
+                            REMOVEFILTERS ( DimDimensionsSet ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            TREATAS ( { Kenntext }, DimArtikel[Artikelnr] )
+                        ),
+                    Artcode = "BetragSeptember",
+                        CALCULATE (
+                            [Beleg Betrag],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( DimKonto ),
+                            REMOVEFILTERS ( DimDimensionsSet ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            TREATAS ( { Kenntext }, DimKonto[Kontonr] )
+                        ),
+                    Artcode = "BetriebSeptember",
+                        CALCULATE (
+                            [Betriebsaufwand],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( DimKonto ),
+                            REMOVEFILTERS ( DimDimensionsSet ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            TREATAS ( { Kenntext }, DimKonto[Kontonr] )
+                        )
+                )
+    )
+VAR Ergebnis =
+    ADDCOLUMNS (
+        Mit,
+        "Abweichung", ROUND ( COALESCE ( [Ist], 0 ) - COALESCE ( [Soll], 0 ), 2 )
+    )
+RETURN
+    SELECTCOLUMNS (
+        Ergebnis,
+        "Nr", [Nr],
+        "Zeile", [Zeile],
+        "Ist", [Ist],
+        "Soll", [Soll],
+        "Abweichung", [Abweichung]
+    )
+ORDER BY [Nr]

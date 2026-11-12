@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "bc-monthly-reporting"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8082198c-1482-480f-b073-54c1e156e5ff"
+  }
+}

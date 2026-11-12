@@ -1,0 +1,33 @@
+createOrReplace
+	
+	table Bruecke
+
+		column Sortierung
+			dataType: int64
+			isHidden
+			formatString: 0
+			summarizeBy: none
+			sourceColumn: Sortierung
+
+		column Schritt
+			dataType: string
+			isKey
+			summarizeBy: none
+			sourceColumn: Schritt
+			sortByColumn: Sortierung
+
+		partition Bruecke = calculated
+			mode: import
+			source = ```
+					DATATABLE (
+						"Sortierung", INTEGER,
+						"Schritt", STRING,
+						{
+							{ 1, "Umsatz" },
+							{ 2, "Wareneinsatz" },
+							{ 3, "Betriebsaufwand" },
+							{ 4, "Abschreibung" },
+							{ 5, "Sonstiger Ertrag und Aufwand" }
+						}
+					)
+					```

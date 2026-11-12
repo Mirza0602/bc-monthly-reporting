@@ -1,0 +1,176 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "d4f8a1c36e70b925d041",
+  "displayName": "05 Beleg",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "fca94ba56ecc5c8d30c2",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimKonto"
+              }
+            },
+            "Property": "Kontoname"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      },
+      {
+        "name": "891e6fcf15dcc560eb79",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimDimensionsSet"
+              }
+            },
+            "Property": "AbteilungName"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      },
+      {
+        "name": "f1e46bd030042e1a4530",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimKunde"
+              }
+            },
+            "Property": "Name"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      },
+      {
+        "name": "50893faba90d06b732dc",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimLieferant"
+              }
+            },
+            "Property": "Name"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      },
+      {
+        "name": "86cd1f2e38b864e8969c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimArtikel"
+              }
+            },
+            "Property": "Beschreibung"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      }
+    ]
+  },
+  "pageBinding": {
+    "name": "0cef9ffe33610b507830",
+    "type": "Drillthrough",
+    "parameters": [
+      {
+        "name": "926d9273e945e6e5ea09",
+        "boundFilter": "fca94ba56ecc5c8d30c2",
+        "asAggregation": false,
+        "qnaSingleSelectRequired": false,
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimKonto"
+              }
+            },
+            "Property": "Kontoname"
+          }
+        }
+      },
+      {
+        "name": "566f4132b811c28ee25e",
+        "boundFilter": "891e6fcf15dcc560eb79",
+        "asAggregation": false,
+        "qnaSingleSelectRequired": false,
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimDimensionsSet"
+              }
+            },
+            "Property": "AbteilungName"
+          }
+        }
+      },
+      {
+        "name": "c46397495dd11c668a35",
+        "boundFilter": "f1e46bd030042e1a4530",
+        "asAggregation": false,
+        "qnaSingleSelectRequired": false,
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimKunde"
+              }
+            },
+            "Property": "Name"
+          }
+        }
+      },
+      {
+        "name": "61b1c87515050377b168",
+        "boundFilter": "50893faba90d06b732dc",
+        "asAggregation": false,
+        "qnaSingleSelectRequired": false,
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimLieferant"
+              }
+            },
+            "Property": "Name"
+          }
+        }
+      },
+      {
+        "name": "1c500fb60e2120263aea",
+        "boundFilter": "86cd1f2e38b864e8969c",
+        "asAggregation": false,
+        "qnaSingleSelectRequired": false,
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimArtikel"
+              }
+            },
+            "Property": "Beschreibung"
+          }
+        }
+      }
+    ],
+    "acceptsFilterContext": "None"
+  },
+  "visibility": "HiddenInViewMode",
+  "type": "Drillthrough"
+}

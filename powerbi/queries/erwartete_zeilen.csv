@@ -1,0 +1,12 @@
+abfrage,quelle,erwartet
+DimDatum,generiert,1461
+DimKonto,microsoft/analytics/v1.0 generalLedgerAccounts,221
+DimDimensionsSet,microsoft/analytics/v1.0 dynamicDimensions,37
+DimKunde,microsoft/analytics/v1.0 customers,5
+DimLieferant,microsoft/analytics/v1.0 vendors,8
+DimArtikel,microsoft/analytics/v1.0 items,80
+FactSachposten,microsoft/analytics/v1.0 incomeStatementGeneralLedgerEntries und balanceSheetGeneralLedgerEntries,4384
+FactDebitorenposten,microsoft/analytics/v1.0 customerLedgerEntries,1145
+FactKreditorenposten,microsoft/analytics/v1.0 vendorLedgerEntries,869
+FactWertposten,microsoft/analytics/v1.0 salesValueEntries und itemValueEntries,878
+FactSaldenliste,v2.0 trialBalances,3315

@@ -1,0 +1,101 @@
+entryNo,entryType,sourceType,sourceNo,documentNo,documentType,postingDate,itemNo,locationCode,serialNo,expirationDate,lotNo,quantity,unitOfMeasureCode,remainingQuantity,dimensionSetID,open,positive,invoicedQuantity,qtyPerUnitOfMeasure,costAmountActual,salesAmountActual
+1,Positive Adjmt., ,,STANDARD, ,2025-06-01,1896-S,,,0001-01-01,,500,STÜCK,339,0,True,True,500,1,392300,0
+2,Positive Adjmt., ,,STANDARD, ,2025-06-01,1900-S,,,0001-01-01,,500,STÜCK,400,0,True,True,500,1,75550,0
+3,Positive Adjmt., ,,STANDARD, ,2025-06-01,1906-S,,,0001-01-01,,500,STÜCK,417,0,True,True,500,1,169950,0
+4,Positive Adjmt., ,,STANDARD, ,2025-06-01,1908-S,,,0001-01-01,,500,STÜCK,429,0,True,True,500,1,74450,0
+5,Positive Adjmt., ,,STANDARD, ,2025-06-01,1920-S,,,0001-01-01,,500,STÜCK,395,0,True,True,500,1,254000,0
+6,Positive Adjmt., ,,STANDARD, ,2025-06-01,1925-W,,,0001-01-01,,500,STÜCK,500,0,True,True,500,1,0,0
+7,Positive Adjmt., ,,STANDARD, ,2025-06-01,1928-S,,,0001-01-01,,500,STÜCK,381,0,True,True,500,1,21550,0
+8,Positive Adjmt., ,,STANDARD, ,2025-06-01,1929-W,,,0001-01-01,,500,STÜCK,500,0,True,True,500,1,0,0
+9,Positive Adjmt., ,,STANDARD, ,2025-06-01,1936-S,,,0001-01-01,,500,STÜCK,403,0,True,True,500,1,75550,0
+10,Positive Adjmt., ,,STANDARD, ,2025-06-01,1953-W,,,0001-01-01,,500,STÜCK,439,0,True,True,500,1,0,0
+11,Positive Adjmt., ,,STANDARD, ,2025-06-01,1960-S,,,0001-01-01,,500,STÜCK,410,0,True,True,500,1,75550,0
+12,Positive Adjmt., ,,STANDARD, ,2025-06-01,1964-S,,,0001-01-01,,500,STÜCK,422,0,True,True,500,1,75550,0
+13,Positive Adjmt., ,,STANDARD, ,2025-06-01,1965-W,,,0001-01-01,,500,STÜCK,419,0,True,True,500,1,0,0
+14,Positive Adjmt., ,,STANDARD, ,2025-06-01,1968-S,,,0001-01-01,,500,STÜCK,394,0,True,True,500,1,74450,0
+15,Positive Adjmt., ,,STANDARD, ,2025-06-01,1969-W,,,0001-01-01,,500,STÜCK,493,0,True,True,500,1,0,0
+16,Positive Adjmt., ,,STANDARD, ,2025-06-01,1972-S,,,0001-01-01,,500,STÜCK,409,0,True,True,500,1,74450,0
+17,Positive Adjmt., ,,STANDARD, ,2025-06-01,1980-S,,,0001-01-01,,500,STÜCK,426,0,True,True,500,1,74450,0
+18,Positive Adjmt., ,,STANDARD, ,2025-06-01,1988-S,,,0001-01-01,,500,STÜCK,415,0,True,True,500,1,75550,0
+19,Positive Adjmt., ,,STANDARD, ,2025-06-01,1996-S,,,0001-01-01,,500,STÜCK,395,0,True,True,500,1,547650,0
+20,Positive Adjmt., ,,STANDARD, ,2025-06-01,2000-S,,,0001-01-01,,500,STÜCK,428,0,True,True,500,1,74450,0
+21,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM2001,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,747,0
+22,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM2002,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,1212,0
+23,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM2003,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,346.5,0
+24,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM2004,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,900,0
+25,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1101,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,1813,0
+26,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1102,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,1406.5,0
+27,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1103,HAUPT,,0001-01-01,,200,STÜCK,200,0,True,True,200,1,598,0
+28,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1104,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,730.5,0
+29,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1105,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,155.5,0
+30,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1106,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,152.5,0
+31,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1107,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,311.5,0
+32,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1108,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,299.5,0
+33,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1109,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,800.5,0
+34,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM2000,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,0,0
+35,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1305,HAUPT,,0001-01-01,,1000,STÜCK,1000,0,True,True,1000,1,390,0
+36,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1301,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,1611,0
+37,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1304,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,2101,0
+38,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1302,HAUPT,,0001-01-01,,50,STÜCK,50,0,True,True,50,1,251.5,0
+39,Positive Adjmt., ,,STANDARD, ,2025-06-01,SP-BOM1303,HAUPT,,0001-01-01,,100,STÜCK,100,0,True,True,100,1,289,0
+40,Positive Adjmt., ,,STANDARD, ,2025-06-01,S-100,HAUPT,,0001-01-01,,10,STÜCK,10,0,True,True,10,1,18000,0
+41,Positive Adjmt., ,,STANDARD, ,2025-06-01,S-210,HAUPT,,0001-01-01,,10,STÜCK,10,0,True,True,10,1,18000,0
+42,Purchase,Vendor,20000,107001,Purchase Receipt,2024-03-01,GGB-1000,,,0001-01-01,,50,STÜCK,50,8,True,True,0,1,0,0
+43,Purchase,Vendor,20000,107001,Purchase Receipt,2024-03-01,GGB-1001,,,0001-01-01,,50,STÜCK,50,8,True,True,0,1,0,0
+44,Purchase,Vendor,20000,107001,Purchase Receipt,2024-03-01,WRB-1003,,,0001-01-01,,50,STÜCK,50,8,True,True,0,1,0,0
+45,Purchase,Vendor,20000,107002,Purchase Receipt,2024-03-01,WRB-1004,,,0001-01-01,,100,STÜCK,100,8,True,True,0,1,0,0
+46,Purchase,Vendor,20000,107002,Purchase Receipt,2024-03-01,WRB-1005,,,0001-01-01,,100,STÜCK,100,8,True,True,0,1,0,0
+47,Purchase,Vendor,20000,107002,Purchase Receipt,2024-03-01,WRB-1006,,,0001-01-01,,100,STÜCK,100,8,True,True,0,1,0,0
+48,Purchase,Vendor,20000,107002,Purchase Receipt,2024-03-01,WRB-1007,,,0001-01-01,,100,STÜCK,100,8,True,True,0,1,0,0
+49,Purchase,Vendor,20000,107002,Purchase Receipt,2024-03-01,WDB-1000,,,0001-01-01,,50,STÜCK,50,8,True,True,0,1,0,0
+50,Purchase,Vendor,20000,107002,Purchase Receipt,2024-03-01,WDB-1001,,,0001-01-01,,50,STÜCK,50,8,True,True,0,1,0,0
+51,Purchase,Vendor,20000,107002,Purchase Receipt,2024-03-01,GRH-1000,,,0001-01-01,,20,STÜCK,20,8,True,True,0,1,0,0
+52,Purchase,Vendor,20000,107002,Purchase Receipt,2024-03-01,GRH-1001,,,0001-01-01,,10,STÜCK,10,8,True,True,0,1,0,0
+53,Purchase,Vendor,40000,107003,Purchase Receipt,2024-03-01,GRH-1000,,,0001-01-01,,15,STÜCK,15,10,True,True,0,1,0,0
+54,Purchase,Vendor,40000,107003,Purchase Receipt,2024-03-01,GRH-1001,,,0001-01-01,,5,STÜCK,5,10,True,True,0,1,0,0
+55,Purchase,Vendor,40000,107004,Purchase Receipt,2024-03-01,GGB-1001,,,0001-01-01,,150,STÜCK,150,10,True,True,0,1,0,0
+56,Purchase,Vendor,40000,107004,Purchase Receipt,2024-03-01,WDB-1003,,,0001-01-01,,25,STÜCK,25,10,True,True,0,1,0,0
+57,Purchase,Vendor,40000,107004,Purchase Receipt,2024-03-01,WDB-1004,,,0001-01-01,,50,STÜCK,50,10,True,True,0,1,0,0
+58,Purchase,Vendor,40000,107004,Purchase Receipt,2024-03-01,WDB-1005,,,0001-01-01,,50,STÜCK,50,10,True,True,0,1,0,0
+59,Purchase,Vendor,40000,107004,Purchase Receipt,2024-03-01,WDB-1006,,,0001-01-01,,40,STÜCK,40,10,True,True,0,1,0,0
+60,Purchase,Vendor,40000,107004,Purchase Receipt,2024-03-01,WDB-1007,,,0001-01-01,,15,STÜCK,15,10,True,True,0,1,0,0
+61,Purchase,Vendor,50000,107005,Purchase Receipt,2024-03-01,WRB-1004,,,0001-01-01,,60,STÜCK,60,8,True,True,0,1,0,0
+62,Purchase,Vendor,50000,107005,Purchase Receipt,2024-03-01,WRB-1005,,,0001-01-01,,60,STÜCK,60,8,True,True,0,1,0,0
+63,Purchase,Vendor,50000,107005,Purchase Receipt,2024-03-01,WRB-1004,,,0001-01-01,,40,STÜCK,40,8,True,True,0,1,0,0
+64,Purchase,Vendor,50000,107005,Purchase Receipt,2024-03-01,WRB-1005,,,0001-01-01,,40,STÜCK,40,8,True,True,0,1,0,0
+65,Purchase,Vendor,50000,107006,Purchase Receipt,2024-03-01,GRH-1001,,,0001-01-01,,20,STÜCK,20,8,True,True,0,1,0,0
+66,Purchase,Vendor,20000,107007,Purchase Receipt,2025-01-01,1896-S,,,0001-01-01,,4,STÜCK,0,8,False,True,4,1,3138.4,0
+67,Purchase,Vendor,30000,107008,Purchase Receipt,2025-01-01,1906-S,,,0001-01-01,,5,STÜCK,0,12,False,True,5,1,1699.5,0
+68,Purchase,Vendor,50000,107009,Purchase Receipt,2025-01-01,1908-S,,,0001-01-01,,3,STÜCK,0,8,False,True,3,1,446.7,0
+69,Purchase,Vendor,40000,107010,Purchase Receipt,2025-01-01,1928-S,,,0001-01-01,,8,STÜCK,0,10,False,True,8,1,344.8,0
+70,Purchase,Vendor,50000,107011,Purchase Receipt,2025-01-01,1936-S,,,0001-01-01,,10,STÜCK,0,8,False,True,10,1,1511,0
+71,Purchase,Vendor,40000,107012,Purchase Receipt,2025-01-01,1960-S,,,0001-01-01,,2,STÜCK,0,10,False,True,2,1,302.2,0
+72,Purchase,Vendor,10000,107013,Purchase Receipt,2025-01-01,1964-S,,,0001-01-01,,4,STÜCK,0,6,False,True,4,1,604.4,0
+73,Purchase,Vendor,20000,107014,Purchase Receipt,2025-01-01,2000-S,,,0001-01-01,,10,STÜCK,0,8,False,True,10,1,1489,0
+74,Purchase,Vendor,40000,107015,Purchase Receipt,2025-01-01,1968-S,HAUPT,,0001-01-01,,2,STÜCK,1,10,True,True,2,1,297.8,0
+75,Purchase,Vendor,20000,107016,Purchase Receipt,2025-01-01,1968-S,OST,,0001-01-01,,3,STÜCK,3,8,True,True,3,1,446.7,0
+76,Purchase,Vendor,10000,107017,Purchase Receipt,2025-01-01,1968-S,WEST,,0001-01-01,,5,STÜCK,5,6,True,True,5,1,744.5,0
+77,Purchase,Vendor,50000,107018,Purchase Receipt,2025-11-01,1996-S,,,0001-01-01,,5,STÜCK,5,8,True,True,5,1,5476.5,0
+78,Purchase,Vendor,40000,107019,Purchase Receipt,2025-09-01,1920-S,,,0001-01-01,,10,STÜCK,10,10,True,True,10,1,5080,0
+79,Purchase,Vendor,40000,107020,Purchase Receipt,2025-12-01,1936-S,,,0001-01-01,,90,STÜCK,90,10,True,True,90,1,13599,0
+80,Purchase,Vendor,40000,107021,Purchase Receipt,2025-12-01,2000-S,,,0001-01-01,,28,STÜCK,28,10,True,True,28,1,4169.2,0
+81,Purchase,Vendor,30000,107022,Purchase Receipt,2025-12-01,1996-S,,,0001-01-01,,5,STÜCK,5,12,True,True,5,1,5476.5,0
+82,Purchase,Vendor,20000,107023,Purchase Receipt,2025-01-04,1908-S,,,0001-01-01,,5,STÜCK,0,8,False,True,5,1,744.5,0
+83,Purchase,Vendor,20000,107023,Purchase Receipt,2025-01-04,1988-S,,,0001-01-01,,5,STÜCK,0,8,False,True,5,1,755.5,0
+84,Purchase,Vendor,40000,107024,Purchase Receipt,2025-01-04,1920-S,,,0001-01-01,,5,STÜCK,0,10,False,True,5,1,2540,0
+85,Purchase,Vendor,30000,107025,Purchase Receipt,2025-01-05,1972-S,,,0001-01-01,,7,STÜCK,0,12,False,True,7,1,1042.3,0
+86,Purchase,Vendor,20000,107026,Purchase Receipt,2025-01-06,1968-S,,,0001-01-01,,6,STÜCK,0,8,False,True,6,1,893.4,0
+87,Purchase,Vendor,50000,107027,Purchase Receipt,2025-01-07,1900-S,,,0001-01-01,,8,STÜCK,0,8,False,True,8,1,1208.8,0
+88,Purchase,Vendor,50000,107027,Purchase Receipt,2025-01-07,1980-S,,,0001-01-01,,4,STÜCK,0,8,False,True,4,1,595.6,0
+89,Purchase,Vendor,10000,107028,Purchase Receipt,2025-01-07,1936-S,,,0001-01-01,,8,STÜCK,0,6,False,True,8,1,1208.8,0
+90,Purchase,Vendor,50000,107029,Purchase Receipt,2025-01-08,1896-S,,,0001-01-01,,9,STÜCK,0,8,False,True,9,1,7061.4,0
+91,Purchase,Vendor,20000,107030,Purchase Receipt,2025-01-09,1960-S,,,0001-01-01,,7,STÜCK,0,8,False,True,7,1,1057.7,0
+92,Purchase,Vendor,30000,107031,Purchase Receipt,2025-01-10,1928-S,,,0001-01-01,,10,STÜCK,0,12,False,True,10,1,431,0
+93,Purchase,Vendor,40000,107032,Purchase Receipt,2025-01-10,1996-S,,,0001-01-01,,7,STÜCK,0,10,False,True,7,1,7667.1,0
+94,Purchase,Vendor,40000,107033,Purchase Receipt,2025-01-11,1964-S,,,0001-01-01,,5,STÜCK,0,10,False,True,5,1,755.5,0
+95,Purchase,Vendor,30000,107034,Purchase Receipt,2025-01-11,2000-S,,,0001-01-01,,5,STÜCK,0,12,False,True,5,1,744.5,0
+96,Purchase,Vendor,30000,107035,Purchase Receipt,2025-01-12,1906-S,,,0001-01-01,,6,STÜCK,0,12,False,True,6,1,2039.4,0
+97,Purchase,Vendor,20000,107036,Purchase Receipt,2025-02-04,1908-S,,,0001-01-01,,5,STÜCK,0,8,False,True,5,1,744.5,0
+98,Purchase,Vendor,20000,107036,Purchase Receipt,2025-02-04,1988-S,,,0001-01-01,,5,STÜCK,0,8,False,True,5,1,755.5,0
+99,Purchase,Vendor,40000,107037,Purchase Receipt,2025-02-04,1920-S,,,0001-01-01,,4,STÜCK,0,10,False,True,4,1,2032,0
+100,Purchase,Vendor,30000,107038,Purchase Receipt,2025-02-05,1972-S,,,0001-01-01,,7,STÜCK,0,12,False,True,7,1,1042.3,0

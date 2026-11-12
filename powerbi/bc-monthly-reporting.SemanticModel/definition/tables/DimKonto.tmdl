@@ -1,0 +1,312 @@
+table DimKonto
+	lineageTag: 4447597a-603b-4a42-a45f-44cbbc127f52
+
+	column Kontonr
+		dataType: string
+		lineageTag: 031b2997-3eb9-4df1-9f99-373fa95f85be
+		summarizeBy: none
+		sourceColumn: Kontonr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kontoname
+		dataType: string
+		lineageTag: 4b11c154-4430-4f08-8f0c-8f4ddd25ce69
+		summarizeBy: none
+		sourceColumn: Kontoname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kontoart
+		dataType: string
+		lineageTag: 6fbcc668-398b-4db8-8c6c-8e997309cf02
+		summarizeBy: none
+		sourceColumn: Kontoart
+
+		annotation SummarizationSetBy = Automatic
+
+	column BilanzGuV
+		dataType: string
+		lineageTag: 48588bf4-8a34-41b1-bc02-44497c7dd49f
+		summarizeBy: none
+		sourceColumn: BilanzGuV
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kategorie
+		dataType: string
+		lineageTag: fc2066a9-b78d-43a1-9f2c-55d72ec898a7
+		summarizeBy: none
+		sourceColumn: Kategorie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unterkategorie
+		dataType: string
+		lineageTag: c08b5d4f-fc8a-4ae6-832f-41d98da5bb92
+		summarizeBy: none
+		sourceColumn: Unterkategorie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ebene1
+		dataType: string
+		lineageTag: a2e4aec6-aad8-4c90-8d59-8a4e3e64364d
+		summarizeBy: none
+		sourceColumn: Ebene1
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ebene2
+		dataType: string
+		lineageTag: e760c743-4ff8-409e-81a8-7c5250aacd56
+		summarizeBy: none
+		sourceColumn: Ebene2
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ebene3
+		dataType: string
+		lineageTag: 4e1f8810-331b-4c43-a688-c8e0da11b1fa
+		summarizeBy: none
+		sourceColumn: Ebene3
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sortierung
+		dataType: string
+		lineageTag: 50f6bf61-2033-4c1f-aa11-f2816238814c
+		summarizeBy: none
+		sourceColumn: Sortierung
+
+		annotation SummarizationSetBy = Automatic
+
+	column bucket
+		dataType: string
+		lineageTag: 3768a77b-0812-49ab-bb1a-4d17afd07437
+		summarizeBy: none
+		sourceColumn: bucket
+
+		annotation SummarizationSetBy = Automatic
+
+	column vorzeichen
+		dataType: double
+		lineageTag: 23fced87-32b2-4869-81d0-ea24ae71996c
+		summarizeBy: sum
+		sourceColumn: vorzeichen
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition DimKonto = m
+		mode: import
+		source =
+				// Quelle: microsoft/analytics/v1.0, generalLedgerAccounts und generalLedgerAccountCategories. Zuordnung aus pRepoPfad und "\config\kpi_mapping.csv", Spalten bucket und vorzeichen.
+				// Filter: keiner.
+				// Schlüssel: Kontonr (accountNo).
+				// Erwartete Zeilenzahl: 221
+				// Abweichung von B2: die Mapping-Spalte heißt bucket, nicht KPI-Zeile. Konten ohne Zeile bekommen bucket NICHT_ZUGEORDNET. GuV ohne Zeile bekommt vorzeichen -1, Bilanz ohne Zeile lässt vorzeichen leer. Hierarchie flach, Ebene 1 bis 3, Wurzel zuerst.
+				let
+				    Inhalt = fnQuelle("microsoft/analytics/v1.0"),
+				    KontenRoh = Inhalt{[Name = "generalLedgerAccounts"]}[Data],
+				    KategorienRoh = Inhalt{[Name = "generalLedgerAccountCategories"]}[Data],
+				    KontoText = (wert as any) as text =>
+				        if wert = null then
+				            ""
+				        else if Value.Is(wert, type number) then
+				            if Number.Round(wert, 0) = wert then Text.From(Int64.From(wert)) else Text.From(wert)
+				        else
+				            Text.Trim(Text.From(wert)),
+				    KontoartText = (wert as any) as nullable text =>
+				        let
+				            Textwert = if wert = null then null else Text.Trim(Text.From(wert)),
+				            Map = [
+				                Posting = "Buchung",
+				                Heading = "Überschrift",
+				                Total = "Summe",
+				                #"Begin-Total" = "Von-Summe",
+				                #"End-Total" = "Bis-Summe",
+				                Begin_x002D_Total = "Von-Summe",
+				                End_x002D_Total = "Bis-Summe"
+				            ]
+				        in
+				            if Textwert = null or Textwert = "" then
+				                null
+				            else if Record.HasFields(Map, Textwert) then
+				                Record.Field(Map, Textwert)
+				            else
+				                Textwert,
+				    BilanzText = (wert as any) as nullable text =>
+				        let
+				            Textwert = if wert = null then null else Text.Trim(Text.From(wert)),
+				            Map = [#"Balance Sheet" = "Bilanz", #"Income Statement" = "GuV"]
+				        in
+				            if Textwert = null or Textwert = "" then
+				                null
+				            else if Record.HasFields(Map, Textwert) then
+				                Record.Field(Map, Textwert)
+				            else
+				                Textwert,
+				    Kategorien = Table.TransformColumns(
+				        Table.TransformColumnTypes(
+				            KategorienRoh,
+				            {{"entryNo", Int64.Type}, {"parentEntryNo", Int64.Type}}
+				        ),
+				        {{"description", each if _ = null then null else Text.From(_), type text}}
+				    ),
+				    Pfad = (start as any) as list =>
+				        let
+				            Schritt = (aktuell as any, rest as list, schutz as number) as list =>
+				                let
+				                    Nummer =
+				                        if aktuell = null then
+				                            0
+				                        else
+				                            try Int64.From(aktuell) otherwise 0,
+				                    Gefunden = Table.SelectRows(Kategorien, each [entryNo] = Nummer),
+				                    Weiter =
+				                        if schutz <= 0 or Nummer = 0 or Table.IsEmpty(Gefunden) then
+				                            rest
+				                        else
+				                            @Schritt(
+				                                Gefunden{0}[parentEntryNo],
+				                                {Gefunden{0}[description]} & rest,
+				                                schutz - 1
+				                            )
+				                in
+				                    Weiter
+				        in
+				            Schritt(start, {}, 8),
+				    Blatt = (start as any) as nullable record =>
+				        let
+				            Nummer = if start = null then 0 else try Int64.From(start) otherwise 0,
+				            Gefunden = Table.SelectRows(Kategorien, each [entryNo] = Nummer)
+				        in
+				            if Nummer = 0 or Table.IsEmpty(Gefunden) then null else Gefunden{0},
+				    Element = (liste as list, index as number) as nullable text =>
+				        if List.Count(liste) > index then liste{index} else null,
+				    Konten = Table.RenameColumns(
+				        Table.TransformColumns(
+				            KontenRoh,
+				            {{"accountNo", each KontoText(_), type text}}
+				        ),
+				        {{"accountNo", "Kontonr"}, {"accountName", "Kontoname"}}
+				    ),
+				    MitBlatt = Table.AddColumn(Konten, "Blatt", each Blatt([accountSubcategoryEntryNo])),
+				    MitPfad = Table.AddColumn(MitBlatt, "Pfad", each Pfad([accountSubcategoryEntryNo])),
+				    Geformt = Table.SelectColumns(
+				        Table.AddColumn(
+				            Table.AddColumn(
+				                Table.AddColumn(
+				                    Table.AddColumn(
+				                        Table.AddColumn(
+				                            Table.AddColumn(
+				                                Table.AddColumn(
+				                                    Table.AddColumn(
+				                                        MitPfad,
+				                                        "Kontoart",
+				                                        each KontoartText([accountType]),
+				                                        type text
+				                                    ),
+				                                    "BilanzGuV",
+				                                    each BilanzText([incomeBalance]),
+				                                    type text
+				                                ),
+				                                "Kategorie",
+				                                each if [Blatt] = null then null else Text.From([Blatt][accountCategory]),
+				                                type text
+				                            ),
+				                            "Unterkategorie",
+				                            each if [Blatt] = null then null else [Blatt][description],
+				                            type text
+				                        ),
+				                        "Ebene1",
+				                        each Element([Pfad], 0),
+				                        type text
+				                    ),
+				                    "Ebene2",
+				                    each Element([Pfad], 1),
+				                    type text
+				                ),
+				                "Ebene3",
+				                each Element([Pfad], 2),
+				                type text
+				            ),
+				            "Sortierung",
+				            each if [Blatt] = null then null else Text.From([Blatt][presentationOrder]),
+				            type text
+				        ),
+				        {
+				            "Kontonr",
+				            "Kontoname",
+				            "Kontoart",
+				            "BilanzGuV",
+				            "Kategorie",
+				            "Unterkategorie",
+				            "Ebene1",
+				            "Ebene2",
+				            "Ebene3",
+				            "Sortierung"
+				        }
+				    ),
+				    Csv = Csv.Document(
+				        File.Contents(pRepoPfad & "\config\kpi_mapping.csv"),
+				        [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]
+				    ),
+				    MappingRoh = Table.PromoteHeaders(Csv, [PromoteAllScalars = true]),
+				    Mapping = Table.Distinct(
+				        Table.TransformColumns(
+				            Table.SelectColumns(MappingRoh, {"konto", "bucket", "vorzeichen"}),
+				            {
+				                {"konto", each KontoText(_), type text},
+				                {
+				                    "vorzeichen",
+				                    each if _ = null or Text.Trim(Text.From(_)) = "" then null else Number.From(_),
+				                    type number
+				                }
+				            }
+				        ),
+				        {"konto"}
+				    ),
+				    Verknuepft = Table.NestedJoin(
+				        Geformt,
+				        {"Kontonr"},
+				        Mapping,
+				        {"konto"},
+				        "Map",
+				        JoinKind.LeftOuter
+				    ),
+				    Erweitert = Table.ExpandTableColumn(Verknuepft, "Map", {"bucket", "vorzeichen"}),
+				    MitBucket = Table.AddColumn(
+				        Erweitert,
+				        "bucketNeu",
+				        each
+				            if [bucket] = null or Text.Trim(Text.From([bucket])) = "" then
+				                "NICHT_ZUGEORDNET"
+				            else
+				                Text.Trim(Text.From([bucket])),
+				        type text
+				    ),
+				    MitVorzeichen = Table.AddColumn(
+				        MitBucket,
+				        "vorzeichenNeu",
+				        each
+				            if [vorzeichen] = null then
+				                if [bucketNeu] = "NICHT_ZUGEORDNET" and [BilanzGuV] = "GuV" then -1 else null
+				            else
+				                [vorzeichen],
+				        type number
+				    ),
+				    OhneAlt = Table.RemoveColumns(MitVorzeichen, {"bucket", "vorzeichen"}),
+				    Ergebnis = Table.RenameColumns(
+				        OhneAlt,
+				        {{"bucketNeu", "bucket"}, {"vorzeichenNeu", "vorzeichen"}}
+				    )
+				in
+				    Ergebnis
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

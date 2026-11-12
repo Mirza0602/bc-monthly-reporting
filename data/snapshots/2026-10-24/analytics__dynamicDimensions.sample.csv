@@ -1,0 +1,101 @@
+dimensionSetID,customDimensionCode,customDimensionName,customDimensionValueCode,customDimensionValueName,globalDimensionNo
+1,ABTEILUNG,Abteilung,VERW,Verwaltung,1
+2,ABTEILUNG,Abteilung,VERKAUF,Verkauf,1
+6,BEREICH,Bereich,70,Nordamerika,0
+6,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+6,UNTERNEHMENSGRUPPE,Unternehmensgruppe,GEWERBLICH,Gewerblich,0
+6,VERKAUFSKAMPAGNE,Verkaufskampagne,SOMMER,Sommer,0
+7,BEREICH,Bereich,30,Nordeuropa (EU),0
+8,BEREICH,Bereich,30,Nordeuropa (EU),0
+8,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+9,BEREICH,Bereich,30,Nordeuropa (EU),0
+9,UNTERNEHMENSGRUPPE,Unternehmensgruppe,STARTSEITE,Startseite,0
+10,BEREICH,Bereich,30,Nordeuropa (EU),0
+10,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+10,UNTERNEHMENSGRUPPE,Unternehmensgruppe,STARTSEITE,Startseite,0
+11,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+12,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+12,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+14,BEREICH,Bereich,30,Nordeuropa (EU),0
+14,VERKÄUFER,Verkäufer,DH,Jim Olive,0
+14,DEBITORENGRUPPE,Debitorengruppe,GROSS,Großunternehmen,2
+15,BEREICH,Bereich,30,Nordeuropa (EU),0
+15,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+16,BEREICH,Bereich,30,Nordeuropa (EU),0
+16,VERKÄUFER,Verkäufer,DH,Jim Olive,0
+16,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+19,BEREICH,Bereich,70,Nordamerika,0
+19,VERKÄUFER,Verkäufer,DH,Jim Olive,0
+19,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+19,UNTERNEHMENSGRUPPE,Unternehmensgruppe,STARTSEITE,Startseite,0
+22,BEREICH,Bereich,30,Nordeuropa (EU),0
+22,UNTERNEHMENSGRUPPE,Unternehmensgruppe,BÜRO,Büro,0
+22,VERKÄUFER,Verkäufer,DH,Jim Olive,0
+22,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+24,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+24,VERKÄUFER,Verkäufer,DH,Jim Olive,0
+24,DEBITORENGRUPPE,Debitorengruppe,KLEIN,Kleinunternehmen,2
+25,ABTEILUNG,Abteilung,PROD,Produktion,1
+26,BEREICH,Bereich,70,Nordamerika,0
+26,VERKÄUFER,Verkäufer,JH,Lina Townsend,0
+26,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+26,UNTERNEHMENSGRUPPE,Unternehmensgruppe,STARTSEITE,Startseite,0
+27,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+27,VERKÄUFER,Verkäufer,JH,Lina Townsend,0
+27,DEBITORENGRUPPE,Debitorengruppe,KLEIN,Kleinunternehmen,2
+28,BEREICH,Bereich,70,Nordamerika,0
+28,VERKÄUFER,Verkäufer,HS,Otis Falls,0
+28,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+28,UNTERNEHMENSGRUPPE,Unternehmensgruppe,STARTSEITE,Startseite,0
+29,BEREICH,Bereich,30,Nordeuropa (EU),0
+29,UNTERNEHMENSGRUPPE,Unternehmensgruppe,BÜRO,Büro,0
+29,VERKÄUFER,Verkäufer,HS,Otis Falls,0
+29,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+30,BEREICH,Bereich,30,Nordeuropa (EU),0
+30,UNTERNEHMENSGRUPPE,Unternehmensgruppe,BÜRO,Büro,0
+30,VERKÄUFER,Verkäufer,JH,Lina Townsend,0
+30,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+31,BEREICH,Bereich,30,Nordeuropa (EU),0
+31,DEBITORENGRUPPE,Debitorengruppe,GROSS,Großunternehmen,2
+31,VERKÄUFER,Verkäufer,HS,Otis Falls,0
+32,BEREICH,Bereich,30,Nordeuropa (EU),0
+32,VERKÄUFER,Verkäufer,JH,Lina Townsend,0
+32,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+33,BEREICH,Bereich,30,Nordeuropa (EU),0
+33,VERKÄUFER,Verkäufer,HS,Otis Falls,0
+33,DEBITORENGRUPPE,Debitorengruppe,MITTEL,Mittelständisches Unternehmen,2
+34,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+34,VERKÄUFER,Verkäufer,HS,Otis Falls,0
+34,DEBITORENGRUPPE,Debitorengruppe,KLEIN,Kleinunternehmen,2
+35,BEREICH,Bereich,30,Nordeuropa (EU),0
+35,DEBITORENGRUPPE,Debitorengruppe,GROSS,Großunternehmen,2
+35,VERKÄUFER,Verkäufer,JH,Lina Townsend,0
+36,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+36,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+36,VERKÄUFER,Verkäufer,HS,Otis Falls,0
+37,BEREICH,Bereich,30,Nordeuropa (EU),0
+37,VERKÄUFER,Verkäufer,DH,Jim Olive,0
+37,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+38,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+38,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+38,VERKÄUFER,Verkäufer,JH,Lina Townsend,0
+39,BEREICH,Bereich,30,Nordeuropa (EU),0
+39,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+39,VERKÄUFER,Verkäufer,JH,Lina Townsend,0
+39,UNTERNEHMENSGRUPPE,Unternehmensgruppe,STARTSEITE,Startseite,0
+40,BEREICH,Bereich,70,Nordamerika,0
+40,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+40,UNTERNEHMENSGRUPPE,Unternehmensgruppe,GEWERBLICH,Gewerblich,0
+40,VERKÄUFER,Verkäufer,HS,Otis Falls,0
+40,VERKAUFSKAMPAGNE,Verkaufskampagne,SOMMER,Sommer,0
+41,BEREICH,Bereich,30,Nordeuropa (EU),0
+41,EINKÄUFER,Einkäufer,BK,Robin Bettencourt,0
+41,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+42,BEREICH,Bereich,30,Nordeuropa (EU),0
+42,VERKÄUFER,Verkäufer,DH,Jim Olive,0
+42,ABTEILUNG,Abteilung,EINKAUF,Einkauf,1
+42,UNTERNEHMENSGRUPPE,Unternehmensgruppe,STARTSEITE,Startseite,0
+43,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+43,ABTEILUNG,Abteilung,VERW,Verwaltung,1
+44,BEREICH,Bereich,40,Nordeuropa (Nicht EU),0
+44,ABTEILUNG,Abteilung,VERKAUF,Verkauf,1

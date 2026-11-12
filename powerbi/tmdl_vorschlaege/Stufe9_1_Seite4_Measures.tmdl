@@ -1,0 +1,75 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'Verkauf Umsatz' = ```
+				// Zweck: Umsatz der Verkaufszeilen im Filterkontext. Monat und YTD benutzen diese Definition.
+				// Quelle: Summe FactWertposten[Verkaufsbetrag], Artikelpostenart Sale. Das sind die Verkaufszeilen. Vorzeichen wie in den Wertposten.
+				CALCULATE (
+					SUM ( FactWertposten[Verkaufsbetrag] ),
+					FactWertposten[Artikelpostenart] = "Sale"
+				)
+				```
+			formatString: #,0.00
+			displayFolder: '10 Kunden Artikel Seite 4'
+			lineageTag: 7c1e9a24-6b50-4d8f-a3e1-5f2c8b0d6a47
+
+		measure 'Verkauf Einstand' = ```
+				// Zweck: Einstand der Verkaufszeilen im Filterkontext, im Bericht positiv.
+				// Quelle: Summe FactWertposten[EinstandsbetragTatsächlich], Artikelpostenart Sale. Der Einstand steht in den Wertposten negativ. Mal minus 1 dreht das Vorzeichen und lässt einen leeren Wert leer.
+				VAR Summe =
+					CALCULATE (
+						SUM ( FactWertposten[EinstandsbetragTatsächlich] ),
+						FactWertposten[Artikelpostenart] = "Sale"
+					)
+				RETURN
+					Summe * -1
+				```
+			formatString: #,0.00
+			displayFolder: '10 Kunden Artikel Seite 4'
+			lineageTag: 2a8f4c61-9e17-4b3d-8c52-0d6e7a1b4f93
+
+		measure 'DB I' = ```
+				// Zweck: Deckungsbeitrag I im Filterkontext. Der Deckungsbeitrag aus den Warenwertposten ist der Rohertrag aus der Buchhaltung.
+				// Quelle: [Verkauf Umsatz] minus [Verkauf Einstand]. Vorzeichen steckt in den Bausteinen.
+				[Verkauf Umsatz] - [Verkauf Einstand]
+				```
+			formatString: #,0.00
+			displayFolder: '10 Kunden Artikel Seite 4'
+			lineageTag: 5e0b7d38-1c64-4a9f-b2d7-8e3f6a0c5b14
+
+		measure 'DB I Marge' = ```
+				// Zweck: Deckungsbeitrag I im Verhältnis zum Verkaufsumsatz.
+				// Quelle: DIVIDE von [DB I] durch [Verkauf Umsatz]. Vorzeichen steckt in den Bausteinen.
+				DIVIDE ( [DB I], [Verkauf Umsatz] )
+				```
+			formatString: 0.0%
+			displayFolder: '10 Kunden Artikel Seite 4'
+			lineageTag: 9d4a2e70-8f15-4c6b-9a38-7b1d0e5c2f46
+
+		measure 'Verkauf Umsatz YTD' = ```
+				// Zweck: Verkaufsumsatz seit Jahresanfang. Das Visual trägt kein Zeitauswahl-Feld.
+				// Quelle: [Verkauf Umsatz] mit Zeitauswahl YTD. Vorzeichen bleibt das des Umsatzes.
+				CALCULATE ( [Verkauf Umsatz], Zeitauswahl[Zeitauswahl] = "YTD" )
+				```
+			formatString: #,0.00
+			displayFolder: '10 Kunden Artikel Seite 4'
+			lineageTag: 1f6c8b53-4e29-4d7a-a1c0-3b8e5d2f7a60
+
+		measure 'DB I YTD' = ```
+				// Zweck: Deckungsbeitrag I seit Jahresanfang. Das Visual trägt kein Zeitauswahl-Feld.
+				// Quelle: [DB I] mit Zeitauswahl YTD. Vorzeichen bleibt das des Deckungsbeitrags.
+				CALCULATE ( [DB I], Zeitauswahl[Zeitauswahl] = "YTD" )
+				```
+			formatString: #,0.00
+			displayFolder: '10 Kunden Artikel Seite 4'
+			lineageTag: 6b3e1a94-7d02-4f8c-b5e6-2a9c0d4f1b78
+
+		measure 'DB I Marge YTD' = ```
+				// Zweck: Marge des Deckungsbeitrags I seit Jahresanfang. Das Visual trägt kein Zeitauswahl-Feld.
+				// Quelle: DIVIDE von [DB I YTD] durch [Verkauf Umsatz YTD]. Die Jahreswerte setzen die Zeitauswahl. Vorzeichen steckt in den Bausteinen.
+				DIVIDE ( [DB I YTD], [Verkauf Umsatz YTD] )
+				```
+			formatString: 0.0%
+			displayFolder: '10 Kunden Artikel Seite 4'
+			lineageTag: 8c5d0f27-3a61-4e9b-8d14-6f2b7c0a5e31

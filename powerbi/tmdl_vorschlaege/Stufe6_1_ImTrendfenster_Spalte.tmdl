@@ -1,0 +1,13 @@
+createOrReplace
+
+	ref table DimDatum
+
+		column 'Im Trendfenster' = ```
+				// 1, wenn das Datum nach dem Monatsende 13 Monate vor dem Stichtag liegt und höchstens am Monatsende des Stichtags.
+				// Sonst 0. Das Measure [Im Trendfenster] bleibt im Modell und wird nicht mehr benutzt.
+				IF ( DimDatum[Datum] > EOMONTH ( MAX ( pStichtag[pStichtag] ), -13 ) && DimDatum[Datum] <= EOMONTH ( MAX ( pStichtag[pStichtag] ), 0 ), 1, 0 )
+				```
+			dataType: int64
+			isHidden
+			formatString: 0
+			summarizeBy: none

@@ -1,0 +1,58 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'Beleg Betrag' = ```
+				// Zweck: Betrag der Sachposten im Filter nach Konto, Kostenstelle, Kunde, Lieferant oder Artikel. Die Belegliste zeigt Buchungszeilen.
+				// Quelle: Summe FactSachposten[Betrag]. Betrag wie in BC, Soll positiv, kein Vorzeichen aus DimKonto, weil die Belegliste Buchungszeilen zeigt. Konto und Kostenstelle kommen aus dem Filterkontext. Kunde über Herkunftsart Customer, Lieferant über Vendor, Artikel über die Belegnr der Wertposten. Datum bis zum Stichtag.
+				VAR KundeAktiv = ISFILTERED ( DimKunde )
+				VAR Kunden = VALUES ( DimKunde[Kundennr] )
+				VAR LieferantAktiv = ISFILTERED ( DimLieferant )
+				VAR Lieferanten = VALUES ( DimLieferant[Lieferantennr] )
+				VAR ArtikelAktiv = ISFILTERED ( DimArtikel )
+				VAR ArtikelBelege = CALCULATETABLE ( VALUES ( FactWertposten[Belegnr] ) )
+				VAR Bis = [Stichtag]
+				RETURN
+					CALCULATE (
+						SUMX (
+							FILTER (
+								FactSachposten,
+								( NOT KundeAktiv || ( FactSachposten[Herkunftsart] = "Customer" && FactSachposten[Herkunftsnr] IN Kunden ) )
+									&& ( NOT LieferantAktiv || ( FactSachposten[Herkunftsart] = "Vendor" && FactSachposten[Herkunftsnr] IN Lieferanten ) )
+									&& ( NOT ArtikelAktiv || FactSachposten[Belegnr] IN ArtikelBelege )
+							),
+							FactSachposten[Betrag]
+						),
+						KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= Bis ) )
+					)
+				```
+			formatString: #,0.00
+			displayFolder: '11 Beleg Seite 5'
+			lineageTag: 679afe45-28fe-41c4-922e-ad65541ab1c1
+
+		measure 'Beleg Zeilen' = ```
+				// Zweck: Anzahl der Sachposten im selben Filter wie [Beleg Betrag].
+				// Quelle: COUNTROWS statt Summe des Betrags. Dieselbe Auswahl nach Kunde, Lieferant und Artikel. Vorzeichen keines. Datum bis zum Stichtag.
+				VAR KundeAktiv = ISFILTERED ( DimKunde )
+				VAR Kunden = VALUES ( DimKunde[Kundennr] )
+				VAR LieferantAktiv = ISFILTERED ( DimLieferant )
+				VAR Lieferanten = VALUES ( DimLieferant[Lieferantennr] )
+				VAR ArtikelAktiv = ISFILTERED ( DimArtikel )
+				VAR ArtikelBelege = CALCULATETABLE ( VALUES ( FactWertposten[Belegnr] ) )
+				VAR Bis = [Stichtag]
+				RETURN
+					CALCULATE (
+						COUNTROWS (
+							FILTER (
+								FactSachposten,
+								( NOT KundeAktiv || ( FactSachposten[Herkunftsart] = "Customer" && FactSachposten[Herkunftsnr] IN Kunden ) )
+									&& ( NOT LieferantAktiv || ( FactSachposten[Herkunftsart] = "Vendor" && FactSachposten[Herkunftsnr] IN Lieferanten ) )
+									&& ( NOT ArtikelAktiv || FactSachposten[Belegnr] IN ArtikelBelege )
+							)
+						),
+						KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= Bis ) )
+					)
+				```
+			formatString: 0
+			displayFolder: '11 Beleg Seite 5'
+			lineageTag: daf6c0aa-4ac5-4e90-a9d1-21ada589938e

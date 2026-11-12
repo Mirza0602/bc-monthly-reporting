@@ -1,0 +1,116 @@
+// Quelle: microsoft/analytics/v1.0, incomeStatementGeneralLedgerEntries und balanceSheetGeneralLedgerEntries. IstAbschlussbuchung aus closingGeneralLedgerEntries. Belegnr und Belegart aus v2.0 generalLedgerEntries.
+// Filter: keiner. pStichtag filtert keine Zeile. 48 Posten nach dem 30.09.2026 bleiben drin.
+// Schlüssel: Eintragsnr (entryNo).
+// Erwartete Zeilenzahl: 4384
+// Abweichung von B2: Kontonr vereinheitlicht accountNo (GuV) und glAccountNo (Bilanz). IstAbschlussbuchung nur aus closingGeneralLedgerEntries, aktuell 0 Zeilen, also überall false. Kein zweites Kriterium über ein C-Datum. Die Analytics-Entitäten haben keine Belegnummer. Belegnr und Belegart kommen per Left Outer Join aus v2.0 generalLedgerEntries auf Eintragsnr = entryNumber. Snapshot 24.10.2026: 4384 Analytics-Sachposten, 4384 v2-Sachposten, Schnitt 4384, entryNumber eindeutig. documentType _x0020_ oder leer wird null. Zeilenzahl bleibt 4384.
+// Abschlussnummern einmal mit List.Buffer holen, je Zeile List.Contains. Ein Join der Abschlussnummern gegen die OData-Quelle wurde nicht an BC weitergegeben und erzeugte Einzelanfragen je Zeile, BC hat die Verbindung geschlossen (26.10.2026). Die Belegzeilen werden einmal gepuffert, der Join läuft lokal.
+let
+    Inhalt = fnQuelle("microsoft/analytics/v1.0"),
+    TextOderLeer = (wert as any) as nullable text =>
+        let
+            Textwert = if wert = null then null else Text.Trim(Text.From(wert))
+        in
+            if Textwert = null or Textwert = "" then null else Textwert,
+    BelegartText = (wert as any) as nullable text =>
+        let
+            Textwert = TextOderLeer(wert)
+        in
+            if Textwert = null or Textwert = "_x0020_" then null else Textwert,
+    BilanzText = (wert as any) as nullable text =>
+        let
+            Textwert = TextOderLeer(wert),
+            Map = [#"Balance Sheet" = "Bilanz", #"Income Statement" = "GuV"]
+        in
+            if Textwert = null then null
+            else if Record.HasFields(Map, Textwert) then Record.Field(Map, Textwert)
+            else Textwert,
+    Spalten = {
+        "entryNo", "postingDate", "Kontonr", "amount", "dimensionSetID",
+        "description", "sourceType", "sourceNo", "sourceCode", "incomeBalance"
+    },
+    GuV = Table.SelectColumns(
+        Table.RenameColumns(
+            Inhalt{[Name = "incomeStatementGeneralLedgerEntries"]}[Data],
+            {{"accountNo", "Kontonr"}}
+        ),
+        Spalten
+    ),
+    Bilanz = Table.SelectColumns(
+        Table.RenameColumns(
+            Inhalt{[Name = "balanceSheetGeneralLedgerEntries"]}[Data],
+            {{"glAccountNo", "Kontonr"}}
+        ),
+        Spalten
+    ),
+    Vereinigt = Table.Combine({GuV, Bilanz}),
+    AbschlussNr = List.Buffer(
+        Table.Column(Inhalt{[Name = "closingGeneralLedgerEntries"]}[Data], "entryNo")
+    ),
+    MitFlag = Table.AddColumn(
+        Vereinigt,
+        "IstAbschlussbuchung",
+        each List.Contains(AbschlussNr, [entryNo]),
+        type logical
+    ),
+    Umbenannt = Table.RenameColumns(
+        MitFlag,
+        {
+            {"entryNo", "Eintragsnr"},
+            {"postingDate", "Buchungsdatum"},
+            {"amount", "Betrag"},
+            {"dimensionSetID", "DimensionSetID"},
+            {"description", "Beschreibung"},
+            {"sourceType", "Herkunftsart"},
+            {"sourceNo", "Herkunftsnr"},
+            {"sourceCode", "Herkunftscode"},
+            {"incomeBalance", "BilanzGuV"}
+        }
+    ),
+    Bereinigt = Table.TransformColumns(
+        Umbenannt,
+        {
+            {"Buchungsdatum", each if _ = null then null else Date.From(_), type date},
+            {"Kontonr", each TextOderLeer(_), type text},
+            {"Beschreibung", each TextOderLeer(_), type text},
+            {"Herkunftsart", each TextOderLeer(_), type text},
+            {"Herkunftsnr", each TextOderLeer(_), type text},
+            {"Herkunftscode", each TextOderLeer(_), type text},
+            {"BilanzGuV", each BilanzText(_), type text}
+        }
+    ),
+    Typisiert = Table.TransformColumnTypes(
+        Bereinigt,
+        {{"Eintragsnr", Int64.Type}, {"Betrag", type number}, {"DimensionSetID", Int64.Type}}
+    ),
+    Belege = Table.Buffer(
+        Table.TransformColumnTypes(
+            Table.SelectColumns(
+                fnQuelle("v2.0"){[Name = "generalLedgerEntries"]}[Data],
+                {"entryNumber", "documentNumber", "documentType"}
+            ),
+            {{"entryNumber", Int64.Type}}
+        )
+    ),
+    Verknuepft = Table.NestedJoin(
+        Typisiert,
+        {"Eintragsnr"},
+        Belege,
+        {"entryNumber"},
+        "Beleg",
+        JoinKind.LeftOuter
+    ),
+    Erweitert = Table.ExpandTableColumn(
+        Verknuepft,
+        "Beleg",
+        {"documentNumber", "documentType"},
+        {"Belegnr", "Belegart"}
+    ),
+    Ergebnis = Table.TransformColumns(
+        Erweitert,
+        {
+            {"Belegnr", each TextOderLeer(_), type text},
+            {"Belegart", each BelegartText(_), type text}
+        }
+    )
+in
+    Ergebnis

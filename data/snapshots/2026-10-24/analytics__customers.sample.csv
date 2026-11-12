@@ -1,0 +1,6 @@
+customerNo,customerName,address,address2,city,postCode,county,countryRegionCode,customerPostingGroup,customerPriceGroup,customerDiscGroup
+10000,Adatum Corporation,"Station Road, 21",,Düsseldorf,48436,,DE,INLAND,,
+20000,Trey Research,"Southwark Bridge Rd, 91-95",,München,80997,,DE,INLAND,,
+30000,School of Fine Art,10 High Tower Green,,Miami,FL 37125,FL,US,AUSLAND,,
+40000,Alpine Ski House,Walter-Gropius-Strasse 5,Park Stadt Schwabing,Bromsgrove,B68 5TT,,GB,EU,,
+50000,Relecloud,"Occam Court, 1",Surrey,Hamburg,20097,,DE,INLAND,,

@@ -1,0 +1,17 @@
+code,description,parentCategory,systemId
+BOHNEN,Bohnen,KAFFEE,5c5ac761-f6bb-f111-85be-7c1e52401c43
+DIENSTE,Dienste,,7b5ac761-f6bb-f111-85be-7c1e52401c43
+EM,Espressomaschinen,,7c5ac761-f6bb-f111-85be-7c1e52401c43
+EM_KOMMER,Kommerzielle Modelle,EM,7d5ac761-f6bb-f111-85be-7c1e52401c43
+ESG,"Umwelt, Soziales und Unternehmensführung (ESG, Environmental, Social, and Governance)",,8f5bc761-f6bb-f111-85be-7c1e52401c43
+KAFFEE,Kaffee,,5b5ac761-f6bb-f111-85be-7c1e52401c43
+KM,Kaffeemaschinen,,f01ed755-f6bb-f111-85be-7c1e52401c43
+KM_KOMMER,Kommerzielle Modelle,KM,f31ed755-f6bb-f111-85be-7c1e52401c43
+KM_KONSUM,Modelle für Verbraucher,KM,f21ed755-f6bb-f111-85be-7c1e52401c43
+LIEFERANTEN,Bürobedarf,SONST,17aeb94f-f6bb-f111-85be-7c1e52401c43
+MÖBEL,Büromöbel,,12aeb94f-f6bb-f111-85be-7c1e52401c43
+SCHREIBT,Büroschreibtisch,MÖBEL,14aeb94f-f6bb-f111-85be-7c1e52401c43
+SONST,Sonstiges,,16aeb94f-f6bb-f111-85be-7c1e52401c43
+STUHL,Bürostuhl,MÖBEL,13aeb94f-f6bb-f111-85be-7c1e52401c43
+TEILE,Teile,,f11ed755-f6bb-f111-85be-7c1e52401c43
+TISCH,Diverse Tische,MÖBEL,15aeb94f-f6bb-f111-85be-7c1e52401c43

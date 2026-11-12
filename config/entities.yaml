@@ -1,0 +1,566 @@
+# Entitäten aus Teil A2. Feldnamen aus der Microsoft-Doku, Stand 23.10.2026.
+# Entityset-Namen stehen so in den GET-Seiten.
+# filter_field ist das Feld für $filter. null bedeutet: kein Datumsfilter.
+# key ist der Zeilenschlüssel. null nur bei Analytics dimensions
+# (Shortcut-Dimensionen 1 bis 8, eine Zeile, kein einzelner Schlüssel).
+#
+# Nicht enthalten, weil nicht in Teil A2: dateSetup.
+# Nicht enthalten: incomeStmtGeneralLedgerEntries (zweiter Name neben der langen Form).
+# GuV-Posten nutzen accountNo. Bilanz- und Abschlussposten nutzen glAccountNo.
+# Debitoren- und Kreditorenzeilen sind Detailed-Posten.
+
+v2.0:
+  - entity_set: generalLedgerEntries
+    select:
+      - id
+      - entryNumber
+      - postingDate
+      - documentNumber
+      - documentType
+      - accountId
+      - accountNumber
+      - description
+      - debitAmount
+      - creditAmount
+      - additionalCurrencyDebitAmount
+      - additionalCurrencyCreditAmount
+      - lastModifiedDateTime
+    filter_field: postingDate
+    key: id
+
+  - entity_set: trialBalances
+    select:
+      - accountId
+      - number
+      - accountType
+      - display
+      - totalDebit
+      - totalCredit
+      - balanceAtDateDebit
+      - balanceAtDateCredit
+      - dateFilter
+    filter_field: dateFilter
+    # OData-Schlüssel ist accountId. number ist die Kontonummer für die Abstimmung.
+    key: accountId
+
+  - entity_set: accounts
+    select:
+      - id
+      - number
+      - displayName
+      - category
+      - subCategory
+      - blocked
+      - accountType
+      - directPosting
+      - netChange
+      - consolidationTranslationMethod
+      - consolidationDebitAccount
+      - consolidationCreditAccount
+      - excludeFromConsolidation
+      - lastModifiedDateTime
+    filter_field: null
+    key: id
+
+  - entity_set: dimensions
+    select:
+      - id
+      - code
+      - displayName
+      - consolidationCode
+      - lastModifiedDateTime
+    filter_field: null
+    key: id
+
+  - entity_set: dimensionValues
+    select:
+      - id
+      - code
+      - dimensionId
+      - displayName
+      - consolidationCode
+      - lastModifiedDateTime
+    filter_field: null
+    key: id
+
+  - entity_set: customers
+    select:
+      - id
+      - number
+      - displayName
+      - type
+      - addressLine1
+      - addressLine2
+      - city
+      - state
+      - country
+      - postalCode
+      - phoneNumber
+      - email
+      - website
+      - salespersonCode
+      - balanceDue
+      - creditLimit
+      - taxLiable
+      - taxAreaId
+      - taxAreaDisplayName
+      - taxRegistrationNumber
+      - currencyId
+      - currencyCode
+      - paymentTermsId
+      - shipmentMethodId
+      - paymentMethodId
+      - blocked
+      - lastModifiedDateTime
+    filter_field: null
+    key: id
+
+  - entity_set: vendors
+    select:
+      - id
+      - number
+      - displayName
+      - addressLine1
+      - addressLine2
+      - city
+      - state
+      - country
+      - postalCode
+      - phoneNumber
+      - email
+      - website
+      - taxRegistrationNumber
+      - currencyId
+      - currencyCode
+      - irs1099Code
+      - paymentTermsId
+      - paymentMethodId
+      - taxLiable
+      - blocked
+      - balance
+      - lastModifiedDateTime
+    filter_field: null
+    key: id
+
+  - entity_set: items
+    select:
+      - id
+      - number
+      - displayName
+      - displayName2
+      - type
+      - itemCategoryId
+      - itemCategoryCode
+      - blocked
+      - gtin
+      - inventory
+      - unitPrice
+      - priceIncludesTax
+      - unitCost
+      - taxGroupId
+      - taxGroupCode
+      - baseUnitOfMeasureId
+      - baseUnitOfMeasureCode
+      - generalProductPostingGroupId
+      - generalProductPostingGroupCode
+      - inventoryPostingGroupId
+      - inventoryPostingGroupCode
+      - lastModifiedDateTime
+    filter_field: null
+    key: id
+
+  - entity_set: itemCategories
+    select:
+      - id
+      - code
+      - displayName
+      - lastModifiedDateTime
+    filter_field: null
+    key: id
+
+"microsoft/analytics/v1.0":
+  - entity_set: incomeStatementGeneralLedgerEntries
+    select:
+      - incomeBalance
+      - accountNo
+      - postingDate
+      - amount
+      - dimensionSetID
+      - sourceCode
+      - entryNo
+      - systemModifiedAt
+      - description
+      - sourceType
+      - sourceNo
+    filter_field: postingDate
+    key: entryNo
+
+  - entity_set: balanceSheetGeneralLedgerEntries
+    select:
+      - incomeBalance
+      - glAccountNo
+      - postingDate
+      - amount
+      - dimensionSetID
+      - sourceCode
+      - entryNo
+      - systemModifiedAt
+      - description
+      - sourceType
+      - sourceNo
+    filter_field: postingDate
+    key: entryNo
+
+  - entity_set: closingGeneralLedgerEntries
+    select:
+      - incomeBalance
+      - glAccountNo
+      - postingDate
+      - amount
+      - dimensionSetID
+      - sourceCode
+      - entryNo
+      - systemModifiedAt
+      - description
+      - sourceType
+      - sourceNo
+    filter_field: postingDate
+    key: entryNo
+
+  - entity_set: customerLedgerEntries
+    select:
+      - cleEntryNo
+      - cleDueDate
+      - cleOpen
+      - clePostingDate
+      - cleDocumentDate
+      - cleDimensionSetID
+      - cleClosedAtDate
+      - cleReasonCode
+      - dcleEntryNo
+      - dclePostingDate
+      - dcleLedgerEntryAmount
+      - dcleEntryType
+      - dcleDocumentType
+      - dcleDocumentNo
+      - dcleInitialEntryDueDate
+      - dcleAmountLCY
+      - dcleCustomerNo
+      - dcleApplicationNo
+      - dcleAppliedCustLedgerEntryNo
+      - salesInvHeaderDocumentNo
+      - salesInvHeaderPaymentTermsCode
+      - salesInvHeaderPmtDiscountDate
+    filter_field: dclePostingDate
+    key: dcleEntryNo
+
+  - entity_set: vendorLedgerEntries
+    select:
+      - vleEntryNo
+      - vleDueDate
+      - vleOpen
+      - vlePostingDate
+      - vleDocumentDate
+      - vleDimensionSetID
+      - vleClosedAtDate
+      - vleReasonCode
+      - dvleEntryNo
+      - dvlePostingDate
+      - dvleLedgerEntryAmount
+      - dvleEntryType
+      - dvleDocumentType
+      - dvleDocumentNo
+      - dvleInitialEntryDueDate
+      - dvleAmountLCY
+      - dvleVendorNo
+      - dvleApplicationNo
+      - dvleAppliedVendLedgerEntryNo
+      - purchInvHeaderDocumentNo
+      - purchInvHeaderPaymentTermsCode
+      - purchInvHeaderPmtDiscountDate
+    filter_field: dvlePostingDate
+    key: dvleEntryNo
+
+  - entity_set: salesValueEntries
+    select:
+      - itemLedgerEntryNo
+      - itemLedgerEntryType
+      - entryNo
+      - entryType
+      - documentNo
+      - documentType
+      - invoicedQuantity
+      - salesAmountActual
+      - costAmountActual
+      - costAmountNonInvtbl
+      - costPostedToGL
+      - customerNo
+      - postingDate
+      - documentDate
+      - itemNo
+      - locationCode
+      - dimensionSetID
+      - salespersonPurchaserCode
+      - returnReasonCode
+      - projectNo
+    filter_field: postingDate
+    key: entryNo
+
+  - entity_set: purchaseValueEntries
+    select:
+      - entryNo
+      - entryType
+      - documentNo
+      - documentType
+      - vendorNo
+      - postingDate
+      - itemNo
+      - locationCode
+      - dimensionSetID
+      - invoicedQuantity
+      - costAmountActual
+      - salespersonPurchaserCode
+      - returnReasonCode
+      - projectNo
+      - adjustment
+      - capacityLedgerEntryNo
+      - discountAmount
+      - itemLedgerEntryNo
+      - itemLedgerEntryType
+    filter_field: postingDate
+    key: entryNo
+
+  - entity_set: itemValueEntries
+    select:
+      - entryNo
+      - valuationDate
+      - itemNo
+      - costAmountActual
+      - costAmountExpected
+      - costPostedToGL
+      - invoicedQuantity
+      - expectedCostPostedToGL
+      - locationCode
+      - itemLedgerEntryType
+      - postingDate
+      - documentType
+      - type
+      - dimensionSetID
+    filter_field: postingDate
+    key: entryNo
+
+  - entity_set: itemLedgerEntries
+    select:
+      - entryNo
+      - entryType
+      - sourceType
+      - sourceNo
+      - documentNo
+      - documentType
+      - postingDate
+      - itemNo
+      - locationCode
+      - serialNo
+      - expirationDate
+      - lotNo
+      - quantity
+      - unitOfMeasureCode
+      - remainingQuantity
+      - dimensionSetID
+      - open
+      - positive
+      - invoicedQuantity
+      - qtyPerUnitOfMeasure
+      - costAmountActual
+      - salesAmountActual
+    filter_field: postingDate
+    key: entryNo
+
+  - entity_set: generalLedgerAccounts
+    select:
+      - accountNo
+      - accountName
+      - accountType
+      - incomeBalance
+      - accountSubcategoryEntryNo
+      - indentation
+      - totaling
+    filter_field: null
+    key: accountNo
+
+  - entity_set: generalLedgerAccountCategories
+    select:
+      - entryNo
+      - parentEntryNo
+      - description
+      - presentationOrder
+      - siblingSequenceNo
+      - indentation
+      - accountCategory
+      - incomeBalance
+      - additionalReportDefinition
+      - systemGenerated
+      - hasChildren
+    filter_field: null
+    key: entryNo
+
+  - entity_set: accountCategories
+    select:
+      - powerBIAccCategory
+      - glAccCategoryEntryNo
+      - parentAccCategoryEntryNo
+    filter_field: null
+    key: powerBIAccCategory
+
+  - entity_set: dimensions
+    select:
+      - dim1Code
+      - dim1Name
+      - dim1Caption
+      - dim2Code
+      - dim2Name
+      - dim2Caption
+      - dim3Code
+      - dim3Name
+      - dim3Caption
+      - dim4Code
+      - dim4Name
+      - dim4Caption
+      - dim5Code
+      - dim5Name
+      - dim5Caption
+      - dim6Code
+      - dim6Name
+      - dim6Caption
+      - dim7Code
+      - dim7Name
+      - dim7Caption
+      - dim8Code
+      - dim8Name
+      - dim8Caption
+    filter_field: null
+    key: null
+
+  - entity_set: dimensionSetEntries
+    select:
+      - id
+      - dimensionSetID
+      - valueCount
+      - dimension1ValueCode
+      - dimension1ValueName
+      - dimension2ValueCode
+      - dimension2ValueName
+      - dimension3ValueCode
+      - dimension3ValueName
+      - dimension4ValueCode
+      - dimension4ValueName
+      - dimension5ValueCode
+      - dimension5ValueName
+      - dimension6ValueCode
+      - dimension6ValueName
+      - dimension7ValueCode
+      - dimension7ValueName
+      - dimension8ValueCode
+      - dimension8ValueName
+    filter_field: null
+    key: dimensionSetID
+
+  - entity_set: generalLedgerBudgets
+    select:
+      - budgetName
+      - budgetDescription
+    filter_field: null
+    key: budgetName
+
+  - entity_set: generalLedgerBudgetEntries
+    select:
+      - budgetName
+      - glAccountNo
+      - budgetDate
+      - budgetAmount
+      - dimensionSetID
+      - entryNo
+    filter_field: budgetDate
+    key: entryNo
+
+  - entity_set: customers
+    select:
+      - customerNo
+      - customerName
+      - address
+      - address2
+      - city
+      - postCode
+      - county
+      - countryRegionCode
+      - customerPostingGroup
+      - customerPriceGroup
+      - customerDiscGroup
+    filter_field: null
+    key: customerNo
+
+  - entity_set: vendors
+    select:
+      - vendorNo
+      - vendorName
+      - address
+      - address2
+      - city
+      - postCode
+      - county
+      - countryRegionCode
+      - vendorPostingGroup
+    filter_field: null
+    key: vendorNo
+
+  - entity_set: items
+    select:
+      - itemNo
+      - itemDescription
+      - baseUnitofMeasure
+      - unitCost
+      - inventoryPostingGroup
+      - routingNo
+      - productionBomNo
+      - replenishmentSystem
+      - singleLevelCapOvhdCost
+      - singleLevelCapacityCost
+      - singleLevelMaterialCost
+      - singleLevelMfgOvhdCost
+      - singleLevelSubcontrdCost
+      - singleLvlMatNonInvtCost
+      - rolledUpCapOverheadCost
+      - rolledUpCapacityCost
+      - rolledUpMatNonInvtCost
+      - rolledUpMaterialCost
+      - rolledUpMfgOvhdCost
+      - rolledUpSubcontractedCost
+      - scrapPrc
+      - itemCategoryCode
+      - itemCategoryDescription
+    filter_field: null
+    key: itemNo
+
+  - entity_set: itemCategories
+    select:
+      - code
+      - description
+      - parentCategory
+      - systemId
+    filter_field: null
+    key: code
+
+  - entity_set: salespersonPurchasers
+    select:
+      - salespersonPurchaserCode
+      - salespersonPurchaserName
+    filter_field: null
+    key: salespersonPurchaserCode
+
+  - entity_set: locations
+    select:
+      - locationCode
+      - locationName
+      - adjustmentBinCode
+    filter_field: null
+    key: locationCode

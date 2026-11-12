@@ -1,0 +1,11 @@
+locationCode,locationName,adjustmentBinCode
+EIGEN-LOG.,Eigene Logistik,
+FREMD-LOG.,Fremdlogistik,
+GELB,Gelbes Warenlager,
+HAUPT,Hauptlager,
+OST,Lager – Ost,
+S82000,Massenassembly,
+S83000,Lokale Assembly,
+SILBER,Silbernes Warenlager,
+WEISS,Weißes Warenlager,W-99-0001
+WEST,Lager – West,

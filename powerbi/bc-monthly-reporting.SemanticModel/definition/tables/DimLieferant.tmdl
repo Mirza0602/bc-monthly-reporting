@@ -1,0 +1,73 @@
+table DimLieferant
+	lineageTag: becc8da0-9b3a-4de9-bb0f-dadd87dab186
+
+	column Lieferantennr
+		dataType: string
+		lineageTag: f2fbc2d5-eea7-45c2-a913-246308a267b1
+		summarizeBy: none
+		sourceColumn: Lieferantennr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Name
+		dataType: string
+		lineageTag: 935aea70-80d4-45e1-9b13-f29f40e71daa
+		summarizeBy: none
+		sourceColumn: Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Land
+		dataType: string
+		lineageTag: 17215135-1032-4c30-9246-1de198240083
+		summarizeBy: none
+		sourceColumn: Land
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kreditorenbuchungsgruppe
+		dataType: string
+		lineageTag: 3c1f7fc2-bb0a-4a69-8394-b36b7d043b15
+		summarizeBy: none
+		sourceColumn: Kreditorenbuchungsgruppe
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimLieferant = m
+		mode: import
+		source =
+				// Quelle: microsoft/analytics/v1.0, vendors.
+				// Filter: keiner.
+				// Schlüssel: Lieferantennr (vendorNo).
+				// Erwartete Zeilenzahl: 8
+				// Abweichung von B2: Zahlungsbedingung steht nicht an analytics vendors und entfällt. Kreditorenbuchungsgruppe ist vendorPostingGroup.
+				let
+				    Inhalt = fnQuelle("microsoft/analytics/v1.0"),
+				    Roh = Inhalt{[Name = "vendors"]}[Data],
+				    Ergebnis = Table.TransformColumnTypes(
+				        Table.RenameColumns(
+				            Table.SelectColumns(
+				                Roh,
+				                {"vendorNo", "vendorName", "countryRegionCode", "vendorPostingGroup"}
+				            ),
+				            {
+				                {"vendorNo", "Lieferantennr"},
+				                {"vendorName", "Name"},
+				                {"countryRegionCode", "Land"},
+				                {"vendorPostingGroup", "Kreditorenbuchungsgruppe"}
+				            }
+				        ),
+				        {
+				            {"Lieferantennr", type text},
+				            {"Name", type text},
+				            {"Land", type text},
+				            {"Kreditorenbuchungsgruppe", type text}
+				        }
+				    )
+				in
+				    Ergebnis
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

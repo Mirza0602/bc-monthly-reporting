@@ -1,0 +1,303 @@
+// Prüfabfrage AP-06 Stufe B, Seite 4 Kunden und Artikel. Berichtsmonat September 2026, Stichtag 30.09.2026.
+// Monat: Verkauf Umsatz, Verkauf Einstand, DB I, DB I Marge. YTD setzt die Zeitauswahl im Measure.
+// DB I Marge Soll: 1532.00 / 6966.00, gerundet auf 4 Stellen, 0.2199.
+// DB I Marge YTD Soll: 101633.18 / 362007.38, gerundet auf 4 Stellen, 0.2807.
+// Kunde über TREATAS von DimKunde[Kundennr] gegen FactWertposten[Kundennr].
+// Artikelkategorie über TREATAS auf DimArtikel[ArtikelkategorieCode]. Artikel über TREATAS auf DimArtikel[Artikelnr]. Lagerort über TREATAS auf FactWertposten[Lagerort].
+// Ohne Kategorie und ohne Lagerort sind Gesamt minus die benannten Werte, kein Filter auf BLANK.
+// Bestandswert ist das vorhandene Measure zum Berichtsende.
+// Abweichung ist Ist minus Soll, gerundet auf 2 Stellen.
+EVALUATE
+VAR Zeilen =
+    DATATABLE (
+        "Nr", INTEGER,
+        "Zeile", STRING,
+        "Art", STRING,
+        "Merkmal", STRING,
+        "Soll", DOUBLE,
+        {
+            { 1, "Verkauf Umsatz", "UmsatzMonat", "", 6966.00 },
+            { 2, "Verkauf Einstand", "EinstandMonat", "", 5434.00 },
+            { 3, "DB I", "DbMonat", "", 1532.00 },
+            { 4, "DB I Marge", "MargeMonat", "", 0.2199 },
+            { 5, "Verkauf Umsatz YTD", "UmsatzYtd", "", 362007.38 },
+            { 6, "DB I YTD", "DbYtd", "", 101633.18 },
+            { 7, "DB I Marge YTD", "MargeYtd", "", 0.2807 },
+            { 8, "Verkauf Umsatz YTD Kunde 10000", "KundeUmsatz", "10000", 128426.24 },
+            { 9, "DB I YTD Kunde 10000", "KundeDb", "10000", 35088.84 },
+            { 10, "Verkauf Umsatz YTD Kunde 30000", "KundeUmsatz", "30000", 105713.50 },
+            { 11, "DB I YTD Kunde 30000", "KundeDb", "30000", 26005.20 },
+            { 12, "Verkauf Umsatz YTD Kunde 40000", "KundeUmsatz", "40000", 45218.48 },
+            { 13, "DB I YTD Kunde 40000", "KundeDb", "40000", 14658.78 },
+            { 14, "Verkauf Umsatz YTD Kunde 20000", "KundeUmsatz", "20000", 44227.19 },
+            { 15, "DB I YTD Kunde 20000", "KundeDb", "20000", 17138.99 },
+            { 16, "Verkauf Umsatz YTD Kunde 50000", "KundeUmsatz", "50000", 38421.97 },
+            { 17, "DB I YTD Kunde 50000", "KundeDb", "50000", 8741.37 },
+            { 18, "Verkauf Umsatz YTD Kategorie SCHREIBT", "KategorieUmsatz", "SCHREIBT", 89063.59 },
+            { 19, "DB I YTD Kategorie SCHREIBT", "KategorieDb", "SCHREIBT", 19234.19 },
+            { 20, "Verkauf Umsatz YTD Kategorie SONST", "KategorieUmsatz", "SONST", 74651.41 },
+            { 21, "DB I YTD Kategorie SONST", "KategorieDb", "SONST", 16248.21 },
+            { 22, "Verkauf Umsatz YTD Kategorie STUHL", "KategorieUmsatz", "STUHL", 99469.71 },
+            { 23, "DB I YTD Kategorie STUHL", "KategorieDb", "STUHL", 21743.31 },
+            { 24, "Verkauf Umsatz YTD Kategorie TISCH", "KategorieUmsatz", "TISCH", 69672.77 },
+            { 25, "DB I YTD Kategorie TISCH", "KategorieDb", "TISCH", 15257.57 },
+            { 26, "Verkauf Umsatz YTD ohne Kategorie", "OhneKategorieUmsatz", "", 29149.90 },
+            { 27, "DB I YTD ohne Kategorie", "OhneKategorieDb", "", 29149.90 },
+            { 28, "Verkauf Umsatz YTD Artikel 1896-S", "ArtikelUmsatz", "1896-S", 89063.59 },
+            { 29, "DB I YTD Artikel 1896-S", "ArtikelDb", "1896-S", 19234.19 },
+            { 30, "Verkauf Umsatz YTD Artikel 1965-W", "ArtikelUmsatz", "1965-W", 19035.00 },
+            { 31, "DB I YTD Artikel 1965-W", "ArtikelDb", "1965-W", 19035.00 },
+            { 32, "Bestandswert", "Bestand", "", 2266906.50 },
+            { 33, "Bestandswert Kategorie BOHNEN", "BestandKategorie", "BOHNEN", 40100.00 },
+            { 34, "Bestandswert Kategorie EM_KOMMER", "BestandKategorie", "EM_KOMMER", 18000.00 },
+            { 35, "Bestandswert Kategorie ESG", "BestandKategorie", "ESG", 0.00 },
+            { 36, "Bestandswert Kategorie SCHREIBT", "BestandKategorie", "SCHREIBT", 400146.00 },
+            { 37, "Bestandswert Kategorie SONST", "BestandKategorie", "SONST", 572658.30 },
+            { 38, "Bestandswert Kategorie STUHL", "BestandKategorie", "STUHL", 772443.50 },
+            { 39, "Bestandswert Kategorie TEILE", "BestandKategorie", "TEILE", 14115.50 },
+            { 40, "Bestandswert Kategorie TISCH", "BestandKategorie", "TISCH", 428193.20 },
+            { 41, "Bestandswert ohne Kategorie", "BestandOhneKategorie", "", 21250.00 },
+            { 42, "Bestandswert Lagerort HAUPT", "BestandLager", "HAUPT", 50264.40 },
+            { 43, "Bestandswert Lagerort OST", "BestandLager", "OST", 446.70 },
+            { 44, "Bestandswert Lagerort WEST", "BestandLager", "WEST", 893.40 },
+            { 45, "Bestandswert Lagerort FREMD-LOG.", "BestandLager", "FREMD-LOG.", 0.00 },
+            { 46, "Bestandswert ohne Lagerort", "BestandOhneLager", "", 2215302.00 }
+        }
+    )
+VAR Mit =
+    ADDCOLUMNS (
+        Zeilen,
+        "Ist",
+            VAR Artcode = [Art]
+            VAR Kenntext = [Merkmal]
+            RETURN
+                SWITCH (
+                    TRUE (),
+                    Artcode
+                        IN {
+                            "UmsatzMonat",
+                            "EinstandMonat",
+                            "DbMonat",
+                            "MargeMonat",
+                            "UmsatzYtd",
+                            "DbYtd",
+                            "MargeYtd",
+                            "Bestand"
+                        },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "UmsatzMonat", [Verkauf Umsatz],
+                                "EinstandMonat", [Verkauf Einstand],
+                                "DbMonat", [DB I],
+                                "MargeMonat", [DB I Marge],
+                                "UmsatzYtd", [Verkauf Umsatz YTD],
+                                "DbYtd", [DB I YTD],
+                                "MargeYtd", [DB I Marge YTD],
+                                "Bestand", [Bestandswert]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                            REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9
+                        ),
+                    Artcode IN { "KundeUmsatz", "KundeDb" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "KundeUmsatz", [Verkauf Umsatz YTD],
+                                "KundeDb", [DB I YTD]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                            REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            TREATAS (
+                                FILTER (
+                                    ALL ( DimKunde[Kundennr] ),
+                                    DimKunde[Kundennr] = Kenntext
+                                ),
+                                FactWertposten[Kundennr]
+                            )
+                        ),
+                    Artcode IN { "KategorieUmsatz", "KategorieDb", "BestandKategorie" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "KategorieUmsatz", [Verkauf Umsatz YTD],
+                                "KategorieDb", [DB I YTD],
+                                "BestandKategorie", [Bestandswert]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                            REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            TREATAS ( { Kenntext }, DimArtikel[ArtikelkategorieCode] )
+                        ),
+                    Artcode IN { "OhneKategorieUmsatz", "OhneKategorieDb" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "OhneKategorieUmsatz", [Verkauf Umsatz YTD],
+                                "OhneKategorieDb", [DB I YTD]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                            REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9
+                        )
+                            - CALCULATE (
+                                SWITCH (
+                                    Artcode,
+                                    "OhneKategorieUmsatz", [Verkauf Umsatz YTD],
+                                    "OhneKategorieDb", [DB I YTD]
+                                ),
+                                REMOVEFILTERS ( DimDatum ),
+                                REMOVEFILTERS ( Zeitauswahl ),
+                                REMOVEFILTERS ( DimKunde ),
+                                REMOVEFILTERS ( DimArtikel ),
+                                REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                                REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                                DimDatum[Jahr] = 2026,
+                                DimDatum[Monat] = 9,
+                                TREATAS (
+                                    {
+                                        "SCHREIBT",
+                                        "SONST",
+                                        "STUHL",
+                                        "TISCH"
+                                    },
+                                    DimArtikel[ArtikelkategorieCode]
+                                )
+                            ),
+                    Artcode IN { "ArtikelUmsatz", "ArtikelDb" },
+                        CALCULATE (
+                            SWITCH (
+                                Artcode,
+                                "ArtikelUmsatz", [Verkauf Umsatz YTD],
+                                "ArtikelDb", [DB I YTD]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                            REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            TREATAS ( { Kenntext }, DimArtikel[Artikelnr] )
+                        ),
+                    Artcode = "BestandOhneKategorie",
+                        CALCULATE (
+                            [Bestandswert],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                            REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9
+                        )
+                            - CALCULATE (
+                                [Bestandswert],
+                                REMOVEFILTERS ( DimDatum ),
+                                REMOVEFILTERS ( Zeitauswahl ),
+                                REMOVEFILTERS ( DimKunde ),
+                                REMOVEFILTERS ( DimArtikel ),
+                                REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                                REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                                DimDatum[Jahr] = 2026,
+                                DimDatum[Monat] = 9,
+                                TREATAS (
+                                    {
+                                        "BOHNEN",
+                                        "EM_KOMMER",
+                                        "ESG",
+                                        "SCHREIBT",
+                                        "SONST",
+                                        "STUHL",
+                                        "TEILE",
+                                        "TISCH"
+                                    },
+                                    DimArtikel[ArtikelkategorieCode]
+                                )
+                            ),
+                    Artcode = "BestandLager",
+                        CALCULATE (
+                            [Bestandswert],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                            REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            TREATAS ( { Kenntext }, FactWertposten[Lagerort] )
+                        ),
+                    Artcode = "BestandOhneLager",
+                        CALCULATE (
+                            [Bestandswert],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            REMOVEFILTERS ( DimArtikel ),
+                            REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                            REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9
+                        )
+                            - CALCULATE (
+                                [Bestandswert],
+                                REMOVEFILTERS ( DimDatum ),
+                                REMOVEFILTERS ( Zeitauswahl ),
+                                REMOVEFILTERS ( DimKunde ),
+                                REMOVEFILTERS ( DimArtikel ),
+                                REMOVEFILTERS ( FactWertposten[Kundennr] ),
+                                REMOVEFILTERS ( FactWertposten[Lagerort] ),
+                                DimDatum[Jahr] = 2026,
+                                DimDatum[Monat] = 9,
+                                TREATAS (
+                                    {
+                                        "HAUPT",
+                                        "OST",
+                                        "WEST",
+                                        "FREMD-LOG."
+                                    },
+                                    FactWertposten[Lagerort]
+                                )
+                            )
+                )
+    )
+VAR Ergebnis =
+    ADDCOLUMNS (
+        Mit,
+        "Abweichung", ROUND ( COALESCE ( [Ist], 0 ) - COALESCE ( [Soll], 0 ), 2 )
+    )
+RETURN
+    SELECTCOLUMNS (
+        Ergebnis,
+        "Nr", [Nr],
+        "Zeile", [Zeile],
+        "Ist", [Ist],
+        "Soll", [Soll],
+        "Abweichung", [Abweichung]
+    )
+ORDER BY [Nr]

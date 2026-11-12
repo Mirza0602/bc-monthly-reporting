@@ -1,0 +1,215 @@
+table FactKreditorenposten
+	lineageTag: 08beaf6b-f9c7-4f99-a69b-e0874c3b4c47
+
+	column Eintragsnr
+		dataType: int64
+		formatString: 0
+		lineageTag: c5d53eaa-9e09-4cd7-bc4d-12fc4edc53d9
+		summarizeBy: sum
+		sourceColumn: Eintragsnr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Postennr
+		dataType: int64
+		formatString: 0
+		lineageTag: 22a81155-e745-42e4-818c-2a7cb17dffb5
+		summarizeBy: sum
+		sourceColumn: Postennr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Buchungsdatum
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: ebc82f3c-5766-4d4c-8d8c-1af5b54f88bf
+		summarizeBy: none
+		sourceColumn: Buchungsdatum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Fälligkeit
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: eed3261e-a62b-40b2-8a34-4d44f2a7294e
+		summarizeBy: none
+		sourceColumn: Fälligkeit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Ursprungsfälligkeit
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: dac12f0b-ccd7-40c1-956c-b4f16eb48f7e
+		summarizeBy: none
+		sourceColumn: Ursprungsfälligkeit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Betrag
+		dataType: double
+		lineageTag: 09e7e942-abc2-4901-a136-78a8b2e3b8e8
+		summarizeBy: sum
+		sourceColumn: Betrag
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Lieferantennr
+		dataType: string
+		isHidden
+		lineageTag: e6a21c69-e180-4560-9172-c94ccc989b64
+		summarizeBy: none
+		sourceColumn: Lieferantennr
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Belegnr
+		dataType: string
+		lineageTag: 5c6e0c27-de98-497a-8679-814c432f36ac
+		summarizeBy: none
+		sourceColumn: Belegnr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Belegart
+		dataType: string
+		lineageTag: f07ee238-87b0-40c4-b6f3-8711d14fb6f6
+		summarizeBy: none
+		sourceColumn: Belegart
+
+		annotation SummarizationSetBy = Automatic
+
+	column Postenart
+		dataType: string
+		lineageTag: b578757c-61e6-47cf-9b74-6a8cea080897
+		summarizeBy: none
+		sourceColumn: Postenart
+
+		annotation SummarizationSetBy = Automatic
+
+	column DimensionSetID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 48d37100-06f1-44ea-9ea7-1f32e8bc9f2d
+		summarizeBy: count
+		sourceColumn: DimensionSetID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column OffenKennzeichen
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 02973fe8-b0e2-4291-ad6b-700e79ad7374
+		summarizeBy: none
+		sourceColumn: OffenKennzeichen
+
+		annotation SummarizationSetBy = Automatic
+
+	column Rechnungsnr
+		dataType: string
+		lineageTag: 5003a342-5b40-446f-902e-e9247b2da406
+		summarizeBy: none
+		sourceColumn: Rechnungsnr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Zahlungsbedingung
+		dataType: string
+		lineageTag: 2ced61b5-3d56-4fcb-bac9-4847fba764b7
+		summarizeBy: none
+		sourceColumn: Zahlungsbedingung
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactKreditorenposten = m
+		mode: import
+		source =
+				// Quelle: microsoft/analytics/v1.0, vendorLedgerEntries (Detailed).
+				// Filter: keiner. Das Filterfeld der Entität ist dvlePostingDate und wird hier nicht angewendet. pStichtag filtert keine Zeile.
+				// Schlüssel: Eintragsnr (dvleEntryNo).
+				// Erwartete Zeilenzahl: 869
+				// Abweichung von B2: Restbetrag und Offen zum Stichtag rechnet das Modell aus diesen Detailposten. OffenKennzeichen ist das Quellflag vleOpen und gilt nicht als Stichtagswert.
+				let
+				    Inhalt = fnQuelle("microsoft/analytics/v1.0"),
+				    Roh = Inhalt{[Name = "vendorLedgerEntries"]}[Data],
+				    TextOderLeer = (wert as any) as nullable text =>
+				        let
+				            Textwert = if wert = null then null else Text.Trim(Text.From(wert))
+				        in
+				            if Textwert = null or Textwert = "" then null else Textwert,
+				    Datum = (wert as any) as nullable date => if wert = null then null else Date.From(wert),
+				    Umbenannt = Table.RenameColumns(
+				        Table.SelectColumns(
+				            Roh,
+				            {
+				                "dvleEntryNo",
+				                "vleEntryNo",
+				                "dvlePostingDate",
+				                "vleDueDate",
+				                "dvleInitialEntryDueDate",
+				                "dvleAmountLCY",
+				                "dvleVendorNo",
+				                "dvleDocumentNo",
+				                "dvleDocumentType",
+				                "dvleEntryType",
+				                "vleDimensionSetID",
+				                "vleOpen",
+				                "purchInvHeaderDocumentNo",
+				                "purchInvHeaderPaymentTermsCode"
+				            }
+				        ),
+				        {
+				            {"dvleEntryNo", "Eintragsnr"},
+				            {"vleEntryNo", "Postennr"},
+				            {"dvlePostingDate", "Buchungsdatum"},
+				            {"vleDueDate", "Fälligkeit"},
+				            {"dvleInitialEntryDueDate", "Ursprungsfälligkeit"},
+				            {"dvleAmountLCY", "Betrag"},
+				            {"dvleVendorNo", "Lieferantennr"},
+				            {"dvleDocumentNo", "Belegnr"},
+				            {"dvleDocumentType", "Belegart"},
+				            {"dvleEntryType", "Postenart"},
+				            {"vleDimensionSetID", "DimensionSetID"},
+				            {"vleOpen", "OffenKennzeichen"},
+				            {"purchInvHeaderDocumentNo", "Rechnungsnr"},
+				            {"purchInvHeaderPaymentTermsCode", "Zahlungsbedingung"}
+				        }
+				    ),
+				    Ergebnis = Table.TransformColumns(
+				        Umbenannt,
+				        {
+				            {"Eintragsnr", each Int64.From(_), Int64.Type},
+				            {"Postennr", each Int64.From(_), Int64.Type},
+				            {"Buchungsdatum", each Datum(_), type date},
+				            {"Fälligkeit", each Datum(_), type date},
+				            {"Ursprungsfälligkeit", each Datum(_), type date},
+				            {"Betrag", each if _ = null then null else Number.From(_), type number},
+				            {"Lieferantennr", each TextOderLeer(_), type text},
+				            {"Belegnr", each TextOderLeer(_), type text},
+				            {"Belegart", each TextOderLeer(_), type text},
+				            {"Postenart", each TextOderLeer(_), type text},
+				            {"DimensionSetID", each if _ = null then null else Int64.From(_), Int64.Type},
+				            {"Rechnungsnr", each TextOderLeer(_), type text},
+				            {"Zahlungsbedingung", each TextOderLeer(_), type text}
+				        }
+				    )
+				in
+				    Ergebnis
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

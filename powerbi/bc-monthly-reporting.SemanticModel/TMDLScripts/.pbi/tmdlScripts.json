@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "tabOrder": [
+    "AP05_Stufe1_Beziehungen",
+    "AP05_Stufe2_Measures",
+    "AP05_Stufe3_3_Planfaktor",
+    "AP05_Stufe3_2_Zeitauswahl",
+    "AP05_Stufe4_1_Konten",
+    "Stufe4_2_Konto_Abweichung",
+    "Stufe5_3_DimDatum_JahrMonat",
+    "Stufe5_2_Bruecke",
+    "Stufe5_1_Seite1_Measures",
+    "Stufe5_4_Plan_Marge",
+    "Stufe6_1_ImTrendfenster_Spalte",
+    "Stufe7_1_Seite2_GuV",
+    "Stufe7_2_GuV_Signal",
+    "Stufe8_1_Faelligkeitsklasse",
+    "Stufe8_2_Seite3_Measures",
+    "Stufe9_1_Seite4_Measures",
+    "Stufe10_1_Seite5_Beleg"
+  ],
+  "defaultTab": "Stufe10_1_Seite5_Beleg"
+}

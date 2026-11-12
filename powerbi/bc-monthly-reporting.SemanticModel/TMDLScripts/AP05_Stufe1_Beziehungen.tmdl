@@ -1,0 +1,61 @@
+createOrReplace
+
+	relationship r_Sachposten_Datum
+		fromColumn: FactSachposten.Buchungsdatum
+		toColumn: DimDatum.Datum
+
+	relationship r_Sachposten_Konto
+		fromColumn: FactSachposten.Kontonr
+		toColumn: DimKonto.Kontonr
+
+	relationship r_Sachposten_DimSet
+		fromColumn: FactSachposten.DimensionSetID
+		toColumn: DimDimensionsSet.DimensionSetID
+
+	relationship r_Debitoren_Datum
+		fromColumn: FactDebitorenposten.Buchungsdatum
+		toColumn: DimDatum.Datum
+
+	relationship r_Debitoren_Kunde
+		fromColumn: FactDebitorenposten.Kundennr
+		toColumn: DimKunde.Kundennr
+
+	relationship r_Debitoren_DimSet
+		fromColumn: FactDebitorenposten.DimensionSetID
+		toColumn: DimDimensionsSet.DimensionSetID
+
+	relationship r_Kreditoren_Datum
+		fromColumn: FactKreditorenposten.Buchungsdatum
+		toColumn: DimDatum.Datum
+
+	relationship r_Kreditoren_Lieferant
+		fromColumn: FactKreditorenposten.Lieferantennr
+		toColumn: DimLieferant.Lieferantennr
+
+	relationship r_Kreditoren_DimSet
+		fromColumn: FactKreditorenposten.DimensionSetID
+		toColumn: DimDimensionsSet.DimensionSetID
+
+	relationship r_Wertposten_Datum
+		fromColumn: FactWertposten.Buchungsdatum
+		toColumn: DimDatum.Datum
+
+	relationship r_Wertposten_Artikel
+		fromColumn: FactWertposten.Artikelnr
+		toColumn: DimArtikel.Artikelnr
+
+	relationship r_Wertposten_Kunde
+		fromColumn: FactWertposten.Kundennr
+		toColumn: DimKunde.Kundennr
+
+	relationship r_Wertposten_DimSet
+		fromColumn: FactWertposten.DimensionSetID
+		toColumn: DimDimensionsSet.DimensionSetID
+
+	relationship r_Saldenliste_Datum
+		fromColumn: FactSaldenliste.periodEnd
+		toColumn: DimDatum.Datum
+
+	relationship r_Saldenliste_Konto
+		fromColumn: FactSaldenliste.Kontonr
+		toColumn: DimKonto.Kontonr

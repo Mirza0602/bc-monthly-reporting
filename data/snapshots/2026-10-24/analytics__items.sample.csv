@@ -1,0 +1,81 @@
+itemNo,itemDescription,baseUnitofMeasure,unitCost,inventoryPostingGroup,routingNo,productionBomNo,replenishmentSystem,singleLevelCapOvhdCost,singleLevelCapacityCost,singleLevelMaterialCost,singleLevelMfgOvhdCost,singleLevelSubcontrdCost,singleLvlMatNonInvtCost,rolledUpCapOverheadCost,rolledUpCapacityCost,rolledUpMatNonInvtCost,rolledUpMaterialCost,rolledUpMfgOvhdCost,rolledUpSubcontractedCost,scrapPrc,itemCategoryCode,itemCategoryDescription
+1896-S,ATHENS Schreibtisch,STÜCK,784.6,WEITERVERK,,,Purchase,0,0,784.6,0,0,0,0,0,0,784.6,0,0,0,SCHREIBT,Büroschreibtisch
+1900-S,"PARIS Gästestuhl, schwarz",STÜCK,151.1,WEITERVERK,,,Purchase,0,0,151.1,0,0,0,0,0,0,151.1,0,0,0,STUHL,Bürostuhl
+1906-S,ATHENS Schubladenelement,STÜCK,339.9,WEITERVERK,,,Purchase,0,0,339.9,0,0,0,0,0,0,339.9,0,0,0,TISCH,Diverse Tische
+1908-S,"LONDON Schreibtischstuhl, blau",STÜCK,148.9,WEITERVERK,,,Purchase,0,0,148.9,0,0,0,0,0,0,148.9,0,0,0,STUHL,Bürostuhl
+1920-S,ANTWERP Konferenztisch,STÜCK,508,WEITERVERK,,,Purchase,0,0,508,0,0,0,0,0,0,508,0,0,0,TISCH,Diverse Tische
+1925-W,Konferenzpaket 1 bis 6,STÜCK,0,WEITERVERK,,,Assembly,0,0,1401.4,0,0,0,0,0,0,1401.4,0,0,0,,
+1928-S,AMSTERDAM Lampe,STÜCK,43.1,WEITERVERK,,,Purchase,0,0,43.1,0,0,0,0,0,0,43.1,0,0,0,SONST,Sonstiges
+1929-W,Konferenzpaket 1 bis 8,STÜCK,0,WEITERVERK,,,Assembly,0,0,1699.2,0,0,0,0,0,0,1699.2,0,0,0,,
+1936-S,"BERLIN Gästestuhl, gelb",STÜCK,151.1,WEITERVERK,,,Purchase,0,0,151.1,0,0,0,0,0,0,151.1,0,0,0,STUHL,Bürostuhl
+1953-W,Gastabschnitt 1,STÜCK,0,WEITERVERK,,,Assembly,0,0,944.3,0,0,0,0,0,0,944.3,0,0,0,,
+1960-S,"ROME Gästestuhl, grün",STÜCK,151.1,WEITERVERK,,,Purchase,0,0,151.1,0,0,0,0,0,0,151.1,0,0,0,STUHL,Bürostuhl
+1964-S,"TOKYO Gästestuhl, blau",STÜCK,151.1,WEITERVERK,,,Purchase,0,0,151.1,0,0,0,0,0,0,151.1,0,0,0,STUHL,Bürostuhl
+1965-W,Konferenzpaket 2 bis 8,STÜCK,0,WEITERVERK,,,Assembly,0,0,1699.2,0,0,0,0,0,0,1699.2,0,0,0,,
+1968-S,"MEXICO Schreibtischst., schw.",STÜCK,148.9,WEITERVERK,,,Purchase,0,0,148.9,0,0,0,0,0,0,148.9,0,0,0,STUHL,Bürostuhl
+1969-W,Konferenzpaket 1,STÜCK,0,WEITERVERK,,,Assembly,0,0,2643.5,0,0,0,0,0,0,2643.5,0,0,0,,
+1972-S,"MUNICH Schreibtischstuhl, gelb",STÜCK,148.9,WEITERVERK,,,Purchase,0,0,148.9,0,0,0,0,0,0,148.9,0,0,0,STUHL,Bürostuhl
+1980-S,"MOSCOW Schreibtischstuhl, rot",STÜCK,148.9,WEITERVERK,,,Purchase,0,0,148.9,0,0,0,0,0,0,148.9,0,0,0,STUHL,Bürostuhl
+1988-S,"SEOUL Gästestuhl, rot",STÜCK,151.1,WEITERVERK,,,Purchase,0,0,151.1,0,0,0,0,0,0,151.1,0,0,0,STUHL,Bürostuhl
+1996-S,"ATLANTA Whiteboard, Basis",STÜCK,1095.3,WEITERVERK,,,Purchase,0,0,1095.3,0,0,0,0,0,0,1095.3,0,0,0,SONST,Sonstiges
+2000-S,"SYDNEY Schreibtischstuhl, grün",STÜCK,148.9,WEITERVERK,,,Purchase,0,0,148.9,0,0,0,0,0,0,148.9,0,0,0,STUHL,Bürostuhl
+CC-1000,Kohlenstoffgutschrift 3 Tonnen CO₂-Äquivalent,STÜCK,240,,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,ESG,"Umwelt, Soziales und Unternehmensführung (ESG, Environmental, Social, and Governance)"
+F-100,Ferngesteuerte Pumpe,STÜCK,65,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,,
+F-101,Kaffeebecher aus Papier,STÜCK,1800,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,,
+GGB-1000,"Ganze Bohnen, geröstet, Kolumbien",STÜCK,100,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+GGB-1001,"Ganze Bohnen, geröstet, Brasilien",STÜCK,100,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+GGB-1002,"Ganze Bohnen, geröstet, Indonesien",STÜCK,10,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+GRH-1000,Precision Grind Home,STÜCK,174,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+GRH-1001,Smart Grind Home,STÜCK,289.222,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+S-100,S-100 Semi-Automatic,STÜCK,1800,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,EM_KOMMER,Kommerzielle Modelle
+S-210,S-210 Halbautomatisch,STÜCK,1800,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,,
+SER101,Ausrüstungsgebühr,TAG,0,,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,DIENSTE,Dienste
+SER102,Reparatur,STUNDE,0,,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,DIENSTE,Dienste
+SER203,Projektgebühr,STUNDE,65,,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,,
+SP-BOM1101,Gehäuse Airpot,STÜCK,36.26,ROHMAT,,,Purchase,0,0,36.26,0,0,0,0,0,0,36.26,0,0,0,TEILE,Teile
+SP-BOM1102,Kaffeefilterkorb,STÜCK,28.13,ROHMAT,,,Purchase,0,0,28.13,0,0,0,0,0,0,28.13,0,0,0,TEILE,Teile
+SP-BOM1103,"Fuß, verstellbar, Gummi",STÜCK,2.99,ROHMAT,,,Purchase,0,0,2.99,0,0,0,0,0,0,2.99,0,0,0,TEILE,Teile
+SP-BOM1104,Warmhalteplatte,STÜCK,14.61,ROHMAT,,,Purchase,0,0,14.61,0,0,0,0,0,0,14.61,0,0,0,TEILE,Teile
+SP-BOM1105,Ein-/Ausschalter,STÜCK,3.11,ROHMAT,,,Purchase,0,0,3.11,0,0,0,0,0,0,3.11,0,0,0,TEILE,Teile
+SP-BOM1106,Licht ein/aus,STÜCK,3.05,ROHMAT,,,Purchase,0,0,3.05,0,0,0,0,0,0,3.05,0,0,0,TEILE,Teile
+SP-BOM1107,Leiterplatte,STÜCK,6.23,ROHMAT,,,Purchase,0,0,6.23,0,0,0,0,0,0,6.23,0,0,0,TEILE,Teile
+SP-BOM1108,Netzkabel,STÜCK,5.99,ROHMAT,,,Purchase,0,0,5.99,0,0,0,0,0,0,5.99,0,0,0,TEILE,Teile
+SP-BOM1109,Glaskaraffe,STÜCK,16.01,ROHMAT,,,Purchase,0,0,16.01,0,0,0,0,0,0,16.01,0,0,0,TEILE,Teile
+SP-BOM1110,"Maschinenschraube mit flachem Kopf, M4, Edelstahl",STÜCK,0.1,,,,Purchase,0,0,0.1,0,0,0,0,0,0,0.1,0,0,0,TEILE,Teile
+SP-BOM1111,"Mutter, M4, Edelstahl",STÜCK,0.06,,,,Purchase,0,0,0.06,0,0,0,0,0,0,0.06,0,0,0,TEILE,Teile
+SP-BOM1112,"Unterlegscheibe, M4, Edelstahl",STÜCK,0.05,,,,Purchase,0,0,0.05,0,0,0,0,0,0,0.05,0,0,0,TEILE,Teile
+SP-BOM1201,Gehäuse Airpot Duo,STÜCK,34.1,ROHMAT,,,Purchase,0,0,34.1,0,0,0,0,0,0,34.1,0,0,0,TEILE,Teile
+SP-BOM1207,IoT-Sensor,STÜCK,8.88,ROHMAT,,,Purchase,0,0,8.88,0,0,0,0,0,0,8.88,0,0,0,TEILE,Teile
+SP-BOM1208,Frontblende mit Display,STÜCK,14.11,ROHMAT,,,Purchase,0,0,14.11,0,0,0,0,0,0,14.11,0,0,0,TEILE,Teile
+SP-BOM1301,Gehäuse AutoDrip,STÜCK,32.22,ROHMAT,,,Purchase,0,0,32.22,0,0,0,0,0,0,32.22,0,0,0,TEILE,Teile
+SP-BOM1302,Bedienfeldanzeige,STÜCK,5.03,ROHMAT,,,Purchase,0,0,5.03,0,0,0,0,0,0,5.03,0,0,0,TEILE,Teile
+SP-BOM1303,Knopf,STÜCK,2.89,ROHMAT,,,Purchase,0,0,2.89,0,0,0,0,0,0,2.89,0,0,0,TEILE,Teile
+SP-BOM1304,Thermokaraffe aus Edelstahl,STÜCK,42.02,ROHMAT,,,Purchase,0,0,42.02,0,0,0,0,0,0,42.02,0,0,0,TEILE,Teile
+SP-BOM1305,"Schraube Hex M3, Zink",STÜCK,0.39,ROHMAT,,,Purchase,0,0,0.39,0,0,0,0,0,0,0.39,0,0,0,TEILE,Teile
+SP-BOM2000,Reservoirmontage,STÜCK,0,ROHMAT,SP-BOM2000,SP-BOM2000,Prod. Order,0,0,0,0,0,0,0,0,0,0,0,0,0,TEILE,Teile
+SP-BOM2001,Reservoir,STÜCK,14.94,ROHMAT,,,Purchase,0,0,14.94,0,0,0,0,0,0,14.94,0,0,0,TEILE,Teile
+SP-BOM2002,Heizelement,STÜCK,24.24,ROHMAT,,,Purchase,0,0,24.24,0,0,0,0,0,0,24.24,0,0,0,TEILE,Teile
+SP-BOM2003,Wasserschläuche,STÜCK,6.93,ROHMAT,,,Purchase,0,0,6.93,0,0,0,0,0,0,6.93,0,0,0,TEILE,Teile
+SP-BOM2004,Reservoir-Test-Kit,STÜCK,18,ROHMAT,,,Purchase,0,0,18,0,0,0,0,0,0,18,0,0,0,TEILE,Teile
+SP-BOM2005,Silikonkleber,STÜCK,17.16,,,,Purchase,0,0,17.16,0,0,0,0,0,0,17.16,0,0,0,,
+SP-BOM3001,"Farbe, schwarz",DOSE,1.6,ROHMAT,,,Purchase,0,0,1.6,0,0,0,0,0,0,1.6,0,0,0,TEILE,Teile
+SP-BOM3002,"Farbe, rot",DOSE,1.6,ROHMAT,,,Purchase,0,0,1.6,0,0,0,0,0,0,1.6,0,0,0,TEILE,Teile
+SP-BOM3003,"Farbe, weiß",DOSE,1.6,ROHMAT,,,Purchase,0,0,1.6,0,0,0,0,0,0,1.6,0,0,0,TEILE,Teile
+SP-SCM1004,AutoDrip,STÜCK,0,FERTIG,SP-SCM1004,SP-SCM1004,Prod. Order,0,0,0,0,0,0,0,0,0,0,0,0,0,KM_KONSUM,Modelle für Verbraucher
+SP-SCM1006,AutoDripLite,STÜCK,0,FERTIG,,SP-SCM1006-BLACK,Prod. Order,0,0,0,0,0,0,0,0,0,0,0,0,0,KM_KONSUM,Modelle für Verbraucher
+SP-SCM1008,Airpot Lite,STÜCK,0,FERTIG,,,Prod. Order,0,0,0,0,0,0,0,0,0,0,0,0,0,KM_KOMMER,Kommerzielle Modelle
+SP-SCM1009,Airpot,STÜCK,0,FERTIG,SP-SCM1009-SERIAL,SP-SCM1009,Prod. Order,0,0,0,0,0,0,0,0,0,0,0,0,0,KM_KOMMER,Kommerzielle Modelle
+SP-SCM1011,Airpot Duo,STÜCK,0,FERTIG,,SP-SCM1011,Prod. Order,0,0,0,0,0,0,0,0,0,0,0,0,0,KM_KOMMER,Kommerzielle Modelle
+WDB-1000,"Whole Decaf Beans, Colombia",STÜCK,59,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WDB-1001,"Whole Decaf Beans, Brazil",STÜCK,113,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WDB-1002,"Whole Decaf Beans, Indonesia",STÜCK,210,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WDB-1003,"Whole Decaf Beans, Mexico",STÜCK,153,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WDB-1004,"Whole Decaf Beans, Kenya",STÜCK,120,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WDB-1005,"Whole Decaf Beans, Costa Rica",STÜCK,140,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WDB-1006,"Whole Decaf Beans, Ethiopia",STÜCK,140,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WDB-1007,"Whole Decaf Beans, Hawaii",STÜCK,119,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WRB-1003,"Whole Roasted Beans, Mexico",STÜCK,120,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WRB-1004,"Whole Roasted Beans, Kenya",STÜCK,115,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WRB-1005,"Whole Roasted Beans, COSTA RICA",STÜCK,115,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WRB-1006,"Whole Roasted Beans, ETHIOPIA",STÜCK,120,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen
+WRB-1007,"Whole Roasted Beans, HAWAII",STÜCK,120,WEITERVERK,,,Purchase,0,0,0,0,0,0,0,0,0,0,0,0,0,BOHNEN,Bohnen

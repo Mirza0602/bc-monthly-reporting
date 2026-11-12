@@ -1,0 +1,29 @@
+table Bruecke
+	lineageTag: 86ccd0b8-f0f7-4c8f-b234-8f4b7ef16261
+
+	column Sortierung
+		lineageTag: 0587ffe5-c541-4132-ab60-7a7a65d7b714
+		isNameInferred
+		sourceColumn: [Sortierung]
+
+	column Schritt
+		lineageTag: 783e8fe9-6c9b-4b9a-b240-e5e440a9765d
+		isNameInferred
+		sourceColumn: [Schritt]
+		sortByColumn: Sortierung
+
+	partition Bruecke = calculated
+		mode: import
+		source =
+				DATATABLE (
+					"Sortierung", INTEGER,
+					"Schritt", STRING,
+					{
+						{ 1, "Umsatz" },
+						{ 2, "Wareneinsatz" },
+						{ 3, "Betriebsaufwand" },
+						{ 4, "Abschreibung" },
+						{ 5, "Sonstiger Ertrag und Aufwand" }
+					}
+				)
+

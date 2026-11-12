@@ -1,0 +1,182 @@
+// Quelle: v2.0, Entität trialBalances, über fnQuelle und den Connector.
+// Filter: je Zeitraum Table.SelectRows auf dateFilter, von Anfang bis Ende. pStichtag filtert keine Zeile.
+// Schlüssel: Kontonr und periodEnd.
+// Erwartete Zeilenzahl: 3315
+// Abweichung von B2: 15 Zeiträume wie der Snapshot, nicht die letzten 13 Monatsenden. Jahresanker 01.01.2024 bis 31.12.2024, danach 14 Monatsenden 31.08.2025 bis 30.09.2026. periodStart und periodEnd setzt die Abfrage. Beträge über fnBetrag. Ladetest 26.10.2026 bestanden, der Connector gibt dateFilter an Business Central weiter.
+let
+    Inhalt = fnQuelle("v2.0"),
+    Entitaet = Inhalt{[Name = "trialBalances"]}[Data],
+    MitZeitraum = (zeilen as table, anfang as date, ende as date) as table =>
+        Table.AddColumn(
+            Table.AddColumn(zeilen, "periodStart", each anfang, type date),
+            "periodEnd",
+            each ende,
+            type date
+        ),
+    // 2024-01-01 bis 2024-12-31
+    F_Anker2024 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2024, 1, 1) and [dateFilter] <= #date(2024, 12, 31)
+    ),
+    Z_Anker2024 = MitZeitraum(F_Anker2024, #date(2024, 1, 1), #date(2024, 12, 31)),
+    // 2025-08-01 bis 2025-08-31
+    F_M202508 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2025, 8, 1) and [dateFilter] <= #date(2025, 8, 31)
+    ),
+    Z_M202508 = MitZeitraum(F_M202508, #date(2025, 8, 1), #date(2025, 8, 31)),
+    // 2025-09-01 bis 2025-09-30
+    F_M202509 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2025, 9, 1) and [dateFilter] <= #date(2025, 9, 30)
+    ),
+    Z_M202509 = MitZeitraum(F_M202509, #date(2025, 9, 1), #date(2025, 9, 30)),
+    // 2025-10-01 bis 2025-10-31
+    F_M202510 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2025, 10, 1) and [dateFilter] <= #date(2025, 10, 31)
+    ),
+    Z_M202510 = MitZeitraum(F_M202510, #date(2025, 10, 1), #date(2025, 10, 31)),
+    // 2025-11-01 bis 2025-11-30
+    F_M202511 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2025, 11, 1) and [dateFilter] <= #date(2025, 11, 30)
+    ),
+    Z_M202511 = MitZeitraum(F_M202511, #date(2025, 11, 1), #date(2025, 11, 30)),
+    // 2025-12-01 bis 2025-12-31
+    F_M202512 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2025, 12, 1) and [dateFilter] <= #date(2025, 12, 31)
+    ),
+    Z_M202512 = MitZeitraum(F_M202512, #date(2025, 12, 1), #date(2025, 12, 31)),
+    // 2026-01-01 bis 2026-01-31
+    F_M202601 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 1, 1) and [dateFilter] <= #date(2026, 1, 31)
+    ),
+    Z_M202601 = MitZeitraum(F_M202601, #date(2026, 1, 1), #date(2026, 1, 31)),
+    // 2026-02-01 bis 2026-02-28
+    F_M202602 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 2, 1) and [dateFilter] <= #date(2026, 2, 28)
+    ),
+    Z_M202602 = MitZeitraum(F_M202602, #date(2026, 2, 1), #date(2026, 2, 28)),
+    // 2026-03-01 bis 2026-03-31
+    F_M202603 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 3, 1) and [dateFilter] <= #date(2026, 3, 31)
+    ),
+    Z_M202603 = MitZeitraum(F_M202603, #date(2026, 3, 1), #date(2026, 3, 31)),
+    // 2026-04-01 bis 2026-04-30
+    F_M202604 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 4, 1) and [dateFilter] <= #date(2026, 4, 30)
+    ),
+    Z_M202604 = MitZeitraum(F_M202604, #date(2026, 4, 1), #date(2026, 4, 30)),
+    // 2026-05-01 bis 2026-05-31
+    F_M202605 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 5, 1) and [dateFilter] <= #date(2026, 5, 31)
+    ),
+    Z_M202605 = MitZeitraum(F_M202605, #date(2026, 5, 1), #date(2026, 5, 31)),
+    // 2026-06-01 bis 2026-06-30
+    F_M202606 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 6, 1) and [dateFilter] <= #date(2026, 6, 30)
+    ),
+    Z_M202606 = MitZeitraum(F_M202606, #date(2026, 6, 1), #date(2026, 6, 30)),
+    // 2026-07-01 bis 2026-07-31
+    F_M202607 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 7, 1) and [dateFilter] <= #date(2026, 7, 31)
+    ),
+    Z_M202607 = MitZeitraum(F_M202607, #date(2026, 7, 1), #date(2026, 7, 31)),
+    // 2026-08-01 bis 2026-08-31
+    F_M202608 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 8, 1) and [dateFilter] <= #date(2026, 8, 31)
+    ),
+    Z_M202608 = MitZeitraum(F_M202608, #date(2026, 8, 1), #date(2026, 8, 31)),
+    // 2026-09-01 bis 2026-09-30
+    F_M202609 = Table.SelectRows(
+        Entitaet,
+        each [dateFilter] >= #date(2026, 9, 1) and [dateFilter] <= #date(2026, 9, 30)
+    ),
+    Z_M202609 = MitZeitraum(F_M202609, #date(2026, 9, 1), #date(2026, 9, 30)),
+    Vereinigt = Table.Combine(
+        {
+            Z_Anker2024,
+            Z_M202508,
+            Z_M202509,
+            Z_M202510,
+            Z_M202511,
+            Z_M202512,
+            Z_M202601,
+            Z_M202602,
+            Z_M202603,
+            Z_M202604,
+            Z_M202605,
+            Z_M202606,
+            Z_M202607,
+            Z_M202608,
+            Z_M202609
+        }
+    ),
+    Namen = List.Select(
+        Table.ColumnNames(Vereinigt),
+        each _ <> "accountId" and not Text.StartsWith(_, "@")
+    ),
+    Schmal = Table.SelectColumns(Vereinigt, Namen),
+    Betraege = Table.TransformColumns(
+        Schmal,
+        {
+            {"totalDebit", each fnBetrag(_), type number},
+            {"totalCredit", each fnBetrag(_), type number},
+            {"balanceAtDateDebit", each fnBetrag(_), type number},
+            {"balanceAtDateCredit", each fnBetrag(_), type number}
+        }
+    ),
+    Umbenannt = Table.RenameColumns(
+        Betraege,
+        {
+            {"number", "Kontonr"},
+            {"display", "Kontoname"},
+            {"accountType", "Kontoart"},
+            {"totalDebit", "Soll"},
+            {"totalCredit", "Haben"},
+            {"balanceAtDateDebit", "SaldoSoll"},
+            {"balanceAtDateCredit", "SaldoHaben"},
+            {"dateFilter", "DatumFilter"}
+        }
+    ),
+    MitNetto = Table.AddColumn(Umbenannt, "Nettoveränderung", each [Soll] - [Haben], type number),
+    Typisiert = Table.TransformColumns(
+        MitNetto,
+        {
+            {"Kontonr", each if _ = null then null else Text.Trim(Text.From(_)), type text},
+            {"Kontoname", each if _ = null then null else Text.From(_), type text},
+            {"Kontoart", each if _ = null then null else Text.From(_), type text},
+            {"periodStart", each Date.From(_), type date},
+            {"periodEnd", each Date.From(_), type date},
+            {"DatumFilter", each if _ = null then null else Date.From(_), type date}
+        }
+    ),
+    Spalten = Table.SelectColumns(
+        Typisiert,
+        {
+            "Kontonr",
+            "Kontoname",
+            "Kontoart",
+            "periodStart",
+            "periodEnd",
+            "Soll",
+            "Haben",
+            "SaldoSoll",
+            "SaldoHaben",
+            "Nettoveränderung",
+            "DatumFilter"
+        }
+    ),
+    Ergebnis = Table.Sort(Spalten, {{"periodEnd", Order.Ascending}, {"Kontonr", Order.Ascending}})
+in
+    Ergebnis

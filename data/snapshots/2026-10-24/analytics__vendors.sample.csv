@@ -1,0 +1,9 @@
+vendorNo,vendorName,address,address2,city,postCode,county,countryRegionCode,vendorPostingGroup
+10000,"Fabrikam, Inc.",10 North Lake Avenue,,Atlanta,GA 31772,GA,US,AUSLAND
+20000,First Up Consultants,"Allan Turing Road, 20",Surrey,Dresden,01310,,DE,INLAND
+30000,Graphic Design Institute,Arbachtalstrasse 6,Unter Achalm,Birmingham,B31 2AL,,GB,EU
+40000,Wide World Importers,"Aviator Way, 3000",Manchester Business Park,Frankfurt/Main,60320,,DE,INLAND
+50000,Nod Publishers,"Waterloo Place, 2-4",Waverly Gate,Dresden,01238,,DE,INLAND
+64000,Wasserkraftwerk,120 Tage Fahrt,,,61236,,US,INLAND
+82000,Massenassembly,,,,,,DE,INLAND
+83000,Lokale Assembly,,,,,,DE,INLAND

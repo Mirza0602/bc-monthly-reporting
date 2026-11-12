@@ -1,0 +1,168 @@
+expression fnQuelle =
+		// fnQuelle: Navigation wie der Power-BI-Navigator (getestet 25.10.2026).
+		// Connector ohne Parameter, dann Umgebung -> Firma -> Route.
+		// v2.0 liegt direkt unter der Firma, die Analytics API unter "Advanced".
+		(apiRoute as text) as table =>
+		let
+		    Quelle   = Dynamics365BusinessCentral.ApiContentsWithOptions(null, null, null, null),
+		    Umgebung = Quelle{[Name = Text.Upper(pUmgebung)]}[Data],
+		    Firma    = Umgebung{[Name = pMandant]}[Data],
+		    Route    =
+		        if apiRoute = "v2.0" then
+		            Firma{[Name = "v2.0"]}[Data]
+		        else
+		            Firma{[Name = "Advanced"]}[Data]{[Name = apiRoute]}[Data]
+		in
+		    Route
+	lineageTag: b049c0de-9479-4ea4-9287-52a3cee5db80
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression fnBetrag =
+		// Quelle: keine. Lokale Funktion für Saldenlisten-Texte.
+		// Filter: keiner.
+		// Schlüssel: keiner. Das ist eine Funktion und wird nicht geladen.
+		// Erwartete Zeilenzahl: keine.
+		// Abweichung von B2: keine. Dieselben Regeln wie parse_amount in src\datenbestand.py.
+		// Dieselben Fälle wie tests\test_parser.py:
+		// "72,893.84" wird 72893.84
+		// "72.893,84" wird 72893.84
+		// "(1.234,56)" wird -1234.56
+		// "" wird 0
+		// null wird 0
+		// "  " wird 0
+		// Steht Komma und Punkt im Text, ist das weiter rechts stehende Zeichen das Dezimaltrennzeichen.
+		// Nur ein Komma: drei Ziffern dahinter und Ziffern davor bedeuten einen Tausenderpunkt, sonst Dezimaltrennzeichen.
+		// Klammern, führendes Minus und nachgestelltes Minus machen den Betrag negativ. Leerer Text wird 0.
+		(wert as any) as number =>
+		let
+		    Zeichen = (text as text) as number =>
+		        let
+		            Klammer = Text.StartsWith(text, "(") and Text.EndsWith(text, ")"),
+		            OhneKlammer =
+		                if Klammer then Text.Middle(text, 1, Text.Length(text) - 2) else text,
+		            EndeMinus = Text.EndsWith(OhneKlammer, "-"),
+		            OhneEnde =
+		                if EndeMinus
+		                then Text.Start(OhneKlammer, Text.Length(OhneKlammer) - 1)
+		                else OhneKlammer,
+		            Plus = Text.StartsWith(OhneEnde, "+"),
+		            OhnePlus = if Plus then Text.Middle(OhneEnde, 1) else OhneEnde,
+		            AnfangMinus = Text.StartsWith(OhnePlus, "-"),
+		            Kern = if AnfangMinus then Text.Middle(OhnePlus, 1) else OhnePlus,
+		            OhneWaehrung = Text.Replace(Text.Replace(Kern, "EUR", ""), "€", ""),
+		            Negativ = Klammer or EndeMinus or AnfangMinus,
+		            Normal = Normalisiere(OhneWaehrung),
+		            Zahl = if Normal = "" then 0 else Number.FromText(Normal, "en-US")
+		        in
+		            if Normal = "" then 0 else if Negativ then -Zahl else Zahl,
+		    Normalisiere = (text as text) as text =>
+		        let
+		            HatKomma = Text.Contains(text, ","),
+		            HatPunkt = Text.Contains(text, "."),
+		            LetztesKomma = Text.PositionOf(text, ",", Occurrence.Last),
+		            LetzterPunkt = Text.PositionOf(text, ".", Occurrence.Last),
+		            NurKomma =
+		                let
+		                    Pos = Text.PositionOf(text, ","),
+		                    Links = Text.Start(text, Pos),
+		                    Rechts = Text.Middle(text, Pos + 1),
+		                    LinksOhnePunkt = Text.Replace(Links, ".", ""),
+		                    LinksOk =
+		                        LinksOhnePunkt <> ""
+		                        and Text.Select(LinksOhnePunkt, {"0".."9"}) = LinksOhnePunkt,
+		                    RechtsOk =
+		                        Text.Length(Rechts) = 3
+		                        and Text.Select(Rechts, {"0".."9"}) = Rechts
+		                in
+		                    if LinksOk and RechtsOk then
+		                        LinksOhnePunkt & Rechts
+		                    else
+		                        LinksOhnePunkt & "." & Rechts
+		        in
+		            if text = "" then
+		                ""
+		            else if HatKomma and HatPunkt then
+		                if LetztesKomma > LetzterPunkt then
+		                    Text.Replace(Text.Replace(text, ".", ""), ",", ".")
+		                else
+		                    Text.Replace(text, ",", "")
+		            else if HatKomma then
+		                NurKomma
+		            else if Text.Length(Text.Select(text, {"."})) > 1 then
+		                Text.Replace(text, ".", "")
+		            else
+		                text,
+		    Roh =
+		        if wert = null then
+		            ""
+		        else if Value.Is(wert, type number) or Value.Is(wert, type logical) then
+		            ""
+		        else
+		            Text.Trim(
+		                Text.Replace(
+		                    Text.Replace(Text.From(wert), Character.FromNumber(160), ""),
+		                    " ",
+		                    ""
+		                )
+		            ),
+		    Ergebnis =
+		        if wert = null then
+		            0
+		        else if Value.Is(wert, type number) then
+		            wert
+		        else if Value.Is(wert, type logical) then
+		            error "Betrag ist ein Wahrheitswert."
+		        else if Roh = "" then
+		            0
+		        else
+		            Zeichen(Roh)
+		in
+		    Ergebnis
+	lineageTag: dfa8ef87-53fb-44ac-8590-cc2921edc553
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+
+expression pUmgebung =
+		// Parameter Text. Standard Production. Wird nicht als Tabelle geladen.
+		"Production" meta [
+		    IsParameterQuery = true,
+		    Type = "Text",
+		    IsParameterQueryRequired = true
+		]
+	lineageTag: 9d2ca26e-69f3-4cd6-8739-f9409639eb22
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression pMandant =
+		// Parameter Text. Standard CRONUS DE. Firmenname, keine Company-ID.
+		"CRONUS DE" meta [
+		    IsParameterQuery = true,
+		    Type = "Text",
+		    IsParameterQueryRequired = true
+		]
+	lineageTag: f7bc3b9b-6dc5-4acb-b5dc-a924017af8ac
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression pRepoPfad =
+		// Parameter Text. Ordner des Repos, damit DimKonto die Zuordnung liest.
+		"C:\git\bc-monthly-reporting" meta [
+		    IsParameterQuery = true,
+		    Type = "Text",
+		    IsParameterQueryRequired = true
+		]
+	lineageTag: 16ca81ec-cae5-4fa0-b8a2-1ab838fe839f
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+

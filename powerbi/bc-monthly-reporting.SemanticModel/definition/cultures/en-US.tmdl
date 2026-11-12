@@ -1,0 +1,1006 @@
+cultureInfo en-US
+
+	linguisticMetadata =
+			{
+			  "Version": "2.0.0",
+			  "Language": "en-US",
+			  "Entities": {
+			    "dimkonto.kontonr": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimKonto",
+			          "ConceptualProperty": "Kontonr"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Konto": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimkonto.kontoname": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimKonto",
+			          "ConceptualProperty": "Kontoname"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Kontoname": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Name": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.konto_bewegung_sachposten": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Konto Bewegung Sachposten"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "P2 Sachposten": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.konto_bewegung_saldenliste": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Konto Bewegung Saldenliste"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "P2 Saldenliste": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.konto_bewegung_differenz": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Konto Bewegung Differenz"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "P2 Differenz": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.konto_saldo_sachposten": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Konto Saldo Sachposten"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "P3 Sachposten": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.konto_saldo_saldenliste": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Konto Saldo Saldenliste"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "P3 Saldenliste": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.konto_saldo_differenz": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Konto Saldo Differenz"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "P3 Differenz": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.konto_abweichung": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Konto Abweichung"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Abweichung gesamt": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.stichtag": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Stichtag"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Berichtsstichtag": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.abstimmung_bericht": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Abstimmung Bericht"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Bericht": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.abstimmung_saldenliste": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Abstimmung Saldenliste"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Saldenliste": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.abstimmung_differenz": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Abstimmung Differenz"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Differenz": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.abstimmung_status": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Abstimmung Status"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Status": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.umsatz": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Umsatz"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Umsatz": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.rohertrag": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Rohertrag"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Rohertrag": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.ebit": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "EBIT"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "EBIT": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.offene_forderungen": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Offene Forderungen"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Offene Forderungen": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.bestandswert": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Bestandswert"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Bestandswert": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.guv_monat": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "GuV Monat"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Ist Monat": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.guv_vorjahr_monat": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "GuV Vorjahr Monat"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Vorjahr Monat": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.guv_δ_vj": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "GuV Δ VJ"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Δ VJ": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.guv_δ_vj_": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "GuV Δ VJ %"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Δ VJ %": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.guv_plan_demo_monat": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "GuV Plan (Demo) Monat"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Plan (Demo) Monat": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.guv_δ_plan": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "GuV Δ Plan"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Δ Plan": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.guv_ytd": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "GuV YTD"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Ist YTD": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.guv_δ_vj_ytd": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "GuV Δ VJ YTD"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Δ VJ YTD": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.verbindlichkeiten_überfällig_anteil": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Verbindlichkeiten Überfällig Anteil"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Anteil überfällig": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.offene_forderungen_überfällig": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Offene Forderungen überfällig"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "davon überfällig": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.überfällig_anteil": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Überfällig Anteil"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Anteil überfällig": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.verbindlichkeiten": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Verbindlichkeiten"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Verbindlichkeiten": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.verbindlichkeiten_überfällig": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Verbindlichkeiten überfällig"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "davon überfällig": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.verkauf_umsatz_ytd": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Verkauf Umsatz YTD"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Umsatz": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Umsatz YTD": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.db_i_ytd": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "DB I YTD"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "DB I": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Deckungsbeitrag I YTD": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.db_i_marge_ytd": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "DB I Marge YTD"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Marge": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "DB-I-Marge YTD": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.beleg_zeilen": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Beleg Zeilen"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Buchungszeilen": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "kennzahlen.beleg_betrag": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Kennzahlen",
+			          "ConceptualProperty": "Beleg Betrag"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Saldo": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Betrag": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factsachposten.eintragsnr": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactSachposten",
+			          "ConceptualProperty": "Eintragsnr"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Lfd. Nr.": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factsachposten.buchungsdatum": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactSachposten",
+			          "ConceptualProperty": "Buchungsdatum"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Datum": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factsachposten.belegnr": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactSachposten",
+			          "ConceptualProperty": "Belegnr"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Beleg": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factsachposten.belegart": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactSachposten",
+			          "ConceptualProperty": "Belegart"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Belegart": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factsachposten.beschreibung": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactSachposten",
+			          "ConceptualProperty": "Beschreibung"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Beschreibung": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factsachposten.herkunftsart": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactSachposten",
+			          "ConceptualProperty": "Herkunftsart"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Herkunft": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factsachposten.herkunftsnr": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactSachposten",
+			          "ConceptualProperty": "Herkunftsnr"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Herkunftsnr": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimdimensionsset.abteilungname": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimDimensionsSet",
+			          "ConceptualProperty": "AbteilungName"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Kostenstelle": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    }
+			  }
+			}
+		contentType: json
+

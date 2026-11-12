@@ -1,0 +1,20 @@
+createOrReplace
+
+	ref table DimDatum
+
+		column MonatKey = ```
+				// Jahr mal 100 plus Monat. Sortierschlüssel für Jahr-Monat.
+				DimDatum[Jahr] * 100 + DimDatum[Monat]
+				```
+			dataType: int64
+			isHidden
+			formatString: 0
+			summarizeBy: none
+
+		column 'Jahr-Monat' = ```
+				// Text im Format yyyy-MM, sortiert über MonatKey.
+				FORMAT ( DimDatum[Jahr], "0" ) & "-" & FORMAT ( DimDatum[Monat], "00" )
+				```
+			dataType: string
+			summarizeBy: none
+			sortByColumn: MonatKey

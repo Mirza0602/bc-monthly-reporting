@@ -1,0 +1,391 @@
+createOrReplace
+
+	table Zeitauswahl
+
+		calculationGroup
+			precedence: 1
+
+			calculationItem 'Monat' = ```
+					// Zweck: Der Filter bleibt. Die Kennzahl gilt für den Monat im Bericht.
+					// Quelle: SELECTEDMEASURE (). Vorzeichen bleibt das der Kennzahl.
+					SELECTEDMEASURE ()
+					```
+				ordinal: 1
+
+			calculationItem 'YTD' = ```
+					// Zweck: Dieselbe Kennzahl vom 1. Januar bis zum Berichtsende.
+					// Quelle: [Berichtsende] ohne Zeitauswahl, dann das Datumsfenster. Vorzeichen bleibt das der Kennzahl.
+					VAR Ende =
+						CALCULATE (
+							[Berichtsende],
+							REMOVEFILTERS ( Zeitauswahl )
+						)
+					VAR Anfang = DATE ( YEAR ( Ende ), 1, 1 )
+					RETURN
+						CALCULATE (
+							SELECTEDMEASURE (),
+							REMOVEFILTERS ( DimDatum ),
+							DimDatum[Datum] >= Anfang,
+							DimDatum[Datum] <= Ende
+						)
+					```
+				ordinal: 2
+
+			calculationItem 'Vormonat' = ```
+					// Zweck: Dieselbe Kennzahl im vollen Monat vor dem Berichtsende.
+					// Quelle: EOMONTH von [Berichtsende]. Vorzeichen bleibt das der Kennzahl.
+					VAR Ende =
+						CALCULATE (
+							[Berichtsende],
+							REMOVEFILTERS ( Zeitauswahl )
+						)
+					VAR VormonatEnde = EOMONTH ( Ende, -1 )
+					VAR Anfang = DATE ( YEAR ( VormonatEnde ), MONTH ( VormonatEnde ), 1 )
+					RETURN
+						CALCULATE (
+							SELECTEDMEASURE (),
+							REMOVEFILTERS ( DimDatum ),
+							DimDatum[Datum] >= Anfang,
+							DimDatum[Datum] <= VormonatEnde
+						)
+					```
+				ordinal: 3
+
+			calculationItem 'Vorjahr Monat' = ```
+					// Zweck: Dieselbe Kennzahl im Monat vor einem Jahr.
+					// Quelle: SAMEPERIODLASTYEAR auf DimDatum[Datum]. Vorzeichen bleibt das der Kennzahl.
+					VAR Zeitraum =
+						CALCULATETABLE ( SAMEPERIODLASTYEAR ( DimDatum[Datum] ) )
+					RETURN
+						CALCULATE (
+							SELECTEDMEASURE (),
+							REMOVEFILTERS ( DimDatum ),
+							Zeitraum
+						)
+					```
+				ordinal: 4
+
+			calculationItem 'Vorjahr YTD' = ```
+					// Zweck: Dieselbe Kennzahl vom 1. Januar bis zum Berichtsende, ein Jahr früher.
+					// Quelle: SAMEPERIODLASTYEAR auf dem YTD-Fenster. Vorzeichen bleibt das der Kennzahl.
+					VAR Ende =
+						CALCULATE (
+							[Berichtsende],
+							REMOVEFILTERS ( Zeitauswahl )
+						)
+					VAR Anfang = DATE ( YEAR ( Ende ), 1, 1 )
+					VAR Zeitraum =
+						CALCULATETABLE (
+							SAMEPERIODLASTYEAR ( DATESBETWEEN ( DimDatum[Datum], Anfang, Ende ) )
+						)
+					RETURN
+						CALCULATE (
+							SELECTEDMEASURE (),
+							REMOVEFILTERS ( DimDatum ),
+							Zeitraum
+						)
+					```
+				ordinal: 5
+
+			calculationItem 'Plan (Demo) Monat' = ```
+					// Zweck: Demo-Plan des Monats. Bestand und die Abstimmung bleiben leer.
+					// Quelle: Vorjahr Monat mal [Planfaktor]. Demo-Plan, kein BC-Budget. Vorzeichen bleibt das der Kennzahl.
+					VAR Faktor =
+						CALCULATE (
+							[Planfaktor],
+							REMOVEFILTERS ( Zeitauswahl )
+						)
+					RETURN
+						IF (
+							ISSELECTEDMEASURE (
+								[Offene Forderungen],
+								[Verbindlichkeiten],
+								[Bestandswert],
+								[Endsaldo Bericht],
+								[Saldenliste Bewegung],
+								[Abstimmung Bericht],
+								[Abstimmung Saldenliste],
+								[Abstimmung Differenz],
+								[Abstimmung Status]
+							),
+							BLANK (),
+							CALCULATE (
+								SELECTEDMEASURE (),
+								Zeitauswahl[Zeitauswahl] = "Vorjahr Monat"
+							) * Faktor
+						)
+					```
+				ordinal: 6
+
+			calculationItem 'Plan (Demo) YTD' = ```
+					// Zweck: Demo-Plan seit Jahresanfang. Bestand und die Abstimmung bleiben leer.
+					// Quelle: Vorjahr YTD mal [Planfaktor]. Demo-Plan, kein BC-Budget. Vorzeichen bleibt das der Kennzahl.
+					VAR Faktor =
+						CALCULATE (
+							[Planfaktor],
+							REMOVEFILTERS ( Zeitauswahl )
+						)
+					RETURN
+						IF (
+							ISSELECTEDMEASURE (
+								[Offene Forderungen],
+								[Verbindlichkeiten],
+								[Bestandswert],
+								[Endsaldo Bericht],
+								[Saldenliste Bewegung],
+								[Abstimmung Bericht],
+								[Abstimmung Saldenliste],
+								[Abstimmung Differenz],
+								[Abstimmung Status]
+							),
+							BLANK (),
+							CALCULATE (
+								SELECTEDMEASURE (),
+								Zeitauswahl[Zeitauswahl] = "Vorjahr YTD"
+							) * Faktor
+						)
+					```
+				ordinal: 7
+
+			calculationItem 'Δ VJ Monat' = ```
+					// Zweck: Monat minus Vorjahr Monat. Bei der Rohertragsmarge sind das Prozentpunkte. Abstimmung Status bleibt leer.
+					// Quelle: die Items Monat und Vorjahr Monat. Vorzeichen ist die Differenz.
+					VAR Aktuell =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Monat"
+						)
+					VAR Basis =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Vorjahr Monat"
+						)
+					RETURN
+						IF (
+							ISSELECTEDMEASURE ( [Abstimmung Status] ),
+							BLANK (),
+							Aktuell - Basis
+						)
+					```
+				ordinal: 8
+
+			calculationItem 'Δ VJ YTD' = ```
+					// Zweck: YTD minus Vorjahr YTD. Bei der Rohertragsmarge sind das Prozentpunkte. Abstimmung Status bleibt leer.
+					// Quelle: die Items YTD und Vorjahr YTD. Vorzeichen ist die Differenz.
+					VAR Aktuell =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "YTD"
+						)
+					VAR Basis =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Vorjahr YTD"
+						)
+					RETURN
+						IF (
+							ISSELECTEDMEASURE ( [Abstimmung Status] ),
+							BLANK (),
+							Aktuell - Basis
+						)
+					```
+				ordinal: 9
+
+			calculationItem 'Δ Plan Monat' = ```
+					// Zweck: Monat minus Plan Monat. Bestand und die Abstimmung bleiben leer. Bei der Marge sind das Prozentpunkte.
+					// Quelle: die Items Monat und Plan (Demo) Monat. Vorzeichen ist die Differenz.
+					VAR Aktuell =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Monat"
+						)
+					VAR Plan =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat"
+						)
+					RETURN
+						IF (
+							ISSELECTEDMEASURE (
+								[Offene Forderungen],
+								[Verbindlichkeiten],
+								[Bestandswert],
+								[Endsaldo Bericht],
+								[Saldenliste Bewegung],
+								[Abstimmung Bericht],
+								[Abstimmung Saldenliste],
+								[Abstimmung Differenz],
+								[Abstimmung Status]
+							),
+							BLANK (),
+							Aktuell - Plan
+						)
+					```
+				ordinal: 10
+
+			calculationItem 'Δ Plan YTD' = ```
+					// Zweck: YTD minus Plan YTD. Bestand und die Abstimmung bleiben leer. Bei der Marge sind das Prozentpunkte.
+					// Quelle: die Items YTD und Plan (Demo) YTD. Vorzeichen ist die Differenz.
+					VAR Aktuell =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "YTD"
+						)
+					VAR Plan =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Plan (Demo) YTD"
+						)
+					RETURN
+						IF (
+							ISSELECTEDMEASURE (
+								[Offene Forderungen],
+								[Verbindlichkeiten],
+								[Bestandswert],
+								[Endsaldo Bericht],
+								[Saldenliste Bewegung],
+								[Abstimmung Bericht],
+								[Abstimmung Saldenliste],
+								[Abstimmung Differenz],
+								[Abstimmung Status]
+							),
+							BLANK (),
+							Aktuell - Plan
+						)
+					```
+				ordinal: 11
+
+			calculationItem 'Δ VJ Monat %' = ```
+					// Zweck: Abweichung zum Vorjahr Monat im Verhältnis zur Basis. Bei der Rohertragsmarge leer.
+					// Quelle: DIVIDE der Differenz durch den Vorjahresmonat. Format 0,0 %. Vorzeichen ist die relative Differenz.
+					VAR Aktuell =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Monat"
+						)
+					VAR Basis =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Vorjahr Monat"
+						)
+					RETURN
+						IF (
+							ISSELECTEDMEASURE ( [Rohertragsmarge], [Abstimmung Status] ),
+							BLANK (),
+							DIVIDE ( Aktuell - Basis, Basis )
+						)
+					```
+				ordinal: 12
+				formatStringDefinition = "0.0%"
+
+			calculationItem 'Δ VJ YTD %' = ```
+					// Zweck: Abweichung zum Vorjahr YTD im Verhältnis zur Basis. Bei der Rohertragsmarge leer.
+					// Quelle: DIVIDE der Differenz durch das Vorjahr YTD. Format 0,0 %. Vorzeichen ist die relative Differenz.
+					VAR Aktuell =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "YTD"
+						)
+					VAR Basis =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Vorjahr YTD"
+						)
+					RETURN
+						IF (
+							ISSELECTEDMEASURE ( [Rohertragsmarge], [Abstimmung Status] ),
+							BLANK (),
+							DIVIDE ( Aktuell - Basis, Basis )
+						)
+					```
+				ordinal: 13
+				formatStringDefinition = "0.0%"
+
+			calculationItem 'Δ Plan Monat %' = ```
+					// Zweck: Abweichung zum Plan Monat im Verhältnis zum Plan. Bei der Rohertragsmarge und ohne Plan leer.
+					// Quelle: DIVIDE der Differenz durch den Plan Monat. Format 0,0 %. Vorzeichen ist die relative Differenz.
+					VAR Aktuell =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Monat"
+						)
+					VAR Plan =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat"
+						)
+					RETURN
+						IF (
+							OR (
+								ISSELECTEDMEASURE ( [Rohertragsmarge] ),
+								ISSELECTEDMEASURE (
+									[Offene Forderungen],
+									[Verbindlichkeiten],
+									[Bestandswert],
+									[Endsaldo Bericht],
+									[Saldenliste Bewegung],
+									[Abstimmung Bericht],
+									[Abstimmung Saldenliste],
+									[Abstimmung Differenz],
+									[Abstimmung Status]
+								)
+							),
+							BLANK (),
+							DIVIDE ( Aktuell - Plan, Plan )
+						)
+					```
+				ordinal: 14
+				formatStringDefinition = "0.0%"
+
+			calculationItem 'Δ Plan YTD %' = ```
+					// Zweck: Abweichung zum Plan YTD im Verhältnis zum Plan. Bei der Rohertragsmarge und ohne Plan leer.
+					// Quelle: DIVIDE der Differenz durch den Plan YTD. Format 0,0 %. Vorzeichen ist die relative Differenz.
+					VAR Aktuell =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "YTD"
+						)
+					VAR Plan =
+						CALCULATE (
+							SELECTEDMEASURE (),
+							Zeitauswahl[Zeitauswahl] = "Plan (Demo) YTD"
+						)
+					RETURN
+						IF (
+							OR (
+								ISSELECTEDMEASURE ( [Rohertragsmarge] ),
+								ISSELECTEDMEASURE (
+									[Offene Forderungen],
+									[Verbindlichkeiten],
+									[Bestandswert],
+									[Endsaldo Bericht],
+									[Saldenliste Bewegung],
+									[Abstimmung Bericht],
+									[Abstimmung Saldenliste],
+									[Abstimmung Differenz],
+									[Abstimmung Status]
+								)
+							),
+							BLANK (),
+							DIVIDE ( Aktuell - Plan, Plan )
+						)
+					```
+				ordinal: 15
+				formatStringDefinition = "0.0%"
+
+		column Zeitauswahl
+			dataType: string
+			summarizeBy: none
+			sourceColumn: Name
+			sortByColumn: Ordinal
+
+			annotation SummarizationSetBy = Automatic
+
+		column Ordinal
+			dataType: int64
+			isHidden
+			formatString: 0
+			summarizeBy: none
+			sourceColumn: Ordinal
+
+			annotation SummarizationSetBy = Automatic

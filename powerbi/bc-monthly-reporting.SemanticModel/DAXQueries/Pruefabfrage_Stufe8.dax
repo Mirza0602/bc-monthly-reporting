@@ -1,0 +1,155 @@
+// Prüfabfrage AP-06 Stufe B, Seite 3 Debitoren und Kreditoren. Berichtsmonat September 2026, Stichtag 30.09.2026.
+// Forderungen Klasse je Klasse, Summe gleich [Offene Forderungen]. Verbindlichkeiten Klasse je Klasse, Summe gegen [Verbindlichkeiten].
+// Überfällig gesamt und je Kunde bzw. Lieferant.
+// Klasse über CALCULATETABLE und TREATAS auf Faelligkeitsklasse[Klasse]. Kunde über TREATAS auf DimKunde[Kundennr], Lieferant über TREATAS auf DimLieferant[Lieferantennr].
+// Abweichung ist Ist minus Soll, gerundet auf 2 Stellen.
+EVALUATE
+VAR Zeilen =
+    DATATABLE (
+        "Nr", INTEGER,
+        "Zeile", STRING,
+        "Art", STRING,
+        "Merkmal", STRING,
+        "Soll", DOUBLE,
+        {
+            { 1, "Forderungen Klasse nicht fällig", "ForderungKlasse", "nicht fällig", 0 },
+            { 2, "Forderungen Klasse 1 bis 30 Tage", "ForderungKlasse", "1 bis 30 Tage", 0 },
+            { 3, "Forderungen Klasse 31 bis 60 Tage", "ForderungKlasse", "31 bis 60 Tage", 0 },
+            { 4, "Forderungen Klasse 61 bis 90 Tage", "ForderungKlasse", "61 bis 90 Tage", 0 },
+            { 5, "Forderungen Klasse über 90 Tage", "ForderungKlasse", "über 90 Tage", 68041.07 },
+            { 6, "Forderungen Klassensumme", "ForderungSumme", "", 68041.07 },
+            { 7, "Verbindlichkeiten Klasse nicht fällig", "VerbindlichkeitKlasse", "nicht fällig", 0 },
+            { 8, "Verbindlichkeiten Klasse 1 bis 30 Tage", "VerbindlichkeitKlasse", "1 bis 30 Tage", 64681.50 },
+            { 9, "Verbindlichkeiten Klasse 31 bis 60 Tage", "VerbindlichkeitKlasse", "31 bis 60 Tage", 0 },
+            { 10, "Verbindlichkeiten Klasse 61 bis 90 Tage", "VerbindlichkeitKlasse", "61 bis 90 Tage", 0 },
+            { 11, "Verbindlichkeiten Klasse über 90 Tage", "VerbindlichkeitKlasse", "über 90 Tage", 54135.85 },
+            { 12, "Verbindlichkeiten Klassensumme", "VerbindlichkeitSumme", "", 118817.35 },
+            { 13, "Verbindlichkeiten überfällig", "VerbindlichkeitUeberfaellig", "", 118817.35 },
+            { 14, "Offene Forderungen überfällig", "ForderungUeberfaellig", "", 68041.07 },
+            { 15, "Offene Forderungen überfällig Kunde 30000", "ForderungKunde", "30000", 50559.40 },
+            { 16, "Offene Forderungen überfällig Kunde 50000", "ForderungKunde", "50000", 9969.82 },
+            { 17, "Offene Forderungen überfällig Kunde 40000", "ForderungKunde", "40000", 4054.30 },
+            { 18, "Offene Forderungen überfällig Kunde 20000", "ForderungKunde", "20000", 3457.55 },
+            { 19, "Verbindlichkeiten überfällig Lieferant 40000", "VerbindlichkeitLieferant", "40000", 67948.16 },
+            { 20, "Verbindlichkeiten überfällig Lieferant 50000", "VerbindlichkeitLieferant", "50000", 19490.18 },
+            { 21, "Verbindlichkeiten überfällig Lieferant 20000", "VerbindlichkeitLieferant", "20000", 16234.81 },
+            { 22, "Verbindlichkeiten überfällig Lieferant 30000", "VerbindlichkeitLieferant", "30000", 9619.90 },
+            { 23, "Verbindlichkeiten überfällig Lieferant 10000", "VerbindlichkeitLieferant", "10000", 5524.30 }
+        }
+    )
+VAR Mit =
+    ADDCOLUMNS (
+        Zeilen,
+        "Ist",
+            VAR Artcode = [Art]
+            VAR Kenntext = [Merkmal]
+            RETURN
+                SWITCH (
+                    Artcode,
+                    "ForderungKlasse",
+                        CALCULATE (
+                            [Forderungen Klasse],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( Faelligkeitsklasse ),
+                            REMOVEFILTERS ( DimKunde ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            CALCULATETABLE (
+                                TREATAS ( { Kenntext }, Faelligkeitsklasse[Klasse] )
+                            )
+                        ),
+                    "ForderungSumme",
+                        CALCULATE (
+                            SUMX (
+                                CALCULATETABLE ( Faelligkeitsklasse ),
+                                [Forderungen Klasse]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( Faelligkeitsklasse ),
+                            REMOVEFILTERS ( DimKunde ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9
+                        ),
+                    "VerbindlichkeitKlasse",
+                        CALCULATE (
+                            [Verbindlichkeiten Klasse],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( Faelligkeitsklasse ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            CALCULATETABLE (
+                                TREATAS ( { Kenntext }, Faelligkeitsklasse[Klasse] )
+                            )
+                        ),
+                    "VerbindlichkeitSumme",
+                        CALCULATE (
+                            SUMX (
+                                CALCULATETABLE ( Faelligkeitsklasse ),
+                                [Verbindlichkeiten Klasse]
+                            ),
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( Faelligkeitsklasse ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9
+                        ),
+                    "VerbindlichkeitUeberfaellig",
+                        CALCULATE (
+                            [Verbindlichkeiten überfällig],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9
+                        ),
+                    "ForderungUeberfaellig",
+                        CALCULATE (
+                            [Offene Forderungen überfällig],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9
+                        ),
+                    "ForderungKunde",
+                        CALCULATE (
+                            [Offene Forderungen überfällig],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimKunde ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            TREATAS ( { Kenntext }, DimKunde[Kundennr] )
+                        ),
+                    "VerbindlichkeitLieferant",
+                        CALCULATE (
+                            [Verbindlichkeiten überfällig],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( DimLieferant ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            TREATAS ( { Kenntext }, DimLieferant[Lieferantennr] )
+                        )
+                )
+    )
+VAR Ergebnis =
+    ADDCOLUMNS (
+        Mit,
+        "Abweichung", ROUND ( COALESCE ( [Ist], 0 ) - COALESCE ( [Soll], 0 ), 2 )
+    )
+RETURN
+    SELECTCOLUMNS (
+        Ergebnis,
+        "Nr", [Nr],
+        "Zeile", [Zeile],
+        "Ist", [Ist],
+        "Soll", [Soll],
+        "Abweichung", [Abweichung]
+    )
+ORDER BY [Nr]

@@ -1,0 +1,121 @@
+// Prüfabfrage AP-05 Stufe 2. Eine Zeile je Kennzahl aus Abstimmzeile.
+// Monat: DimDatum Jahr 2026 und Monat 9.
+// YTD: Datum 01.01.2026 bis 30.09.2026 als Filter, kein YTD-Measure.
+// Sollwerte aus dem Abstimmprotokoll September 2026.
+// Bestandswert Bericht 2266906.50, Saldenliste 2267146.50, Differenz -240.00, Status erklärt.
+// Leer im Bericht und Soll 0,00 ergibt in der Prüfspalte 0, weil die Prüfspalte leer mit COALESCE liest. Das Measure bleibt leer.
+EVALUATE
+ADDCOLUMNS (
+    ADDCOLUMNS (
+        Abstimmzeile,
+        "Monat Bericht",
+            CALCULATE ( [Abstimmung Bericht], DimDatum[Jahr] = 2026, DimDatum[Monat] = 9 ),
+        "Monat Saldenliste",
+            CALCULATE ( [Abstimmung Saldenliste], DimDatum[Jahr] = 2026, DimDatum[Monat] = 9 ),
+        "Monat Soll",
+            SWITCH (
+                Abstimmzeile[Kennzahl],
+                "Umsatz", 6966,
+                "Wareneinsatz", 5434,
+                "Rohertrag", 1532,
+                "Betriebsaufwand", 10060,
+                "Abschreibung", 0,
+                "Sonstiger Ertrag und Aufwand", 0,
+                "EBIT", -8528,
+                "Zins und Finanz", 0,
+                "Nicht zugeordnet", 0,
+                "Ergebnis GuV", -8528,
+                "Offene Forderungen", 68041.07,
+                "Verbindlichkeiten", 118817.35,
+                "Bestandswert", 2266906.50
+            ),
+        "Monat Soll Saldenliste",
+            SWITCH (
+                Abstimmzeile[Kennzahl],
+                "Bestandswert", 2267146.50,
+                "Umsatz", 6966,
+                "Wareneinsatz", 5434,
+                "Rohertrag", 1532,
+                "Betriebsaufwand", 10060,
+                "Abschreibung", 0,
+                "Sonstiger Ertrag und Aufwand", 0,
+                "EBIT", -8528,
+                "Zins und Finanz", 0,
+                "Nicht zugeordnet", 0,
+                "Ergebnis GuV", -8528,
+                "Offene Forderungen", 68041.07,
+                "Verbindlichkeiten", 118817.35
+            ),
+        "Monat Differenz",
+            CALCULATE ( [Abstimmung Differenz], DimDatum[Jahr] = 2026, DimDatum[Monat] = 9 ),
+        "Monat Status",
+            CALCULATE ( [Abstimmung Status], DimDatum[Jahr] = 2026, DimDatum[Monat] = 9 ),
+        "YTD Bericht",
+            CALCULATE (
+                [Abstimmung Bericht],
+                REMOVEFILTERS ( DimDatum ),
+                DimDatum[Datum] >= DATE ( 2026, 1, 1 ),
+                DimDatum[Datum] <= DATE ( 2026, 9, 30 )
+            ),
+        "YTD Saldenliste",
+            CALCULATE (
+                [Abstimmung Saldenliste],
+                REMOVEFILTERS ( DimDatum ),
+                DimDatum[Datum] >= DATE ( 2026, 1, 1 ),
+                DimDatum[Datum] <= DATE ( 2026, 9, 30 )
+            ),
+        "YTD Soll",
+            SWITCH (
+                Abstimmzeile[Kennzahl],
+                "Umsatz", 362007.38,
+                "Wareneinsatz", 260374.20,
+                "Rohertrag", 101633.18,
+                "Betriebsaufwand", 14660,
+                "Abschreibung", 0,
+                "Sonstiger Ertrag und Aufwand", 0,
+                "EBIT", 86973.18,
+                "Zins und Finanz", -26244.83,
+                "Nicht zugeordnet", 0,
+                "Ergebnis GuV", 60728.35,
+                "Offene Forderungen", 68041.07,
+                "Verbindlichkeiten", 118817.35,
+                "Bestandswert", 2266906.50
+            ),
+        "YTD Soll Saldenliste",
+            SWITCH (
+                Abstimmzeile[Kennzahl],
+                "Bestandswert", 2267146.50,
+                "Umsatz", 362007.38,
+                "Wareneinsatz", 260374.20,
+                "Rohertrag", 101633.18,
+                "Betriebsaufwand", 14660,
+                "Abschreibung", 0,
+                "Sonstiger Ertrag und Aufwand", 0,
+                "EBIT", 86973.18,
+                "Zins und Finanz", -26244.83,
+                "Nicht zugeordnet", 0,
+                "Ergebnis GuV", 60728.35,
+                "Offene Forderungen", 68041.07,
+                "Verbindlichkeiten", 118817.35
+            ),
+        "YTD Differenz",
+            CALCULATE (
+                [Abstimmung Differenz],
+                REMOVEFILTERS ( DimDatum ),
+                DimDatum[Datum] >= DATE ( 2026, 1, 1 ),
+                DimDatum[Datum] <= DATE ( 2026, 9, 30 )
+            ),
+        "YTD Status",
+            CALCULATE (
+                [Abstimmung Status],
+                REMOVEFILTERS ( DimDatum ),
+                DimDatum[Datum] >= DATE ( 2026, 1, 1 ),
+                DimDatum[Datum] <= DATE ( 2026, 9, 30 )
+            )
+    ),
+    "Monat Bericht gegen Soll", COALESCE ( [Monat Bericht], 0 ) - [Monat Soll],
+    "Monat Saldenliste gegen Soll", COALESCE ( [Monat Saldenliste], 0 ) - [Monat Soll Saldenliste],
+    "YTD Bericht gegen Soll", COALESCE ( [YTD Bericht], 0 ) - [YTD Soll],
+    "YTD Saldenliste gegen Soll", COALESCE ( [YTD Saldenliste], 0 ) - [YTD Soll Saldenliste]
+)
+ORDER BY [Sortierung]

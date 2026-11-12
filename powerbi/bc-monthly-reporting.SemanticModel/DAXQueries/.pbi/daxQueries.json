@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "tabOrder": [
+    "P9_Zeilen_Ladetest",
+    "Stufe2_Artikelpostenart",
+    "Stufe2_Abstimmung",
+    "Stufe3_Zeitauswahl",
+    "Stufe4_Konten",
+    "Stufe5_Pruefabfrage",
+    "Pruefabfrage_Stufe3",
+    "Pruefabfrage_Stufe7",
+    "Pruefabfrage_Stufe8",
+    "Pruefabfrage_Stufe9",
+    "Pruefabfrage_Stufe1"
+  ],
+  "defaultTab": "Pruefabfrage_Stufe1"
+}

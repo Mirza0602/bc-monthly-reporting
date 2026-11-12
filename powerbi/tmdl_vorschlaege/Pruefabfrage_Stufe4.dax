@@ -1,0 +1,204 @@
+// Prüfabfrage AP-05 Stufe 4. Berichtsmonat 09/2026, ohne Zeitauswahl.
+// (1) Buchungskonten mit Konto Bewegung Differenz und Konto Saldo Differenz ungleich 0. Soll 0 und 0.
+// (2) Stichproben je Konto. Soll aus Abstimmprotokoll 2026-09, Abschnitt Konten.
+//     1102 P2 37.916,00 und P3 2.253.031,00. 0400, 0520, 1001, 1202, 1203 haben P2 0,00.
+//     P3: 0400 59.693,00, 0520 117.168,00, 1001 14.115,50, 1202 13.427,37, 1203 54.613,70.
+// (3) Abstimmzeile mit Abstimmung Differenz ungleich 0. Soll genau 1 Zeile, Bestandswert, -240,00.
+// Spalte Abweichung ist auf Cent gerundet. Sie soll in jeder Zeile 0 sein.
+EVALUATE
+VAR AnzahlBewegung =
+    CALCULATE (
+        COALESCE (
+            COUNTROWS (
+                FILTER (
+                    VALUES ( DimKonto[Kontonr] ),
+                    [Konto Bewegung Differenz] <> 0
+                )
+            ),
+            0
+        ),
+        DimKonto[Kontoart] = "Buchung",
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9
+    )
+VAR AnzahlSaldo =
+    CALCULATE (
+        COALESCE (
+            COUNTROWS (
+                FILTER (
+                    VALUES ( DimKonto[Kontonr] ),
+                    [Konto Saldo Differenz] <> 0
+                )
+            ),
+            0
+        ),
+        DimKonto[Kontoart] = "Buchung",
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9
+    )
+VAR Teil1 =
+    UNION (
+        ROW (
+            "Teil", 1,
+            "Objekt", "Buchungskonten",
+            "Name", "",
+            "Position", "Konto Bewegung Differenz ungleich 0",
+            "Ist", AnzahlBewegung * 1.0,
+            "Soll", 0 * 1.0,
+            "Abweichung", ROUND ( AnzahlBewegung - 0, 2 )
+        ),
+        ROW (
+            "Teil", 1,
+            "Objekt", "Buchungskonten",
+            "Name", "",
+            "Position", "Konto Saldo Differenz ungleich 0",
+            "Ist", AnzahlSaldo * 1.0,
+            "Soll", 0 * 1.0,
+            "Abweichung", ROUND ( AnzahlSaldo - 0, 2 )
+        )
+    )
+VAR StichprobeRoh =
+    SUMMARIZECOLUMNS (
+        DimKonto[Kontonr],
+        DimKonto[Kontoname],
+        TREATAS (
+            { "1102", "0400", "0520", "1001", "1202", "1203" },
+            DimKonto[Kontonr]
+        ),
+        FILTER (
+            ALL ( DimDatum ),
+            DimDatum[Jahr] = 2026
+                && DimDatum[Monat] = 9
+        ),
+        "P2Bericht", [Konto Bewegung Sachposten],
+        "P2Liste", [Konto Bewegung Saldenliste],
+        "P2Diff", [Konto Bewegung Differenz],
+        "P3Bericht", [Konto Saldo Sachposten],
+        "P3Liste", [Konto Saldo Saldenliste],
+        "P3Diff", [Konto Saldo Differenz]
+    )
+VAR Stichprobe =
+    ADDCOLUMNS (
+        StichprobeRoh,
+        "P2Soll", IF ( [Kontonr] = "1102", 37916, 0 ),
+        "P3Soll",
+            SWITCH (
+                [Kontonr],
+                "1102", 2253031,
+                "0400", 59693,
+                "0520", 117168,
+                "1001", 14115.50,
+                "1202", 13427.37,
+                "1203", 54613.70
+            )
+    )
+VAR Teil2 =
+    UNION (
+        SELECTCOLUMNS (
+            Stichprobe,
+            "Teil", 2,
+            "Objekt", [Kontonr],
+            "Name", [Kontoname],
+            "Position", "1 P2 Sachposten",
+            "Ist", COALESCE ( [P2Bericht], 0 ) * 1.0,
+            "Soll", [P2Soll] * 1.0,
+            "Abweichung", ROUND ( COALESCE ( [P2Bericht], 0 ) - [P2Soll], 2 )
+        ),
+        SELECTCOLUMNS (
+            Stichprobe,
+            "Teil", 2,
+            "Objekt", [Kontonr],
+            "Name", [Kontoname],
+            "Position", "2 P2 Saldenliste",
+            "Ist", COALESCE ( [P2Liste], 0 ) * 1.0,
+            "Soll", [P2Soll] * 1.0,
+            "Abweichung", ROUND ( COALESCE ( [P2Liste], 0 ) - [P2Soll], 2 )
+        ),
+        SELECTCOLUMNS (
+            Stichprobe,
+            "Teil", 2,
+            "Objekt", [Kontonr],
+            "Name", [Kontoname],
+            "Position", "3 P2 Differenz",
+            "Ist", COALESCE ( [P2Diff], 0 ) * 1.0,
+            "Soll", 0 * 1.0,
+            "Abweichung", ROUND ( COALESCE ( [P2Diff], 0 ) - 0, 2 )
+        ),
+        SELECTCOLUMNS (
+            Stichprobe,
+            "Teil", 2,
+            "Objekt", [Kontonr],
+            "Name", [Kontoname],
+            "Position", "4 P3 Sachposten",
+            "Ist", COALESCE ( [P3Bericht], 0 ) * 1.0,
+            "Soll", [P3Soll] * 1.0,
+            "Abweichung", ROUND ( COALESCE ( [P3Bericht], 0 ) - [P3Soll], 2 )
+        ),
+        SELECTCOLUMNS (
+            Stichprobe,
+            "Teil", 2,
+            "Objekt", [Kontonr],
+            "Name", [Kontoname],
+            "Position", "5 P3 Saldenliste",
+            "Ist", COALESCE ( [P3Liste], 0 ) * 1.0,
+            "Soll", [P3Soll] * 1.0,
+            "Abweichung", ROUND ( COALESCE ( [P3Liste], 0 ) - [P3Soll], 2 )
+        ),
+        SELECTCOLUMNS (
+            Stichprobe,
+            "Teil", 2,
+            "Objekt", [Kontonr],
+            "Name", [Kontoname],
+            "Position", "6 P3 Differenz",
+            "Ist", COALESCE ( [P3Diff], 0 ) * 1.0,
+            "Soll", 0 * 1.0,
+            "Abweichung", ROUND ( COALESCE ( [P3Diff], 0 ) - 0, 2 )
+        )
+    )
+VAR AbweichendeZeilen =
+    FILTER (
+        ADDCOLUMNS (
+            VALUES ( Abstimmzeile[Kennzahl] ),
+            "Diff",
+                CALCULATE (
+                    [Abstimmung Differenz],
+                    DimDatum[Jahr] = 2026,
+                    DimDatum[Monat] = 9
+                )
+        ),
+        [Diff] <> 0
+    )
+VAR AnzahlAbweichend =
+    COALESCE ( COUNTROWS ( AbweichendeZeilen ), 0 )
+VAR Teil3 =
+    UNION (
+        ROW (
+            "Teil", 3,
+            "Objekt", "Abstimmzeile",
+            "Name", "",
+            "Position", "0 Anzahl ungleich 0",
+            "Ist", AnzahlAbweichend * 1.0,
+            "Soll", 1 * 1.0,
+            "Abweichung", ROUND ( AnzahlAbweichend - 1, 2 )
+        ),
+        SELECTCOLUMNS (
+            AbweichendeZeilen,
+            "Teil", 3,
+            "Objekt", [Kennzahl],
+            "Name", "",
+            "Position", "1 Abstimmung Differenz",
+            "Ist", COALESCE ( [Diff], 0 ) * 1.0,
+            "Soll", IF ( [Kennzahl] = "Bestandswert", -240, 0 ) * 1.0,
+            "Abweichung",
+                ROUND (
+                    COALESCE ( [Diff], 0 )
+                        - IF ( [Kennzahl] = "Bestandswert", -240, 0 ),
+                    2
+                )
+        )
+    )
+VAR Ergebnis =
+    UNION ( Teil1, Teil2, Teil3 )
+RETURN
+    Ergebnis
+ORDER BY [Teil], [Objekt], [Position]

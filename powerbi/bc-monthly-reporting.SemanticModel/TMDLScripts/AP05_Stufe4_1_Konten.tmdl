@@ -1,0 +1,113 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'Abstimmung Differenz' = ```
+				// Zweck: Bericht minus Saldenliste der gewählten Zeile, auf Cent gerundet. Ein Rest bleibt stehen. Ohne Zeile bleibt das Measure leer.
+				// Quelle: COALESCE der beiden Abstimmungswerte auf 0, dann ROUND auf 2. Toleranz 0,00. Vorzeichen ist in beiden Wegen dasselbe.
+				VAR Kennzahl = SELECTEDVALUE ( Abstimmzeile[Kennzahl] )
+				VAR Differenz =
+					COALESCE ( [Abstimmung Bericht], 0 )
+						- COALESCE ( [Abstimmung Saldenliste], 0 )
+				RETURN
+					IF (
+						ISBLANK ( Kennzahl ),
+						BLANK (),
+						ROUND ( Differenz, 2 )
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Konto Bewegung Sachposten' = ```
+				// Zweck: Bewegung der Buchungskonten im Datumsfenster, P2. GuV und Bilanz, Summenkonten bleiben draußen.
+				// Quelle: Summe FactSachposten[Betrag], Kontoart Buchung, ohne Abschlussbuchung, Obergrenze Stichtag. Vorzeichen keines, Soll minus Haben.
+				CALCULATE (
+					SUM ( FactSachposten[Betrag] ),
+					DimKonto[Kontoart] = "Buchung",
+					FactSachposten[IstAbschlussbuchung] = FALSE (),
+					KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= [Stichtag] ) )
+				)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Konto Bewegung Saldenliste' = ```
+				// Zweck: Bewegung der Saldenliste im selben Fenster, P2. Endsaldo am Berichtsende minus Endsaldo am Tag vor dem Filteranfang.
+				// Quelle: FactSaldenliste SaldoSoll minus SaldoHaben, Kontoart Buchung. Vorzeichen keines, Soll minus Haben.
+				VAR Ende = [Berichtsende]
+				VAR Vortag = MIN ( DimDatum[Datum] ) - 1
+				VAR SaldoEnde =
+					CALCULATE (
+						SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+						REMOVEFILTERS ( DimDatum ),
+						DimKonto[Kontoart] = "Buchung",
+						FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] = Ende )
+					)
+				VAR SaldoVortag =
+					CALCULATE (
+						SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+						REMOVEFILTERS ( DimDatum ),
+						DimKonto[Kontoart] = "Buchung",
+						FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] = Vortag )
+					)
+				RETURN
+					SaldoEnde - SaldoVortag
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Konto Bewegung Differenz' = ```
+				// Zweck: Bericht minus Saldenliste auf Kontenebene, P2. Ein Rest bleibt stehen, auch wenn eine Seite leer ist.
+				// Quelle: COALESCE beider Bewegungen auf 0, dann ROUND auf 2. Vorzeichen ist in beiden Wegen dasselbe.
+				ROUND (
+					COALESCE ( [Konto Bewegung Sachposten], 0 )
+						- COALESCE ( [Konto Bewegung Saldenliste], 0 ),
+					2
+				)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Konto Saldo Sachposten' = ```
+				// Zweck: Saldo der Buchungskonten vom Anfang bis zum Berichtsende, P3. Das ist der Bestand, nicht die Bewegung des Monats.
+				// Quelle: Summe FactSachposten[Betrag], Kontoart Buchung, ohne Abschlussbuchung, Datum bis Berichtsende. Vorzeichen keines, Soll minus Haben.
+				VAR Ende = [Berichtsende]
+				RETURN
+					CALCULATE (
+						SUM ( FactSachposten[Betrag] ),
+						REMOVEFILTERS ( DimDatum ),
+						DimKonto[Kontoart] = "Buchung",
+						FactSachposten[IstAbschlussbuchung] = FALSE (),
+						FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= Ende )
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Konto Saldo Saldenliste' = ```
+				// Zweck: Endsaldo der Saldenliste am Berichtsende, P3.
+				// Quelle: FactSaldenliste SaldoSoll minus SaldoHaben an diesem Datum, Kontoart Buchung. Vorzeichen keines, Soll minus Haben.
+				VAR Ende = [Berichtsende]
+				RETURN
+					CALCULATE (
+						SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+						REMOVEFILTERS ( DimDatum ),
+						DimKonto[Kontoart] = "Buchung",
+						FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] = Ende )
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Konto Saldo Differenz' = ```
+				// Zweck: Bericht minus Saldenliste zum Stichtag, P3. Ein Rest bleibt stehen, auch wenn eine Seite leer ist.
+				// Quelle: COALESCE beider Salden auf 0, dann ROUND auf 2. Vorzeichen ist in beiden Wegen dasselbe.
+				ROUND (
+					COALESCE ( [Konto Saldo Sachposten], 0 )
+						- COALESCE ( [Konto Saldo Saldenliste], 0 ),
+					2
+				)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'

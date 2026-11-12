@@ -1,0 +1,27 @@
+powerBIAccCategory,glAccCategoryEntryNo,parentAccCategoryEntryNo
+Assets (Level 1 Category),1,0
+Liabilities (Level 1 Category),10,0
+Equity (Level 1 Category),14,0
+Revenue (Level 1 Category),18,0
+Cost of Goods Sold (Level 1 Category),26,0
+Expense (Level 1 Category),31,0
+Current Assets (Level 2 Category),2,1
+Current Liabilities (Level 2 Category),11,10
+Payroll Liabilities (Level 2 Category),12,10
+Longterm Liabilities (Level 2 Category),13,10
+Shareholder's Equity (Level 2 Category),15,14
+Inventory (Level 3 Category),6,2
+Interest Expense (Level 2 Category),34,31
+Tax Expense (Level 2 Category),43,31
+Extraordinary Expense (Level 2 Category),0,0
+Accounts Payable (Level 3 Category),0,0
+Accounts Receivable (Level 3 Category),4,2
+Purchases (Level 3 Category),0,0
+FX Losses Expense (Level 2 Category),0,0
+Depreciation and Amortization Expense (Level 2 Category),9,7
+Interest Revenue (Level 2 Category),24,18
+FX Gains Revenue (Level 2 Category),0,0
+Extraordinary Revenue (Level 2 Category),0,0
+Purchase Prepayments (Level 3 Category),5,2
+Liquid Assets (Level 3 Category),3,2
+Fixed Assets (Level 2 Category),7,1

@@ -1,0 +1,1221 @@
+table Kennzahlen
+	lineageTag: bd28b522-6a38-4f1c-860e-5695dce9b523
+
+	measure Stichtag =
+			// Zweck: Stichtag des Berichts, eine Quelle für den Zeitraum und den Bestand.
+			// Quelle: Spalte pStichtag[pStichtag]. Vorzeichen: keines.
+			MAX ( pStichtag[pStichtag] )
+		formatString: dd.MM.yyyy
+		displayFolder: '01 Basis'
+		lineageTag: 4cb2e00d-176b-4086-9292-fa747aefb431
+
+	measure Berichtsende =
+			// Zweck: Letztes Datum im Filter, gedeckelt mit dem Stichtag. Posten danach zählen in keinen Periodenwert.
+			// Quelle: DimDatum[Datum] und [Stichtag]. Vorzeichen: keines.
+			MIN ( MAX ( DimDatum[Datum] ), [Stichtag] )
+		formatString: dd.MM.yyyy
+		displayFolder: '01 Basis'
+		lineageTag: 5266ef08-4313-4f05-9b67-3fd7fdb45830
+
+	measure Vormonatsende =
+			// Zweck: Monatsende vor dem Berichtsende. Datum zum Nachsehen.
+			// Quelle: EOMONTH von [Berichtsende]. Die Bewegung nutzt den Tag vor dem Filteranfang. Vorzeichen: keines.
+			EOMONTH ( [Berichtsende], -1 )
+		formatString: dd.MM.yyyy
+		displayFolder: '01 Basis'
+		lineageTag: ed9241e8-33fb-417c-be8b-b193116d8212
+
+	measure Vorjahresende =
+			// Zweck: Der 31.12. des Vorjahres zum Berichtsende. Datum zum Nachsehen.
+			// Quelle: Jahr von [Berichtsende]. Das Geschäftsjahr ist das Kalenderjahr. Vorzeichen: keines.
+			DATE ( YEAR ( [Berichtsende] ) - 1, 12, 31 )
+		formatString: dd.MM.yyyy
+		displayFolder: '01 Basis'
+		lineageTag: 64ab35fd-bb5a-4258-b396-7ec1b0129527
+
+	measure 'Bewegung Sachposten' =
+			// Zweck: Eine Definition der vorzeichenrichtigen Bewegung. Die Kennzahl filtert daraus den Bucket, der Zeitraum kommt aus dem Filter.
+			// Quelle: FactSachposten[Betrag] mal DimKonto[vorzeichen], Kontoart Buchung, BilanzGuV GuV, ohne Abschlussbuchung. KEEPFILTERS hält die Obergrenze Stichtag im bestehenden Datumsfilter. Vorzeichen aus DimKonto. Leer bleibt leer.
+			CALCULATE (
+				SUMX (
+					FactSachposten,
+					FactSachposten[Betrag] * RELATED ( DimKonto[vorzeichen] )
+				),
+				DimKonto[Kontoart] = "Buchung",
+				DimKonto[BilanzGuV] = "GuV",
+				FactSachposten[IstAbschlussbuchung] = FALSE (),
+				KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= [Stichtag] ) )
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: '01 Basis'
+		lineageTag: 2199ebfe-26b5-4a51-808a-9b2f4e17bdd5
+
+	measure Umsatz =
+			// Zweck: Umsatz im Filterkontext. Monat, Jahr, Vorjahr und Plan benutzen diese Definition.
+			// Quelle: [Bewegung Sachposten], Bucket UMSATZ aus DimKonto[bucket]. Vorzeichen -1, eine Habenbuchung wird im Bericht positiv.
+			CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "UMSATZ" )
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 2d95cf2b-3670-407c-9eec-728a632ee4b6
+
+	measure 'Netto Wareneinsatz' =
+			// Zweck: Nettobewegung der Wareneinsatzkonten im Filterkontext, vor dem Abzug des Lagerzugangs. Das ist der Wert auf Kontoebene.
+			// Quelle: [Bewegung Sachposten], Bucket WARENEINSATZ aus DimKonto[bucket]. Vorzeichen +1, Aufwand bleibt positiv.
+			CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "WARENEINSATZ" )
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: d5871907-0d25-4c5a-8e80-0f4d97634728
+
+	measure Betriebsaufwand =
+			// Zweck: Betriebsaufwand im Filterkontext.
+			// Quelle: [Bewegung Sachposten], Bucket BETRIEBSAUFWAND aus DimKonto[bucket]. Vorzeichen +1, Aufwand bleibt positiv.
+			CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "BETRIEBSAUFWAND" )
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 2b6e1dc1-0e35-42ee-bda8-915845a3f724
+
+	measure Abschreibung =
+			// Zweck: Abschreibung im Filterkontext. Das ist die Bewegung, nicht der Endsaldo des Kontos.
+			// Quelle: [Bewegung Sachposten], Bucket ABSCHREIBUNG aus DimKonto[bucket]. Vorzeichen +1, Aufwand bleibt positiv.
+			CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "ABSCHREIBUNG" )
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: c9db5201-c29b-4050-b81f-54177a1199a4
+
+	measure 'Sonstiger Ertrag und Aufwand' =
+			// Zweck: Sonstiger Ertrag und Aufwand im Filterkontext. Geht in den EBIT ein.
+			// Quelle: [Bewegung Sachposten], Bucket SONSTIGER_ERTRAG_AUFWAND aus DimKonto[bucket]. Vorzeichen -1, Ertrag im Bericht positiv.
+			CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "SONSTIGER_ERTRAG_AUFWAND" )
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: ce6de53d-caa7-46b0-9ec4-8fc374ab2bcd
+
+	measure 'Zins und Finanz' =
+			// Zweck: Zins und Finanz im Filterkontext. Steht unter dem EBIT, die Merkzeile zur Fehlbuchung ist darin enthalten.
+			// Quelle: [Bewegung Sachposten], Bucket ZINS_FINANZ aus DimKonto[bucket]. Vorzeichen -1.
+			CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "ZINS_FINANZ" )
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 70deecbd-ee6f-497a-960d-a01b0ebb1836
+
+	measure Steuer =
+			// Zweck: Steuer im Filterkontext. Steht unter dem EBIT.
+			// Quelle: [Bewegung Sachposten], Bucket STEUER aus DimKonto[bucket]. Vorzeichen -1.
+			CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "STEUER" )
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: e3149283-60e5-42ec-980b-7616440d72cc
+
+	measure 'Nicht zugeordnet' =
+			// Zweck: GuV-Konten ohne Zeile in der Zuordnung. Steht unter dem EBIT.
+			// Quelle: [Bewegung Sachposten], Bucket NICHT_ZUGEORDNET aus DimKonto. Vorzeichen -1, wie ein Ertragskonto.
+			CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "NICHT_ZUGEORDNET" )
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 5cce856d-237b-4269-bba3-5b62254727bc
+
+	measure 'Lagerzugang Verrechnung' =
+			// Zweck: Lagerzugang ohne Einkaufsrechnung im Filterkontext. Im Bericht steht der Betrag positiv.
+			// Quelle: FactWertposten[KostenAnFibu], Artikelpostenart Positive Adjmt. oder Output, Vergleich ohne Großschreibung. Vorzeichen im Bericht plus. Das Habenvorzeichen für den Wareneinsatz ist minus diese Summe. Leer bleibt leer.
+			CALCULATE (
+				SUM ( FactWertposten[KostenAnFibu] ),
+				   KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= [Stichtag] ) ),
+				FILTER (
+					ALL ( FactWertposten[Artikelpostenart] ),
+					LOWER ( FactWertposten[Artikelpostenart] )
+						IN { "positive adjmt.", "output" }
+				)
+			)
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: be945dd1-e7fd-4a03-972d-ca3206182e9d
+
+	measure Wareneinsatz =
+			// Zweck: Wareneinsatz im Filterkontext, nur auf Summenebene. FactWertposten hat keine Beziehung zu DimKonto, deshalb auf Kontoebene [Netto Wareneinsatz] nehmen.
+			// Quelle: [Netto Wareneinsatz] minus den Lagerzugang mit Habenvorzeichen. Der Bericht zeigt den Lagerzugang positiv, das Habenvorzeichen ist minus diese Summe. Vorzeichen der Nettobewegung +1.
+			VAR Netto = [Netto Wareneinsatz]
+			VAR ZugangHaben = - [Lagerzugang Verrechnung]
+			RETURN
+				Netto - ZugangHaben
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: a120dca3-063c-46fe-b264-c93272a31be9
+
+	measure Rohertrag =
+			// Zweck: Merkzeile im Filterkontext. Wird im EBIT nicht noch einmal addiert.
+			// Quelle: [Umsatz] minus [Wareneinsatz]. Vorzeichen steckt in den beiden Bausteinen.
+			[Umsatz] - [Wareneinsatz]
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: f39a398b-402e-4aae-8350-20d5ec26fadd
+
+	measure EBIT =
+			// Zweck: Betriebsergebnis im Filterkontext. Zins, Steuer, Lagerzugang und nicht zugeordnete Konten stehen darunter.
+			// Quelle: [Umsatz] plus [Sonstiger Ertrag und Aufwand] minus [Wareneinsatz] minus [Betriebsaufwand] minus [Abschreibung]. Vorzeichen steckt in den Bausteinen.
+			[Umsatz]
+				+ [Sonstiger Ertrag und Aufwand]
+				- [Wareneinsatz]
+				- [Betriebsaufwand]
+				- [Abschreibung]
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 97cd7d42-7a8f-4ede-baa4-b6e992f6f7e6
+
+	measure 'Ergebnis GuV' =
+			// Zweck: Vorzeichenrichtiges Ergebnis der zugeordneten GuV-Konten. Die Wareneinsatzkonten gehen einmal als Nettobewegung ein.
+			// Quelle: [EBIT] plus [Zins und Finanz] plus [Steuer] plus [Lagerzugang Verrechnung] plus [Nicht zugeordnet]. Der Lagerzugang kommt hier wieder dazu, nachdem der Wareneinsatz ihn aus der Nettobewegung genommen hat. Vorzeichen steckt in den Bausteinen.
+			[EBIT]
+				+ [Zins und Finanz]
+				+ [Steuer]
+				+ [Lagerzugang Verrechnung]
+				+ [Nicht zugeordnet]
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 51de1141-8a18-437a-947c-fd0c9f79b87e
+
+	measure 'Offene Forderungen' =
+			// Zweck: Offene Forderungen zum Berichtsende. Das ist ein Bestand, nicht die Bewegung des Monats.
+			// Quelle: FactDebitorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01. Vorzeichen wie in den Posten, Soll bleibt positiv. Leer bleibt leer.
+			VAR Ende = [Berichtsende]
+			RETURN
+				CALCULATE (
+					SUMX (
+						FILTER (
+							ADDCOLUMNS (
+								VALUES ( FactDebitorenposten[Postennr] ),
+								"@Rest", CALCULATE ( SUM ( FactDebitorenposten[Betrag] ) )
+							),
+							ABS ( [@Rest] ) >= 0.01
+						),
+						[@Rest]
+					),
+					REMOVEFILTERS ( DimDatum ),
+					DimDatum[Datum] <= Ende
+				)
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 4c58b4ea-16e0-4ce1-97fa-e6e57a6ff806
+
+	measure Verbindlichkeiten =
+			// Zweck: Offene Verbindlichkeiten zum Berichtsende, im Bericht positiv.
+			// Quelle: FactKreditorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01. Die Posten stehen im Haben. Mal minus 1 dreht das Vorzeichen und lässt einen leeren Wert leer.
+			VAR Ende = [Berichtsende]
+			VAR Summe =
+				CALCULATE (
+					SUMX (
+						FILTER (
+							ADDCOLUMNS (
+								VALUES ( FactKreditorenposten[Postennr] ),
+								"@Rest", CALCULATE ( SUM ( FactKreditorenposten[Betrag] ) )
+							),
+							ABS ( [@Rest] ) >= 0.01
+						),
+						[@Rest]
+					),
+					REMOVEFILTERS ( DimDatum ),
+					DimDatum[Datum] <= Ende
+				)
+			RETURN
+				Summe * -1
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 208c5e46-8461-4a7a-ba45-06bd9cb5cd8b
+
+	measure Bestandswert =
+			// Zweck: Bestandswert zum Berichtsende. Eine bekannte Differenz zur Saldenliste bleibt stehen.
+			// Quelle: Summe FactWertposten[EinstandsbetragTatsächlich], Buchungsdatum bis [Berichtsende]. Vorzeichen wie in den Wertposten, Bestand im Soll positiv. Leer bleibt leer.
+			VAR Ende = [Berichtsende]
+			RETURN
+				CALCULATE (
+					SUM ( FactWertposten[EinstandsbetragTatsächlich] ),
+					REMOVEFILTERS ( DimDatum ),
+					DimDatum[Datum] <= Ende
+				)
+		formatString: #,0.00
+		displayFolder: '01 Basis'
+		lineageTag: 481b90dd-ae3a-4781-a94a-59d0906a5bce
+
+	measure 'Endsaldo Bericht' =
+			// Zweck: Eine Definition des vorzeichenrichtigen Endsaldos der GuV-Buchungskonten am Datum im Filter.
+			// Quelle: FactSaldenliste[SaldoSoll] minus FactSaldenliste[SaldoHaben], mal DimKonto[vorzeichen]. Kontoart Buchung, damit Überschrift, Summe, Von-Summe und Bis-Summe draußen bleiben. Vorzeichen aus DimKonto. Leer bleibt leer.
+			SUMX (
+				FILTER (
+					DimKonto,
+					DimKonto[Kontoart] = "Buchung"
+						&& DimKonto[BilanzGuV] = "GuV"
+						&& NOT ISBLANK ( DimKonto[vorzeichen] )
+				),
+				DimKonto[vorzeichen]
+					* CALCULATE (
+						SUM ( FactSaldenliste[SaldoSoll] )
+							- SUM ( FactSaldenliste[SaldoHaben] )
+					)
+			)
+		formatString: #,0.00
+		isHidden
+		displayFolder: '06 Abstimmung'
+		lineageTag: 6eeb23c7-f403-4a1b-8db7-b4ed6312fd52
+
+	measure 'Saldenliste Bewegung' =
+			// Zweck: Eine Bewegung der Saldenliste für Monat, YTD und Jahr. Endsaldo am Berichtsende minus Endsaldo am Tag vor dem ersten Datum im Filter.
+			// Quelle: [Endsaldo Bericht]. Im September ist der Vortag der 31.08., im Fenster ab dem 1. Januar der 31.12. des Vorjahres. Vorzeichen aus DimKonto.
+			VAR Ende = [Berichtsende]
+			VAR Vortag = MIN ( DimDatum[Datum] ) - 1
+			RETURN
+				CALCULATE (
+					[Endsaldo Bericht],
+					REMOVEFILTERS ( DimDatum ),
+					DimDatum[Datum] = Ende
+				)
+					- CALCULATE (
+						[Endsaldo Bericht],
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] = Vortag
+					)
+		formatString: #,0.00
+		isHidden
+		displayFolder: '06 Abstimmung'
+		lineageTag: 31f9de37-7e41-4a29-bcdb-56be3b1fcd85
+
+	measure 'Abstimmung Bericht' =
+			// Zweck: Berichtswert der Zeile in Abstimmzeile. Jede Kennzahl bleibt die Definition aus 01 Basis.
+			// Quelle: SWITCH auf SELECTEDVALUE von Abstimmzeile[Kennzahl]. Vorzeichen steckt in den Basis-Measures.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", [Umsatz],
+				"Wareneinsatz", [Wareneinsatz],
+				"Rohertrag", [Rohertrag],
+				"Betriebsaufwand", [Betriebsaufwand],
+				"Abschreibung", [Abschreibung],
+				"Sonstiger Ertrag und Aufwand", [Sonstiger Ertrag und Aufwand],
+				"EBIT", [EBIT],
+				"Zins und Finanz", [Zins und Finanz],
+				"Nicht zugeordnet", [Nicht zugeordnet],
+				"Ergebnis GuV", [Ergebnis GuV],
+				"Offene Forderungen", [Offene Forderungen],
+				"Verbindlichkeiten", [Verbindlichkeiten],
+				"Bestandswert", [Bestandswert]
+			)
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: 61beb45a-83e4-48f0-bb1c-8caf13b259ba
+
+	measure 'Abstimmung Saldenliste' =
+			// Zweck: Saldenliste zur Zeile in Abstimmzeile. Dieselben Formeln wie in 01 Basis, die GuV-Bausteine kommen aus [Saldenliste Bewegung].
+			// Quelle: Endsalden mal DimKonto[vorzeichen]. Kontrollkonten aus config\reconciliation.yaml: Forderungen 1202 und 1203, Verbindlichkeiten 3301 und 3302 im Bericht positiv, Lager 1001, 1101 und 1102. Vorzeichen wie in den Basis-Measures.
+			VAR Umsatz =
+				CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "UMSATZ" )
+			VAR Netto =
+				CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "WARENEINSATZ" )
+			VAR ZugangHaben = - [Lagerzugang Verrechnung]
+			VAR Wareneinsatz = Netto - ZugangHaben
+			VAR Betrieb =
+				CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "BETRIEBSAUFWAND" )
+			VAR Abschreibung =
+				CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "ABSCHREIBUNG" )
+			VAR Sonstig =
+				CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "SONSTIGER_ERTRAG_AUFWAND" )
+			VAR Ebit =
+				Umsatz + Sonstig - Wareneinsatz - Betrieb - Abschreibung
+			VAR Zins =
+				CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "ZINS_FINANZ" )
+			VAR Steuer =
+				CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "STEUER" )
+			VAR Nicht =
+				CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "NICHT_ZUGEORDNET" )
+			VAR Ergebnis =
+				Ebit + Zins + Steuer + [Lagerzugang Verrechnung] + Nicht
+			VAR Ende = [Berichtsende]
+			VAR Forderungen =
+				CALCULATE (
+					SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+					REMOVEFILTERS ( FactSaldenliste ),
+					REMOVEFILTERS ( DimDatum ),
+					REMOVEFILTERS ( DimKonto ),
+					DimDatum[Datum] = Ende,
+					DimKonto[Kontonr] IN { "1202", "1203" },
+					DimKonto[Kontoart] = "Buchung"
+				)
+			VAR Verbindlichkeiten =
+				CALCULATE (
+					SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+					REMOVEFILTERS ( FactSaldenliste ),
+					REMOVEFILTERS ( DimDatum ),
+					REMOVEFILTERS ( DimKonto ),
+					DimDatum[Datum] = Ende,
+					DimKonto[Kontonr] IN { "3301", "3302" },
+					DimKonto[Kontoart] = "Buchung"
+				) * -1
+			VAR Bestand =
+				CALCULATE (
+					SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+					REMOVEFILTERS ( FactSaldenliste ),
+					REMOVEFILTERS ( DimDatum ),
+					REMOVEFILTERS ( DimKonto ),
+					DimDatum[Datum] = Ende,
+					DimKonto[Kontonr] IN { "1001", "1101", "1102" },
+					DimKonto[Kontoart] = "Buchung"
+				)
+			RETURN
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", Umsatz,
+					"Wareneinsatz", Wareneinsatz,
+					"Rohertrag", Umsatz - Wareneinsatz,
+					"Betriebsaufwand", Betrieb,
+					"Abschreibung", Abschreibung,
+					"Sonstiger Ertrag und Aufwand", Sonstig,
+					"EBIT", Ebit,
+					"Zins und Finanz", Zins,
+					"Nicht zugeordnet", Nicht,
+					"Ergebnis GuV", Ergebnis,
+					"Offene Forderungen", Forderungen,
+					"Verbindlichkeiten", Verbindlichkeiten,
+					"Bestandswert", Bestand
+				)
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: 72a4d5b5-d215-4203-bb04-634533078b72
+
+	measure 'Abstimmung Differenz' =
+			// Zweck: Bericht minus Saldenliste der gewählten Zeile, auf Cent gerundet. Ein Rest bleibt stehen. Ohne Zeile bleibt das Measure leer.
+			// Quelle: COALESCE der beiden Abstimmungswerte auf 0, dann ROUND auf 2. Toleranz 0,00. Vorzeichen ist in beiden Wegen dasselbe.
+			VAR Kennzahl = SELECTEDVALUE ( Abstimmzeile[Kennzahl] )
+			VAR Differenz =
+				COALESCE ( [Abstimmung Bericht], 0 )
+					- COALESCE ( [Abstimmung Saldenliste], 0 )
+			RETURN
+				IF (
+					ISBLANK ( Kennzahl ),
+					BLANK (),
+					ROUND ( Differenz, 2 )
+				)
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: f9ccac75-4d7d-4e6c-a071-2e28570ea70e
+
+	measure 'Abstimmung Status' =
+			// Zweck: Status der gewählten Zeile. Ohne Zeile bleibt er leer.
+			// Quelle: config\reconciliation.yaml, bekannte_differenzen, Prüfung P8, Betrag -240,00, Beleg 108210, nur bei Kennzahl Bestandswert. 0,00 ist abgeglichen, -240,00 ist erklärt, sonst Differenz. Vergleich auf Cent.
+			VAR Kennzahl = SELECTEDVALUE ( Abstimmzeile[Kennzahl] )
+			VAR Differenz = ROUND ( COALESCE ( [Abstimmung Differenz], 0 ), 2 )
+			RETURN
+				IF (
+					ISBLANK ( Kennzahl ),
+					BLANK (),
+					SWITCH (
+						TRUE (),
+						Differenz = 0, "abgeglichen",
+						Kennzahl = "Bestandswert" && Differenz = -240, "erklärt",
+						"Differenz"
+					)
+				)
+		displayFolder: '06 Abstimmung'
+		lineageTag: ffb12222-75a0-42a3-a24e-94491e19e612
+
+	measure Planfaktor =
+			// Zweck: Faktor für den Demo-Plan. Jede Kennzahl wird damit aus dem Vorjahr abgeleitet.
+			// Quelle: Konstante 1,05. Demo-Plan, kein BC-Budget. Vorzeichen: keines.
+			1.05
+		formatString: 0.00
+		displayFolder: '03 Abweichung'
+		lineageTag: 55796af3-0c09-4968-a981-469c550d719a
+
+	measure Rohertragsmarge =
+			// Zweck: Rohertrag im Verhältnis zum Umsatz. Monat, YTD, Vorjahr und Plan nutzen diese Definition.
+			// Quelle: DIVIDE ( [Rohertrag], [Umsatz] ). Vorzeichen steckt in den Bausteinen.
+			DIVIDE ( [Rohertrag], [Umsatz] )
+		formatString: 0.0%
+		displayFolder: '01 Basis'
+		lineageTag: a009b742-3141-45d7-94db-69184cec7d3d
+
+	measure 'Konto Bewegung Sachposten' =
+			// Zweck: Bewegung der Buchungskonten im Datumsfenster, P2. GuV und Bilanz, Summenkonten bleiben draußen.
+			// Quelle: Summe FactSachposten[Betrag], Kontoart Buchung, ohne Abschlussbuchung, Obergrenze Stichtag. Vorzeichen keines, Soll minus Haben.
+			CALCULATE (
+				SUM ( FactSachposten[Betrag] ),
+				DimKonto[Kontoart] = "Buchung",
+				FactSachposten[IstAbschlussbuchung] = FALSE (),
+				KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= [Stichtag] ) )
+			)
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: bd7ffc29-b0dd-48cb-aa95-26cb83a1484f
+
+	measure 'Konto Bewegung Saldenliste' =
+			// Zweck: Bewegung der Saldenliste im selben Fenster, P2. Endsaldo am Berichtsende minus Endsaldo am Tag vor dem Filteranfang.
+			// Quelle: FactSaldenliste SaldoSoll minus SaldoHaben, Kontoart Buchung. Vorzeichen keines, Soll minus Haben.
+			VAR Ende = [Berichtsende]
+			VAR Vortag = MIN ( DimDatum[Datum] ) - 1
+			VAR SaldoEnde =
+				CALCULATE (
+					SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+					REMOVEFILTERS ( DimDatum ),
+					DimKonto[Kontoart] = "Buchung",
+					FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] = Ende )
+				)
+			VAR SaldoVortag =
+				CALCULATE (
+					SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+					REMOVEFILTERS ( DimDatum ),
+					DimKonto[Kontoart] = "Buchung",
+					FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] = Vortag )
+				)
+			RETURN
+				SaldoEnde - SaldoVortag
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: 6767c218-ea6a-4214-85b7-616269408022
+
+	measure 'Konto Bewegung Differenz' =
+			// Zweck: Bericht minus Saldenliste auf Kontenebene, P2. Ein Rest bleibt stehen, auch wenn eine Seite leer ist.
+			// Quelle: COALESCE beider Bewegungen auf 0, dann ROUND auf 2. Vorzeichen ist in beiden Wegen dasselbe.
+			ROUND (
+				COALESCE ( [Konto Bewegung Sachposten], 0 )
+					- COALESCE ( [Konto Bewegung Saldenliste], 0 ),
+				2
+			)
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: aabad923-56be-489a-9579-0478f281c2da
+
+	measure 'Konto Saldo Sachposten' =
+			// Zweck: Saldo der Buchungskonten vom Anfang bis zum Berichtsende, P3. Das ist der Bestand, nicht die Bewegung des Monats.
+			// Quelle: Summe FactSachposten[Betrag], Kontoart Buchung, ohne Abschlussbuchung, Datum bis Berichtsende. Vorzeichen keines, Soll minus Haben.
+			VAR Ende = [Berichtsende]
+			RETURN
+				CALCULATE (
+					SUM ( FactSachposten[Betrag] ),
+					REMOVEFILTERS ( DimDatum ),
+					DimKonto[Kontoart] = "Buchung",
+					FactSachposten[IstAbschlussbuchung] = FALSE (),
+					FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= Ende )
+				)
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: 307931a3-5b94-472f-b5a0-17b8815907fe
+
+	measure 'Konto Saldo Saldenliste' =
+			// Zweck: Endsaldo der Saldenliste am Berichtsende, P3.
+			// Quelle: FactSaldenliste SaldoSoll minus SaldoHaben an diesem Datum, Kontoart Buchung. Vorzeichen keines, Soll minus Haben.
+			VAR Ende = [Berichtsende]
+			RETURN
+				CALCULATE (
+					SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+					REMOVEFILTERS ( DimDatum ),
+					DimKonto[Kontoart] = "Buchung",
+					FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] = Ende )
+				)
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: a3f6b031-2f7f-4b00-91ce-05a401c4451f
+
+	measure 'Konto Saldo Differenz' =
+			// Zweck: Bericht minus Saldenliste zum Stichtag, P3. Ein Rest bleibt stehen, auch wenn eine Seite leer ist.
+			// Quelle: COALESCE beider Salden auf 0, dann ROUND auf 2. Vorzeichen ist in beiden Wegen dasselbe.
+			ROUND (
+				COALESCE ( [Konto Saldo Sachposten], 0 )
+					- COALESCE ( [Konto Saldo Saldenliste], 0 ),
+				2
+			)
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: 4b2b8be3-69d6-48cb-b95a-2ffa91beee1f
+
+	measure 'Konto Abweichung' =
+			// Zweck: Betrag der Bewegungsdifferenz plus Betrag der Saldodifferenz. Beide Reste zählen, auch wenn das Vorzeichen verschieden ist.
+			// Quelle: ABS von Konto Bewegung Differenz plus ABS von Konto Saldo Differenz. Vorzeichen keines, das Ergebnis bleibt positiv.
+			ABS ( [Konto Bewegung Differenz] )
+				+ ABS ( [Konto Saldo Differenz] )
+		formatString: #,0.00
+		displayFolder: '06 Abstimmung'
+		lineageTag: 96aafcaf-b8a9-48d0-9663-3e87c074bfe8
+
+	measure 'Offene Forderungen überfällig' =
+			// Zweck: Offene Forderungen zum Berichtsende, deren Fälligkeit vor dem Berichtsende liegt. Ein Posten, der am Berichtsende fällig ist, zählt nicht.
+			// Quelle: FactDebitorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01, Fälligkeit je Postennr aus FactDebitorenposten[Fälligkeit]. Vorzeichen wie in den Posten, Soll bleibt positiv. Leer bleibt leer.
+			VAR Bis = [Berichtsende]
+			RETURN
+				CALCULATE (
+					SUMX (
+						FILTER (
+							ADDCOLUMNS (
+								VALUES ( FactDebitorenposten[Postennr] ),
+								"@Rest", CALCULATE ( SUM ( FactDebitorenposten[Betrag] ) ),
+								"@Faellig", CALCULATE ( MAX ( FactDebitorenposten[Fälligkeit] ) )
+							),
+							VAR Rest = [@Rest]
+							VAR Faellig = [@Faellig]
+							RETURN
+								ABS ( Rest ) >= 0.01
+									&& NOT ISBLANK ( Faellig )
+									&& Faellig < Bis
+						),
+						[@Rest]
+					),
+					REMOVEFILTERS ( DimDatum ),
+					DimDatum[Datum] <= Bis
+				)
+		formatString: #,0.00
+		displayFolder: '04 Forderungen'
+		lineageTag: 5f751039-c506-4536-b4b2-05c3d86d6a87
+
+	measure 'Überfällig Anteil' =
+			// Zweck: Anteil der überfälligen offenen Forderungen an den offenen Forderungen.
+			// Quelle: DIVIDE von [Offene Forderungen überfällig] durch [Offene Forderungen]. Vorzeichen bleibt das der Beträge.
+			DIVIDE ( [Offene Forderungen überfällig], [Offene Forderungen] )
+		formatString: 0.0%
+		displayFolder: '04 Forderungen'
+		lineageTag: dbc0a5c4-e54d-4c53-a1b2-d888f701f1cb
+
+	measure 'Umsatz YTD' =
+			// Zweck: Umsatz seit Jahresanfang für die Karte auf Seite 1.
+			// Quelle: [Umsatz] mit Zeitauswahl YTD. Vorzeichen bleibt das des Umsatzes.
+			CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "YTD" )
+		formatString: #,0
+		displayFolder: '07 Karten'
+		lineageTag: e68beeaf-458d-4a77-af33-829efdab4f94
+
+	measure 'Umsatz Δ VJ' =
+			// Zweck: Abweichung des Monatsumsatzes zum Vorjahr für die Karte.
+			// Quelle: [Umsatz] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+			CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+		formatString: +#,0;-#,0;0
+		displayFolder: '07 Karten'
+		lineageTag: 292e405f-d412-4b38-928e-5bc1251ad62f
+
+	measure 'Umsatz Δ VJ %' =
+			// Zweck: Prozentuale Abweichung des Monatsumsatzes zum Vorjahr für die Karte.
+			// Quelle: [Umsatz] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz.
+			CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '07 Karten'
+		lineageTag: d2319f97-25ea-4695-9553-d1e5ee574fbf
+
+	measure 'Umsatz Δ Plan' =
+			// Zweck: Abweichung des Monatsumsatzes zum Plan für die Karte.
+			// Quelle: [Umsatz] mit Zeitauswahl Δ Plan Monat. Vorzeichen ist die Differenz.
+			CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+		formatString: +#,0;-#,0;0
+		displayFolder: '07 Karten'
+		lineageTag: 167cec51-53fd-472a-a717-8987e083ef90
+
+	measure 'Umsatz Δ Plan %' =
+			// Zweck: Prozentuale Abweichung des Monatsumsatzes zum Plan für die Karte.
+			// Quelle: [Umsatz] mit Zeitauswahl Δ Plan Monat %. Vorzeichen ist die relative Differenz.
+			CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat %" )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '07 Karten'
+		lineageTag: 66e93c1a-2983-4cdb-bdcd-67debba89beb
+
+	measure 'Rohertrag YTD' =
+			// Zweck: Rohertrag seit Jahresanfang für die Karte auf Seite 1.
+			// Quelle: [Rohertrag] mit Zeitauswahl YTD. Vorzeichen bleibt das des Rohertrags.
+			CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "YTD" )
+		formatString: #,0
+		displayFolder: '07 Karten'
+		lineageTag: c5a10f28-c7c9-4bb0-af15-c14c8ad651bd
+
+	measure 'Rohertrag Δ VJ' =
+			// Zweck: Abweichung des Monatsrohertrags zum Vorjahr für die Karte.
+			// Quelle: [Rohertrag] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+			CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+		formatString: +#,0;-#,0;0
+		displayFolder: '07 Karten'
+		lineageTag: ebabc205-94b3-4481-b5e0-bbae2793e48c
+
+	measure 'Rohertrag Δ VJ %' =
+			// Zweck: Prozentuale Abweichung des Monatsrohertrags zum Vorjahr für die Karte.
+			// Quelle: [Rohertrag] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz.
+			CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '07 Karten'
+		lineageTag: 3eaf86b8-084a-4b75-9136-24f7d7c8649e
+
+	measure 'Rohertrag Δ Plan' =
+			// Zweck: Abweichung des Monatsrohertrags zum Plan für die Karte.
+			// Quelle: [Rohertrag] mit Zeitauswahl Δ Plan Monat. Vorzeichen ist die Differenz.
+			CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+		formatString: +#,0;-#,0;0
+		displayFolder: '07 Karten'
+		lineageTag: 74a6af5c-3ff3-4120-8bb5-4853a029453e
+
+	measure 'Rohertrag Δ Plan %' =
+			// Zweck: Prozentuale Abweichung des Monatsrohertrags zum Plan für die Karte.
+			// Quelle: [Rohertrag] mit Zeitauswahl Δ Plan Monat %. Vorzeichen ist die relative Differenz.
+			CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat %" )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '07 Karten'
+		lineageTag: 2660a435-380d-44ec-93c4-3c5bc38841e6
+
+	measure 'Rohertragsmarge YTD' =
+			// Zweck: Rohertragsmarge seit Jahresanfang für die Karte auf Seite 1.
+			// Quelle: [Rohertragsmarge] mit Zeitauswahl YTD. Vorzeichen steckt in den Bausteinen.
+			CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "YTD" )
+		formatString: 0.0%
+		displayFolder: '07 Karten'
+		lineageTag: 1a27929b-72fa-404e-8b15-44367579e89b
+
+	measure 'Rohertragsmarge Δ VJ' =
+			// Zweck: Abweichung der Monatsmarge zum Vorjahr in Prozentpunkten für die Karte.
+			// Quelle: [Rohertragsmarge] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz der Marge.
+			CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+		formatString: 0.0%
+		displayFolder: '07 Karten'
+		lineageTag: d186c53a-f4ee-4f8b-9f27-9d4991a3a272
+
+	measure 'Rohertragsmarge Δ Plan' =
+			// Zweck: Abweichung der Monatsmarge zum Plan in Prozentpunkten für die Karte.
+			// Quelle: [Rohertragsmarge] mit Zeitauswahl Δ Plan Monat. Vorzeichen ist die Differenz der Marge.
+			CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+		formatString: 0.0%
+		displayFolder: '07 Karten'
+		lineageTag: 90018380-43cc-44b9-845a-bd89618ea57e
+
+	measure 'EBIT YTD' =
+			// Zweck: EBIT seit Jahresanfang für die Karte auf Seite 1.
+			// Quelle: [EBIT] mit Zeitauswahl YTD. Vorzeichen bleibt das des EBIT.
+			CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "YTD" )
+		formatString: #,0
+		displayFolder: '07 Karten'
+		lineageTag: af22a13b-7505-4334-8950-5182b6b4bb9d
+
+	measure 'EBIT Δ VJ' =
+			// Zweck: Abweichung des Monatsergebnisses zum Vorjahr für die Karte.
+			// Quelle: [EBIT] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+			CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+		formatString: +#,0;-#,0;0
+		displayFolder: '07 Karten'
+		lineageTag: 15b084e8-196e-43ab-81e8-31e2b3e7e2bb
+
+	measure 'EBIT Δ VJ %' =
+			// Zweck: Prozentuale Abweichung des Monatsergebnisses zum Vorjahr für die Karte.
+			// Quelle: [EBIT] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz.
+			CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '07 Karten'
+		lineageTag: ddc836da-a816-42db-933b-f6eacb15342d
+
+	measure 'EBIT Δ Plan' =
+			// Zweck: Abweichung des Monatsergebnisses zum Plan für die Karte.
+			// Quelle: [EBIT] mit Zeitauswahl Δ Plan Monat. Vorzeichen ist die Differenz.
+			CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+		formatString: +#,0;-#,0;0
+		displayFolder: '07 Karten'
+		lineageTag: ef46b104-f186-4a9e-8e08-8a7c690ffda2
+
+	measure 'EBIT Δ Plan %' =
+			// Zweck: Prozentuale Abweichung des Monatsergebnisses zum Plan für die Karte.
+			// Quelle: [EBIT] mit Zeitauswahl Δ Plan Monat %. Vorzeichen ist die relative Differenz.
+			CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat %" )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '07 Karten'
+		lineageTag: 9945191c-0306-472b-bc0b-429525c30169
+
+	measure 'Offene Forderungen Δ VJ' =
+			// Zweck: Abweichung der offenen Forderungen zum Vorjahr Monat für die Karte.
+			// Quelle: [Offene Forderungen] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz. Das Vorjahr der Offenen Forderungen ist 0,00, die Prozent-Abweichung ist deshalb leer.
+			CALCULATE ( [Offene Forderungen], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+		formatString: +#,0;-#,0;0
+		displayFolder: '07 Karten'
+		lineageTag: 13f40abd-5dd6-4889-bb0f-3f0f25aa6169
+
+	measure 'Offene Forderungen Δ VJ %' =
+			// Zweck: Prozentuale Abweichung der offenen Forderungen zum Vorjahr Monat für die Karte.
+			// Quelle: [Offene Forderungen] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz. Das Vorjahr der Offenen Forderungen ist 0,00, die Prozent-Abweichung ist deshalb leer.
+			CALCULATE ( [Offene Forderungen], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '07 Karten'
+		lineageTag: 6c52bc40-e9ca-4d43-b4e1-19a77e117802
+
+	measure 'Bestandswert Δ VJ' =
+			// Zweck: Abweichung des Bestandswerts zum Vorjahr Monat für die Karte.
+			// Quelle: [Bestandswert] mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+			CALCULATE ( [Bestandswert], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+		formatString: +#,0;-#,0;0
+		displayFolder: '07 Karten'
+		lineageTag: ff9d2101-676e-4019-8776-4492e3baba3d
+
+	measure 'Bestandswert Δ VJ %' =
+			// Zweck: Prozentuale Abweichung des Bestandswerts zum Vorjahr Monat für die Karte.
+			// Quelle: [Bestandswert] mit Zeitauswahl Δ VJ Monat %. Vorzeichen ist die relative Differenz.
+			CALCULATE ( [Bestandswert], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '07 Karten'
+		lineageTag: 90304c5e-6562-428d-b31e-d3121668f0ce
+
+	measure 'Im Trendfenster' =
+			// Zweck: Liefert 1, wenn der letzte Tag im Filter nach dem Monatsende 13 Monate vor dem Stichtag liegt und höchstens am Monatsende des Stichtags. Sonst leer. Visual-Filter ist 1.
+			// Quelle: [Stichtag] und MAX von DimDatum[Datum]. Der Slicer wird nicht gelesen. Vorzeichen keines.
+			VAR Stich = [Stichtag]
+			VAR Letzter = MAX ( DimDatum[Datum] )
+			VAR Untergrenze = EOMONTH ( Stich, -13 )
+			VAR Obergrenze = EOMONTH ( Stich, 0 )
+			RETURN
+				IF (
+					NOT ISBLANK ( Letzter )
+						&& Letzter > Untergrenze
+						&& Letzter <= Obergrenze,
+					1
+				)
+		formatString: 0
+		displayFolder: '07 Karten'
+		lineageTag: 8f5b7ce6-3d1c-428e-9f9d-f595ada31da4
+
+	measure 'Brücke Wert' =
+			// Zweck: Wert eines Schritts der GuV-Brücke. Die Summe der Schritte ist der EBIT, der Wasserfall zeigt diese Summe als Total.
+			// Quelle: SWITCH auf Bruecke[Schritt]. Vorzeichen dreht bei Wareneinsatz, Betriebsaufwand und Abschreibung.
+			SWITCH (
+				SELECTEDVALUE ( Bruecke[Schritt] ),
+				"Umsatz", [Umsatz],
+				"Wareneinsatz", - [Wareneinsatz],
+				"Betriebsaufwand", - [Betriebsaufwand],
+				"Abschreibung", - [Abschreibung],
+				"Sonstiger Ertrag und Aufwand", [Sonstiger Ertrag und Aufwand]
+			)
+		formatString: #,0
+		displayFolder: '07 Karten'
+		lineageTag: 95527db5-b95d-46e2-bd66-a8fedf471196
+
+	measure 'GuV Monat' =
+			// Zweck: Wert der GuV-Zeile im Berichtsmonat. Jede Zeile bleibt die Definition aus 01 Basis.
+			// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Monat. Vorzeichen bleibt das der Zeile. Aufwand bleibt positiv.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Monat" ),
+				"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Monat" ),
+				"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Monat" ),
+				"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Monat" ),
+				"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Monat" ),
+				"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Monat" ),
+				"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Monat" ),
+				"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Monat" )
+			)
+		formatString: #,0
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: 1ac8419c-9655-48f7-85ef-cb21024b038f
+
+	measure 'GuV Vorjahr Monat' =
+			// Zweck: Wert der GuV-Zeile im Vorjahresmonat. Dieselbe Definition wie im Berichtsmonat.
+			// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Vorjahr Monat. Vorzeichen bleibt das der Zeile.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+				"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+				"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+				"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+				"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+				"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+				"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" ),
+				"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Vorjahr Monat" )
+			)
+		formatString: #,0
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: 3963abc7-b3ba-4fa2-b253-bd9777076725
+
+	measure 'GuV Δ VJ' =
+			// Zweck: Abweichung der GuV-Zeile zum Vorjahr Monat.
+			// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Δ VJ Monat. Vorzeichen ist die Differenz.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+				"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+				"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+				"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+				"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+				"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+				"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" ),
+				"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat" )
+			)
+		formatString: +#,0;-#,0;0
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: 0e948432-433c-4dcf-8fec-261147fa80bd
+
+	measure 'GuV Δ VJ %' =
+			// Zweck: Prozentuale Abweichung der GuV-Zeile zum Vorjahr Monat.
+			// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Δ VJ Monat %. DIVIDE durch den Vorjahresmonat, bei Vorjahr 0 leer. Die Rohertragsmarge bleibt leer.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+				"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+				"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+				"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+				"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+				"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+				"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" ),
+				"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ VJ Monat %" )
+			)
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: 8f03b5ee-4c82-4b78-bd1d-5ff0b889f19b
+
+	measure 'GuV Plan (Demo) Monat' =
+			// Zweck: Demo-Plan der GuV-Zeile im Berichtsmonat.
+			// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Plan (Demo) Monat. Die Rohertragsmarge ruft [Rohertragsmarge] auf, der Plan bleibt die Vorjahresmarge.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+				"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+				"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+				"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+				"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+				"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+				"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" ),
+				"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Plan (Demo) Monat" )
+			)
+		formatString: #,0
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: d5c8f860-36a2-4488-aab3-4f9b7eea3e6e
+
+	measure 'GuV Δ Plan' =
+			// Zweck: Abweichung der GuV-Zeile zum Plan Monat.
+			// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Δ Plan Monat. Bei der Rohertragsmarge sind das Prozentpunkte zur Vorjahresmarge.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+				"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+				"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+				"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+				"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+				"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+				"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" ),
+				"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ Plan Monat" )
+			)
+		formatString: +#,0;-#,0;0
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: e77ca9a3-9b2a-4a79-8c05-810b4de15352
+
+	measure 'GuV YTD' =
+			// Zweck: Wert der GuV-Zeile seit Jahresanfang. Dieselbe Definition wie im Berichtsmonat.
+			// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl YTD. Vorzeichen bleibt das der Zeile.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "YTD" ),
+				"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "YTD" ),
+				"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "YTD" ),
+				"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "YTD" ),
+				"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "YTD" ),
+				"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "YTD" ),
+				"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "YTD" ),
+				"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "YTD" )
+			)
+		formatString: #,0
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: a105ad79-de1e-4ded-b986-fab0a7cb23cb
+
+	measure 'GuV Δ VJ YTD' =
+			// Zweck: Abweichung der GuV-Zeile zum Vorjahr seit Jahresanfang.
+			// Quelle: SWITCH auf Abstimmzeile[Kennzahl], Basis mit Zeitauswahl Δ VJ YTD. Vorzeichen ist die Differenz.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Umsatz", CALCULATE ( [Umsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+				"Wareneinsatz", CALCULATE ( [Wareneinsatz], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+				"Rohertrag", CALCULATE ( [Rohertrag], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+				"Betriebsaufwand", CALCULATE ( [Betriebsaufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+				"Abschreibung", CALCULATE ( [Abschreibung], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+				"Sonstiger Ertrag und Aufwand", CALCULATE ( [Sonstiger Ertrag und Aufwand], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+				"EBIT", CALCULATE ( [EBIT], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" ),
+				"Rohertragsmarge", CALCULATE ( [Rohertragsmarge], Zeitauswahl[Zeitauswahl] = "Δ VJ YTD" )
+			)
+		formatString: +#,0;-#,0;0
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: 40a5f53f-b83d-481b-856a-715096613bea
+
+	measure 'Kostenart Δ VJ' =
+			// Zweck: Abweichung der Kostenart zum Vorjahr Monat für das Top 10. Das Visual trägt kein Zeitauswahl-Feld.
+			// Quelle: [Betriebsaufwand] mit den Items Monat und Vorjahr Monat. Die Differenz setzt beide Items selbst. Aufwand bleibt positiv.
+			VAR Aktuell =
+				CALCULATE (
+					[Betriebsaufwand],
+					Zeitauswahl[Zeitauswahl] = "Monat"
+				)
+			VAR Vorjahr =
+				CALCULATE (
+					[Betriebsaufwand],
+					Zeitauswahl[Zeitauswahl] = "Vorjahr Monat"
+				)
+			RETURN
+				Aktuell - Vorjahr
+		formatString: +#,0;-#,0;0
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: b84f417f-faa1-4d01-a10b-7538c403eaaa
+
+	measure 'GuV Signalrichtung' =
+			// Zweck: Richtung der GuV-Zeile für die Signalfarbe. Die Regel steht nur hier.
+			// Quelle: Abstimmzeile[Kennzahl]. Aufwand liefert 1, ein Anstieg ist ungünstig. Ertrag liefert -1, ein Rückgang ist ungünstig. Zeilen ohne Regel bleiben leer.
+			SWITCH (
+				SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+				"Wareneinsatz", 1,
+				"Betriebsaufwand", 1,
+				"Abschreibung", 1,
+				"Umsatz", -1,
+				"Rohertrag", -1,
+				"EBIT", -1,
+				"Sonstiger Ertrag und Aufwand", -1
+			)
+		formatString: 0
+		isHidden
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: b61c1d27-b043-47a2-92a3-a81ee1debeaa
+
+	measure 'GuV Farbe VJ' =
+			// Zweck: Signalfarbe der Abweichung zum Vorjahr. Nur eine ungünstige Abweichung wird Signal, sonst die Textfarbe.
+			// Quelle: [GuV Δ VJ] mal [GuV Signalrichtung]. Blank und 0 bleiben #1E2733. Der Vergleich nutzt den Rohwert, nicht die Anzeige. 0,4 bleibt ungleich 0 und damit ungünstig, auch wenn das Format #,0 eine 0 zeigt.
+			VAR Delta = [GuV Δ VJ]
+			VAR Richtung = [GuV Signalrichtung]
+			VAR HatAbweichung =
+				NOT ISBLANK ( Richtung )
+					&& NOT ISBLANK ( Delta )
+					&& Delta <> 0
+			RETURN
+				IF ( HatAbweichung && Delta * Richtung > 0, "#A94F0A", "#1E2733" )
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: 8b4e73d2-de01-4f8b-8f9c-594836d0e148
+
+	measure 'GuV Farbe Plan' =
+			// Zweck: Signalfarbe der Abweichung zum Plan. Dieselbe Regel wie bei [GuV Farbe VJ].
+			// Quelle: [GuV Δ Plan] mal [GuV Signalrichtung]. Blank, 0 und der Rohwert 0,4 gelten wie bei [GuV Farbe VJ].
+			VAR Delta = [GuV Δ Plan]
+			VAR Richtung = [GuV Signalrichtung]
+			VAR HatAbweichung =
+				NOT ISBLANK ( Richtung )
+					&& NOT ISBLANK ( Delta )
+					&& Delta <> 0
+			RETURN
+				IF ( HatAbweichung && Delta * Richtung > 0, "#A94F0A", "#1E2733" )
+		displayFolder: '08 GuV Seite 2'
+		lineageTag: 43201d3f-1463-46b0-a91d-0b3b1333e219
+
+	measure 'Forderungen Klasse' =
+			// Zweck: Offene Forderungen zum Berichtsende in der Fälligkeitsklasse im Filter. Die Klassen zusammen sind die offenen Posten.
+			// Quelle: FactDebitorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01, Fälligkeit je Postennr. Tage sind INT von Berichtsende minus Fälligkeit, von Faelligkeitsklasse[VonTage] bis [BisTage]. Der Filter auf Faelligkeitsklasse bleibt, REMOVEFILTERS trifft nur DimDatum. Vorzeichen wie in den Posten, Soll bleibt positiv. Leer bleibt leer.
+			VAR Ende = [Berichtsende]
+			VAR VonT = MIN ( Faelligkeitsklasse[VonTage] )
+			VAR BisT = MAX ( Faelligkeitsklasse[BisTage] )
+			RETURN
+				CALCULATE (
+					SUMX (
+						FILTER (
+							ADDCOLUMNS (
+								VALUES ( FactDebitorenposten[Postennr] ),
+								"@Rest", CALCULATE ( SUM ( FactDebitorenposten[Betrag] ) ),
+								"@Faellig", CALCULATE ( MAX ( FactDebitorenposten[Fälligkeit] ) )
+							),
+							VAR Rest = [@Rest]
+							VAR Faellig = [@Faellig]
+							RETURN
+								ABS ( Rest ) >= 0.01
+									&& NOT ISBLANK ( Faellig )
+									&& INT ( Ende - Faellig ) >= VonT
+									&& INT ( Ende - Faellig ) <= BisT
+						),
+						[@Rest]
+					),
+					REMOVEFILTERS ( DimDatum ),
+					DimDatum[Datum] <= Ende
+				)
+		formatString: #,0.00
+		displayFolder: '09 Debitoren Kreditoren Seite 3'
+		lineageTag: 8074feb5-a15e-47e9-a033-eaaa85d433ef
+
+	measure 'Verbindlichkeiten Klasse' =
+			// Zweck: Offene Verbindlichkeiten zum Berichtsende in der Fälligkeitsklasse im Filter, im Bericht positiv. Die Klassen zusammen sind die offenen Verbindlichkeiten.
+			// Quelle: FactKreditorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01, Fälligkeit je Postennr. Tage wie bei [Forderungen Klasse]. Der Filter auf Faelligkeitsklasse bleibt, REMOVEFILTERS trifft nur DimDatum. Die Posten stehen im Haben. Mal minus 1 dreht das Vorzeichen und lässt einen leeren Wert leer.
+			VAR Ende = [Berichtsende]
+			VAR VonT = MIN ( Faelligkeitsklasse[VonTage] )
+			VAR BisT = MAX ( Faelligkeitsklasse[BisTage] )
+			VAR Summe =
+				CALCULATE (
+					SUMX (
+						FILTER (
+							ADDCOLUMNS (
+								VALUES ( FactKreditorenposten[Postennr] ),
+								"@Rest", CALCULATE ( SUM ( FactKreditorenposten[Betrag] ) ),
+								"@Faellig", CALCULATE ( MAX ( FactKreditorenposten[Fälligkeit] ) )
+							),
+							VAR Rest = [@Rest]
+							VAR Faellig = [@Faellig]
+							RETURN
+								ABS ( Rest ) >= 0.01
+									&& NOT ISBLANK ( Faellig )
+									&& INT ( Ende - Faellig ) >= VonT
+									&& INT ( Ende - Faellig ) <= BisT
+						),
+						[@Rest]
+					),
+					REMOVEFILTERS ( DimDatum ),
+					DimDatum[Datum] <= Ende
+				)
+			RETURN
+				Summe * -1
+		formatString: #,0.00
+		displayFolder: '09 Debitoren Kreditoren Seite 3'
+		lineageTag: beb72283-a72f-41a2-a079-8d272085bb22
+
+	measure 'Verbindlichkeiten überfällig' =
+			// Zweck: Offene Verbindlichkeiten zum Berichtsende, deren Fälligkeit vor dem Berichtsende liegt, im Bericht positiv. Ein Posten, der am Berichtsende fällig ist, zählt nicht.
+			// Quelle: FactKreditorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01, Fälligkeit je Postennr aus FactKreditorenposten[Fälligkeit]. Die Posten stehen im Haben. Mal minus 1 dreht das Vorzeichen und lässt einen leeren Wert leer.
+			VAR Bis = [Berichtsende]
+			VAR Summe =
+				CALCULATE (
+					SUMX (
+						FILTER (
+							ADDCOLUMNS (
+								VALUES ( FactKreditorenposten[Postennr] ),
+								"@Rest", CALCULATE ( SUM ( FactKreditorenposten[Betrag] ) ),
+								"@Faellig", CALCULATE ( MAX ( FactKreditorenposten[Fälligkeit] ) )
+							),
+							VAR Rest = [@Rest]
+							VAR Faellig = [@Faellig]
+							RETURN
+								ABS ( Rest ) >= 0.01
+									&& NOT ISBLANK ( Faellig )
+									&& Faellig < Bis
+						),
+						[@Rest]
+					),
+					REMOVEFILTERS ( DimDatum ),
+					DimDatum[Datum] <= Bis
+				)
+			RETURN
+				Summe * -1
+		formatString: #,0.00
+		displayFolder: '09 Debitoren Kreditoren Seite 3'
+		lineageTag: 95c9d6d5-8e37-444d-b9d7-d8322c3d618b
+
+	measure 'Verbindlichkeiten Überfällig Anteil' =
+			// Zweck: Anteil der überfälligen offenen Verbindlichkeiten an den offenen Verbindlichkeiten.
+			// Quelle: DIVIDE von [Verbindlichkeiten überfällig] durch [Verbindlichkeiten]. Vorzeichen bleibt das der Beträge.
+			DIVIDE ( [Verbindlichkeiten überfällig], [Verbindlichkeiten] )
+		formatString: 0.0%
+		displayFolder: '09 Debitoren Kreditoren Seite 3'
+		lineageTag: b1c59d3a-f0eb-4677-9000-6e2587006185
+
+	measure 'Verkauf Umsatz' =
+			// Zweck: Umsatz der Verkaufszeilen im Filterkontext. Monat und YTD benutzen diese Definition.
+			// Quelle: Summe FactWertposten[Verkaufsbetrag], Artikelpostenart Sale. Das sind die Verkaufszeilen. Vorzeichen wie in den Wertposten.
+			CALCULATE (
+				SUM ( FactWertposten[Verkaufsbetrag] ),
+				FactWertposten[Artikelpostenart] = "Sale"
+			)
+		formatString: #,0.00
+		displayFolder: '10 Kunden Artikel Seite 4'
+		lineageTag: 7c1e9a24-6b50-4d8f-a3e1-5f2c8b0d6a47
+
+	measure 'Verkauf Einstand' =
+			// Zweck: Einstand der Verkaufszeilen im Filterkontext, im Bericht positiv.
+			// Quelle: Summe FactWertposten[EinstandsbetragTatsächlich], Artikelpostenart Sale. Der Einstand steht in den Wertposten negativ. Mal minus 1 dreht das Vorzeichen und lässt einen leeren Wert leer.
+			VAR Summe =
+				CALCULATE (
+					SUM ( FactWertposten[EinstandsbetragTatsächlich] ),
+					FactWertposten[Artikelpostenart] = "Sale"
+				)
+			RETURN
+				Summe * -1
+		formatString: #,0.00
+		displayFolder: '10 Kunden Artikel Seite 4'
+		lineageTag: 2a8f4c61-9e17-4b3d-8c52-0d6e7a1b4f93
+
+	measure 'DB I' =
+			// Zweck: Deckungsbeitrag I im Filterkontext. Der Deckungsbeitrag aus den Warenwertposten ist der Rohertrag aus der Buchhaltung.
+			// Quelle: [Verkauf Umsatz] minus [Verkauf Einstand]. Vorzeichen steckt in den Bausteinen.
+			[Verkauf Umsatz] - [Verkauf Einstand]
+		formatString: #,0.00
+		displayFolder: '10 Kunden Artikel Seite 4'
+		lineageTag: 5e0b7d38-1c64-4a9f-b2d7-8e3f6a0c5b14
+
+	measure 'DB I Marge' =
+			// Zweck: Deckungsbeitrag I im Verhältnis zum Verkaufsumsatz.
+			// Quelle: DIVIDE von [DB I] durch [Verkauf Umsatz]. Vorzeichen steckt in den Bausteinen.
+			DIVIDE ( [DB I], [Verkauf Umsatz] )
+		formatString: 0.0%
+		displayFolder: '10 Kunden Artikel Seite 4'
+		lineageTag: 9d4a2e70-8f15-4c6b-9a38-7b1d0e5c2f46
+
+	measure 'Verkauf Umsatz YTD' =
+			// Zweck: Verkaufsumsatz seit Jahresanfang. Das Visual trägt kein Zeitauswahl-Feld.
+			// Quelle: [Verkauf Umsatz] mit Zeitauswahl YTD. Vorzeichen bleibt das des Umsatzes.
+			CALCULATE ( [Verkauf Umsatz], Zeitauswahl[Zeitauswahl] = "YTD" )
+		formatString: #,0.00
+		displayFolder: '10 Kunden Artikel Seite 4'
+		lineageTag: 1f6c8b53-4e29-4d7a-a1c0-3b8e5d2f7a60
+
+	measure 'DB I YTD' =
+			// Zweck: Deckungsbeitrag I seit Jahresanfang. Das Visual trägt kein Zeitauswahl-Feld.
+			// Quelle: [DB I] mit Zeitauswahl YTD. Vorzeichen bleibt das des Deckungsbeitrags.
+			CALCULATE ( [DB I], Zeitauswahl[Zeitauswahl] = "YTD" )
+		formatString: #,0.00
+		displayFolder: '10 Kunden Artikel Seite 4'
+		lineageTag: 6b3e1a94-7d02-4f8c-b5e6-2a9c0d4f1b78
+
+	measure 'DB I Marge YTD' =
+			// Zweck: Marge des Deckungsbeitrags I seit Jahresanfang. Das Visual trägt kein Zeitauswahl-Feld.
+			// Quelle: DIVIDE von [DB I YTD] durch [Verkauf Umsatz YTD]. Die Jahreswerte setzen die Zeitauswahl. Vorzeichen steckt in den Bausteinen.
+			DIVIDE ( [DB I YTD], [Verkauf Umsatz YTD] )
+		formatString: 0.0%
+		displayFolder: '10 Kunden Artikel Seite 4'
+		lineageTag: 8c5d0f27-3a61-4e9b-8d14-6f2b7c0a5e31
+
+	measure 'Beleg Betrag' =
+			// Zweck: Betrag der Sachposten im Filter nach Konto, Kostenstelle, Kunde, Lieferant oder Artikel. Die Belegliste zeigt Buchungszeilen.
+			// Quelle: Summe FactSachposten[Betrag]. Betrag wie in BC, Soll positiv, kein Vorzeichen aus DimKonto, weil die Belegliste Buchungszeilen zeigt. Konto und Kostenstelle kommen aus dem Filterkontext. Kunde über Herkunftsart Customer, Lieferant über Vendor, Artikel über die Belegnr der Wertposten. Datum bis zum Stichtag.
+			VAR KundeAktiv = ISFILTERED ( DimKunde )
+			VAR Kunden = VALUES ( DimKunde[Kundennr] )
+			VAR LieferantAktiv = ISFILTERED ( DimLieferant )
+			VAR Lieferanten = VALUES ( DimLieferant[Lieferantennr] )
+			VAR ArtikelAktiv = ISFILTERED ( DimArtikel )
+			VAR ArtikelBelege = CALCULATETABLE ( VALUES ( FactWertposten[Belegnr] ) )
+			VAR Bis = [Stichtag]
+			RETURN
+				CALCULATE (
+					SUMX (
+						FILTER (
+							FactSachposten,
+							( NOT KundeAktiv || ( FactSachposten[Herkunftsart] = "Customer" && FactSachposten[Herkunftsnr] IN Kunden ) )
+								&& ( NOT LieferantAktiv || ( FactSachposten[Herkunftsart] = "Vendor" && FactSachposten[Herkunftsnr] IN Lieferanten ) )
+								&& ( NOT ArtikelAktiv || FactSachposten[Belegnr] IN ArtikelBelege )
+						),
+						FactSachposten[Betrag]
+					),
+					KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= Bis ) )
+				)
+		formatString: #,0.00
+		displayFolder: '11 Beleg Seite 5'
+		lineageTag: 679afe45-28fe-41c4-922e-ad65541ab1c1
+
+	measure 'Beleg Zeilen' =
+			// Zweck: Anzahl der Sachposten im selben Filter wie [Beleg Betrag].
+			// Quelle: COUNTROWS statt Summe des Betrags. Dieselbe Auswahl nach Kunde, Lieferant und Artikel. Vorzeichen keines. Datum bis zum Stichtag.
+			VAR KundeAktiv = ISFILTERED ( DimKunde )
+			VAR Kunden = VALUES ( DimKunde[Kundennr] )
+			VAR LieferantAktiv = ISFILTERED ( DimLieferant )
+			VAR Lieferanten = VALUES ( DimLieferant[Lieferantennr] )
+			VAR ArtikelAktiv = ISFILTERED ( DimArtikel )
+			VAR ArtikelBelege = CALCULATETABLE ( VALUES ( FactWertposten[Belegnr] ) )
+			VAR Bis = [Stichtag]
+			RETURN
+				CALCULATE (
+					COUNTROWS (
+						FILTER (
+							FactSachposten,
+							( NOT KundeAktiv || ( FactSachposten[Herkunftsart] = "Customer" && FactSachposten[Herkunftsnr] IN Kunden ) )
+								&& ( NOT LieferantAktiv || ( FactSachposten[Herkunftsart] = "Vendor" && FactSachposten[Herkunftsnr] IN Lieferanten ) )
+								&& ( NOT ArtikelAktiv || FactSachposten[Belegnr] IN ArtikelBelege )
+						)
+					),
+					KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= Bis ) )
+				)
+		formatString: 0
+		displayFolder: '11 Beleg Seite 5'
+		lineageTag: daf6c0aa-4ac5-4e90-a9d1-21ada589938e
+
+	column Kennzahlen
+		lineageTag: 5172dae2-f1a9-477d-8007-db38eef00f06
+		isNameInferred
+		sourceColumn: [Kennzahlen]
+
+	partition Kennzahlen = calculated
+		mode: import
+		source = ROW ( "Kennzahlen", "Kennzahlen" )
+

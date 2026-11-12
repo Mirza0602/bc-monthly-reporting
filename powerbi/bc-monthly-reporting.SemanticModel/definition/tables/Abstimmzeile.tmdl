@@ -1,0 +1,37 @@
+table Abstimmzeile
+	lineageTag: ba5ce7f4-c659-49ff-b126-80658e5b26f4
+
+	column Kennzahl
+		lineageTag: 5e6eb9d2-7f5f-4ba4-8099-851b96649480
+		isNameInferred
+		sourceColumn: [Kennzahl]
+		sortByColumn: Sortierung
+
+	column Sortierung
+		lineageTag: e2892161-2cee-4402-a5a7-b983ab3e408c
+		isNameInferred
+		sourceColumn: [Sortierung]
+
+	partition Abstimmzeile = calculated
+		mode: import
+		source =
+				DATATABLE (
+					"Kennzahl", STRING,
+					"Sortierung", INTEGER,
+					{
+						{ "Umsatz", 1 },
+						{ "Wareneinsatz", 2 },
+						{ "Rohertrag", 3 },
+						{ "Betriebsaufwand", 4 },
+						{ "Abschreibung", 5 },
+						{ "Sonstiger Ertrag und Aufwand", 6 },
+						{ "EBIT", 7 },
+						{ "Zins und Finanz", 8 },
+						{ "Nicht zugeordnet", 9 },
+						{ "Ergebnis GuV", 10 },
+						{ "Offene Forderungen", 11 },
+						{ "Verbindlichkeiten", 12 },
+						{ "Bestandswert", 13 }
+					}
+				)
+

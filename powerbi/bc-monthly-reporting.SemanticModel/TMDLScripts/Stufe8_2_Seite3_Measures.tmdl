@@ -1,0 +1,112 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'Forderungen Klasse' = ```
+				// Zweck: Offene Forderungen zum Berichtsende in der Fälligkeitsklasse im Filter. Die Klassen zusammen sind die offenen Posten.
+				// Quelle: FactDebitorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01, Fälligkeit je Postennr. Tage sind INT von Berichtsende minus Fälligkeit, von Faelligkeitsklasse[VonTage] bis [BisTage]. Der Filter auf Faelligkeitsklasse bleibt, REMOVEFILTERS trifft nur DimDatum. Vorzeichen wie in den Posten, Soll bleibt positiv. Leer bleibt leer.
+				VAR Ende = [Berichtsende]
+				VAR VonT = MIN ( Faelligkeitsklasse[VonTage] )
+				VAR BisT = MAX ( Faelligkeitsklasse[BisTage] )
+				RETURN
+					CALCULATE (
+						SUMX (
+							FILTER (
+								ADDCOLUMNS (
+									VALUES ( FactDebitorenposten[Postennr] ),
+									"@Rest", CALCULATE ( SUM ( FactDebitorenposten[Betrag] ) ),
+									"@Faellig", CALCULATE ( MAX ( FactDebitorenposten[Fälligkeit] ) )
+								),
+								VAR Rest = [@Rest]
+								VAR Faellig = [@Faellig]
+								RETURN
+									ABS ( Rest ) >= 0.01
+										&& NOT ISBLANK ( Faellig )
+										&& INT ( Ende - Faellig ) >= VonT
+										&& INT ( Ende - Faellig ) <= BisT
+							),
+							[@Rest]
+						),
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] <= Ende
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '09 Debitoren Kreditoren Seite 3'
+			lineageTag: 8074feb5-a15e-47e9-a033-eaaa85d433ef
+
+		measure 'Verbindlichkeiten Klasse' = ```
+				// Zweck: Offene Verbindlichkeiten zum Berichtsende in der Fälligkeitsklasse im Filter, im Bericht positiv. Die Klassen zusammen sind die offenen Verbindlichkeiten.
+				// Quelle: FactKreditorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01, Fälligkeit je Postennr. Tage wie bei [Forderungen Klasse]. Der Filter auf Faelligkeitsklasse bleibt, REMOVEFILTERS trifft nur DimDatum. Die Posten stehen im Haben. Mal minus 1 dreht das Vorzeichen und lässt einen leeren Wert leer.
+				VAR Ende = [Berichtsende]
+				VAR VonT = MIN ( Faelligkeitsklasse[VonTage] )
+				VAR BisT = MAX ( Faelligkeitsklasse[BisTage] )
+				VAR Summe =
+					CALCULATE (
+						SUMX (
+							FILTER (
+								ADDCOLUMNS (
+									VALUES ( FactKreditorenposten[Postennr] ),
+									"@Rest", CALCULATE ( SUM ( FactKreditorenposten[Betrag] ) ),
+									"@Faellig", CALCULATE ( MAX ( FactKreditorenposten[Fälligkeit] ) )
+								),
+								VAR Rest = [@Rest]
+								VAR Faellig = [@Faellig]
+								RETURN
+									ABS ( Rest ) >= 0.01
+										&& NOT ISBLANK ( Faellig )
+										&& INT ( Ende - Faellig ) >= VonT
+										&& INT ( Ende - Faellig ) <= BisT
+							),
+							[@Rest]
+						),
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] <= Ende
+					)
+				RETURN
+					Summe * -1
+				```
+			formatString: "#,0.00"
+			displayFolder: '09 Debitoren Kreditoren Seite 3'
+			lineageTag: beb72283-a72f-41a2-a079-8d272085bb22
+
+		measure 'Verbindlichkeiten überfällig' = ```
+				// Zweck: Offene Verbindlichkeiten zum Berichtsende, deren Fälligkeit vor dem Berichtsende liegt, im Bericht positiv. Ein Posten, der am Berichtsende fällig ist, zählt nicht.
+				// Quelle: FactKreditorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01, Fälligkeit je Postennr aus FactKreditorenposten[Fälligkeit]. Die Posten stehen im Haben. Mal minus 1 dreht das Vorzeichen und lässt einen leeren Wert leer.
+				VAR Bis = [Berichtsende]
+				VAR Summe =
+					CALCULATE (
+						SUMX (
+							FILTER (
+								ADDCOLUMNS (
+									VALUES ( FactKreditorenposten[Postennr] ),
+									"@Rest", CALCULATE ( SUM ( FactKreditorenposten[Betrag] ) ),
+									"@Faellig", CALCULATE ( MAX ( FactKreditorenposten[Fälligkeit] ) )
+								),
+								VAR Rest = [@Rest]
+								VAR Faellig = [@Faellig]
+								RETURN
+									ABS ( Rest ) >= 0.01
+										&& NOT ISBLANK ( Faellig )
+										&& Faellig < Bis
+							),
+							[@Rest]
+						),
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] <= Bis
+					)
+				RETURN
+					Summe * -1
+				```
+			formatString: "#,0.00"
+			displayFolder: '09 Debitoren Kreditoren Seite 3'
+			lineageTag: 95c9d6d5-8e37-444d-b9d7-d8322c3d618b
+
+		measure 'Verbindlichkeiten Überfällig Anteil' = ```
+				// Zweck: Anteil der überfälligen offenen Verbindlichkeiten an den offenen Verbindlichkeiten.
+				// Quelle: DIVIDE von [Verbindlichkeiten überfällig] durch [Verbindlichkeiten]. Vorzeichen bleibt das der Beträge.
+				DIVIDE ( [Verbindlichkeiten überfällig], [Verbindlichkeiten] )
+				```
+			formatString: "0.0%"
+			displayFolder: '09 Debitoren Kreditoren Seite 3'
+			lineageTag: b1c59d3a-f0eb-4677-9000-6e2587006185

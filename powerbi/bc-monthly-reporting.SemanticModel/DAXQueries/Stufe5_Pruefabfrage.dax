@@ -1,0 +1,177 @@
+// Prüfabfrage AP-06 Stufe A. Berichtsmonat 09/2026. 28 Zeilen.
+// Zeitauswahl nur innerhalb der Karten-Measures. Soll der Basis aus der Prüfabfrage Stufe 3, Planfaktor 1,05.
+// Abweichung und Prozent sind Formeln daraus. Überfällig aus scripts\sollwert_ueberfaellig.py, in diesem Monat gleich den offenen Forderungen.
+// Brücke: Summe der fünf Schritte gleich EBIT Monat. Im Trendfenster: 13 Monate, 2025-09 bis 2026-09.
+EVALUATE
+VAR Faktor = 1.05
+VAR UmsatzMonat = 6966
+VAR UmsatzYtd = 362007.38
+VAR UmsatzVj = 33478.70
+VAR RohertragMonat = 1532
+VAR RohertragYtd = 101633.18
+VAR RohertragVj = 7366.10
+VAR EbitMonat = -8528
+VAR EbitYtd = 86973.18
+VAR EbitVj = 7366.10
+VAR ForderungenMonat = 68041.07
+VAR ForderungenVj = 0
+VAR BestandMonat = 2266906.50
+VAR BestandVj = 2190821.60
+VAR UeberfaelligSoll = 68041.07
+VAR MargeMonat = DIVIDE ( RohertragMonat, UmsatzMonat )
+VAR MargeYtd = DIVIDE ( RohertragYtd, UmsatzYtd )
+VAR MargeVj = DIVIDE ( RohertragVj, UmsatzVj )
+VAR FensterVon = 2025 * 100 + 9
+VAR FensterBis = 2026 * 100 + 9
+VAR FensterAnzahl = ( 2026 - 2025 ) * 12 + ( 9 - 9 ) + 1
+VAR BrueckeSumme =
+    CALCULATE (
+        SUMX ( Bruecke, CALCULATE ( [Brücke Wert] ) ),
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9
+    )
+VAR Monatswerte =
+    ADDCOLUMNS (
+        SUMMARIZE ( DimDatum, DimDatum[Jahr], DimDatum[Monat] ),
+        "@Schluessel", DimDatum[Jahr] * 100 + DimDatum[Monat],
+        "@Wert",
+            VAR Jahrwert = DimDatum[Jahr]
+            VAR Monatwert = DimDatum[Monat]
+            RETURN
+                CALCULATE (
+                    [Im Trendfenster],
+                    REMOVEFILTERS ( DimDatum ),
+                    REMOVEFILTERS ( Zeitauswahl ),
+                    DimDatum[Jahr] = Jahrwert,
+                    DimDatum[Monat] = Monatwert
+                )
+    )
+VAR Treffer =
+    FILTER ( Monatswerte, [@Wert] = 1 )
+VAR TrendAnzahl = COUNTROWS ( Treffer )
+VAR TrendVon = MINX ( Treffer, [@Schluessel] )
+VAR TrendBis = MAXX ( Treffer, [@Schluessel] )
+VAR Zeilen =
+    DATATABLE (
+        "Nr", INTEGER,
+        "Name", STRING,
+        {
+            { 1, "Umsatz YTD" },
+            { 2, "Umsatz Δ VJ" },
+            { 3, "Umsatz Δ VJ %" },
+            { 4, "Umsatz Δ Plan" },
+            { 5, "Umsatz Δ Plan %" },
+            { 6, "Rohertrag YTD" },
+            { 7, "Rohertrag Δ VJ" },
+            { 8, "Rohertrag Δ VJ %" },
+            { 9, "Rohertrag Δ Plan" },
+            { 10, "Rohertrag Δ Plan %" },
+            { 11, "Rohertragsmarge YTD" },
+            { 12, "Rohertragsmarge Δ VJ" },
+            { 13, "Rohertragsmarge Δ Plan" },
+            { 14, "EBIT YTD" },
+            { 15, "EBIT Δ VJ" },
+            { 16, "EBIT Δ VJ %" },
+            { 17, "EBIT Δ Plan" },
+            { 18, "EBIT Δ Plan %" },
+            { 19, "Offene Forderungen Δ VJ" },
+            { 20, "Offene Forderungen Δ VJ %" },
+            { 21, "Bestandswert Δ VJ" },
+            { 22, "Bestandswert Δ VJ %" },
+            { 23, "Offene Forderungen überfällig" },
+            { 24, "Überfällig Anteil" },
+            { 25, "Brücke Summe" },
+            { 26, "Trend Anzahl" },
+            { 27, "Trend von" },
+            { 28, "Trend bis" }
+        }
+    )
+VAR Mit =
+    ADDCOLUMNS (
+        Zeilen,
+        "Soll",
+            SWITCH (
+                [Name],
+                "Umsatz YTD", UmsatzYtd,
+                "Umsatz Δ VJ", UmsatzMonat - UmsatzVj,
+                "Umsatz Δ VJ %", DIVIDE ( UmsatzMonat - UmsatzVj, UmsatzVj ),
+                "Umsatz Δ Plan", UmsatzMonat - UmsatzVj * Faktor,
+                "Umsatz Δ Plan %", DIVIDE ( UmsatzMonat - UmsatzVj * Faktor, UmsatzVj * Faktor ),
+                "Rohertrag YTD", RohertragYtd,
+                "Rohertrag Δ VJ", RohertragMonat - RohertragVj,
+                "Rohertrag Δ VJ %", DIVIDE ( RohertragMonat - RohertragVj, RohertragVj ),
+                "Rohertrag Δ Plan", RohertragMonat - RohertragVj * Faktor,
+                "Rohertrag Δ Plan %", DIVIDE ( RohertragMonat - RohertragVj * Faktor, RohertragVj * Faktor ),
+                "Rohertragsmarge YTD", MargeYtd,
+                "Rohertragsmarge Δ VJ", MargeMonat - MargeVj,
+                "Rohertragsmarge Δ Plan", MargeMonat - MargeVj * Faktor,
+                "EBIT YTD", EbitYtd,
+                "EBIT Δ VJ", EbitMonat - EbitVj,
+                "EBIT Δ VJ %", DIVIDE ( EbitMonat - EbitVj, EbitVj ),
+                "EBIT Δ Plan", EbitMonat - EbitVj * Faktor,
+                "EBIT Δ Plan %", DIVIDE ( EbitMonat - EbitVj * Faktor, EbitVj * Faktor ),
+                "Offene Forderungen Δ VJ", ForderungenMonat - ForderungenVj,
+                "Offene Forderungen Δ VJ %", DIVIDE ( ForderungenMonat - ForderungenVj, ForderungenVj ),
+                "Bestandswert Δ VJ", BestandMonat - BestandVj,
+                "Bestandswert Δ VJ %", DIVIDE ( BestandMonat - BestandVj, BestandVj ),
+                "Offene Forderungen überfällig", UeberfaelligSoll,
+                "Überfällig Anteil", DIVIDE ( UeberfaelligSoll, ForderungenMonat ),
+                "Brücke Summe", EbitMonat,
+                "Trend Anzahl", FensterAnzahl,
+                "Trend von", FensterVon,
+                "Trend bis", FensterBis
+            ),
+        "Ist",
+            VAR Zeile = [Name]
+            RETURN
+                SWITCH (
+                    TRUE (),
+                    Zeile = "Brücke Summe", BrueckeSumme,
+                    Zeile = "Trend Anzahl", TrendAnzahl,
+                    Zeile = "Trend von", TrendVon,
+                    Zeile = "Trend bis", TrendBis,
+                    CALCULATE (
+                        SWITCH (
+                            Zeile,
+                            "Umsatz YTD", [Umsatz YTD],
+                            "Umsatz Δ VJ", [Umsatz Δ VJ],
+                            "Umsatz Δ VJ %", [Umsatz Δ VJ %],
+                            "Umsatz Δ Plan", [Umsatz Δ Plan],
+                            "Umsatz Δ Plan %", [Umsatz Δ Plan %],
+                            "Rohertrag YTD", [Rohertrag YTD],
+                            "Rohertrag Δ VJ", [Rohertrag Δ VJ],
+                            "Rohertrag Δ VJ %", [Rohertrag Δ VJ %],
+                            "Rohertrag Δ Plan", [Rohertrag Δ Plan],
+                            "Rohertrag Δ Plan %", [Rohertrag Δ Plan %],
+                            "Rohertragsmarge YTD", [Rohertragsmarge YTD],
+                            "Rohertragsmarge Δ VJ", [Rohertragsmarge Δ VJ],
+                            "Rohertragsmarge Δ Plan", [Rohertragsmarge Δ Plan],
+                            "EBIT YTD", [EBIT YTD],
+                            "EBIT Δ VJ", [EBIT Δ VJ],
+                            "EBIT Δ VJ %", [EBIT Δ VJ %],
+                            "EBIT Δ Plan", [EBIT Δ Plan],
+                            "EBIT Δ Plan %", [EBIT Δ Plan %],
+                            "Offene Forderungen Δ VJ", [Offene Forderungen Δ VJ],
+                            "Offene Forderungen Δ VJ %", [Offene Forderungen Δ VJ %],
+                            "Bestandswert Δ VJ", [Bestandswert Δ VJ],
+                            "Bestandswert Δ VJ %", [Bestandswert Δ VJ %],
+                            "Offene Forderungen überfällig", [Offene Forderungen überfällig],
+                            "Überfällig Anteil", [Überfällig Anteil]
+                        ),
+                        REMOVEFILTERS ( DimDatum ),
+                        REMOVEFILTERS ( Zeitauswahl ),
+                        DimDatum[Jahr] = 2026,
+                        DimDatum[Monat] = 9
+                    )
+                )
+    )
+VAR Ergebnis =
+    ADDCOLUMNS (
+        Mit,
+        "Abweichung", COALESCE ( [Ist], 0 ) - COALESCE ( [Soll], 0 )
+    )
+RETURN
+    Ergebnis
+ORDER BY [Nr]

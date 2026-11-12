@@ -1,0 +1,464 @@
+createOrReplace
+	
+	table Abstimmzeile
+
+		column Kennzahl
+			dataType: string
+			isKey
+			summarizeBy: none
+			sourceColumn: Kennzahl
+			sortByColumn: Sortierung
+
+		column Sortierung
+			dataType: int64
+			isHidden
+			formatString: 0
+			summarizeBy: none
+			sourceColumn: Sortierung
+
+		partition Abstimmzeile = calculated
+			mode: import
+			source = ```
+					DATATABLE (
+						"Kennzahl", STRING,
+						"Sortierung", INTEGER,
+						{
+							{ "Umsatz", 1 },
+							{ "Wareneinsatz", 2 },
+							{ "Rohertrag", 3 },
+							{ "Betriebsaufwand", 4 },
+							{ "Abschreibung", 5 },
+							{ "Sonstiger Ertrag und Aufwand", 6 },
+							{ "EBIT", 7 },
+							{ "Zins und Finanz", 8 },
+							{ "Nicht zugeordnet", 9 },
+							{ "Ergebnis GuV", 10 },
+							{ "Offene Forderungen", 11 },
+							{ "Verbindlichkeiten", 12 },
+							{ "Bestandswert", 13 }
+						}
+					)
+					```
+
+	table Kennzahlen
+
+		column Kennzahlen
+			dataType: string
+			isHidden
+			summarizeBy: none
+			sourceColumn: Kennzahlen
+
+		partition Kennzahlen = calculated
+			mode: import
+			source = ROW ( "Kennzahlen", "Kennzahlen" )
+
+		measure 'Stichtag' = ```
+				// Zweck: Stichtag des Berichts, eine Quelle für den Zeitraum und den Bestand.
+				// Quelle: Spalte pStichtag[pStichtag]. Vorzeichen: keines.
+				MAX ( pStichtag[pStichtag] )
+				```
+			formatString: "dd.MM.yyyy"
+			displayFolder: '01 Basis'
+
+		measure 'Berichtsende' = ```
+				// Zweck: Letztes Datum im Filter, gedeckelt mit dem Stichtag. Posten danach zählen in keinen Periodenwert.
+				// Quelle: DimDatum[Datum] und [Stichtag]. Vorzeichen: keines.
+				MIN ( MAX ( DimDatum[Datum] ), [Stichtag] )
+				```
+			formatString: "dd.MM.yyyy"
+			displayFolder: '01 Basis'
+
+		measure 'Vormonatsende' = ```
+				// Zweck: Monatsende vor dem Berichtsende. Datum zum Nachsehen.
+				// Quelle: EOMONTH von [Berichtsende]. Die Bewegung nutzt den Tag vor dem Filteranfang. Vorzeichen: keines.
+				EOMONTH ( [Berichtsende], -1 )
+				```
+			formatString: "dd.MM.yyyy"
+			displayFolder: '01 Basis'
+
+		measure 'Vorjahresende' = ```
+				// Zweck: Der 31.12. des Vorjahres zum Berichtsende. Datum zum Nachsehen.
+				// Quelle: Jahr von [Berichtsende]. Das Geschäftsjahr ist das Kalenderjahr. Vorzeichen: keines.
+				DATE ( YEAR ( [Berichtsende] ) - 1, 12, 31 )
+				```
+			formatString: "dd.MM.yyyy"
+			displayFolder: '01 Basis'
+
+		measure 'Bewegung Sachposten' = ```
+				// Zweck: Eine Definition der vorzeichenrichtigen Bewegung. Die Kennzahl filtert daraus den Bucket, der Zeitraum kommt aus dem Filter.
+				// Quelle: FactSachposten[Betrag] mal DimKonto[vorzeichen], Kontoart Buchung, BilanzGuV GuV, ohne Abschlussbuchung. KEEPFILTERS hält die Obergrenze Stichtag im bestehenden Datumsfilter. Vorzeichen aus DimKonto. Leer bleibt leer.
+				CALCULATE (
+					SUMX (
+						FactSachposten,
+						FactSachposten[Betrag] * RELATED ( DimKonto[vorzeichen] )
+					),
+					DimKonto[Kontoart] = "Buchung",
+					DimKonto[BilanzGuV] = "GuV",
+					FactSachposten[IstAbschlussbuchung] = FALSE (),
+					KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= [Stichtag] ) )
+				)
+				```
+			isHidden
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Umsatz' = ```
+				// Zweck: Umsatz im Filterkontext. Monat, Jahr, Vorjahr und Plan benutzen diese Definition.
+				// Quelle: [Bewegung Sachposten], Bucket UMSATZ aus DimKonto[bucket]. Vorzeichen -1, eine Habenbuchung wird im Bericht positiv.
+				CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "UMSATZ" )
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Netto Wareneinsatz' = ```
+				// Zweck: Nettobewegung der Wareneinsatzkonten im Filterkontext, vor dem Abzug des Lagerzugangs. Das ist der Wert auf Kontoebene.
+				// Quelle: [Bewegung Sachposten], Bucket WARENEINSATZ aus DimKonto[bucket]. Vorzeichen +1, Aufwand bleibt positiv.
+				CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "WARENEINSATZ" )
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Betriebsaufwand' = ```
+				// Zweck: Betriebsaufwand im Filterkontext.
+				// Quelle: [Bewegung Sachposten], Bucket BETRIEBSAUFWAND aus DimKonto[bucket]. Vorzeichen +1, Aufwand bleibt positiv.
+				CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "BETRIEBSAUFWAND" )
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Abschreibung' = ```
+				// Zweck: Abschreibung im Filterkontext. Das ist die Bewegung, nicht der Endsaldo des Kontos.
+				// Quelle: [Bewegung Sachposten], Bucket ABSCHREIBUNG aus DimKonto[bucket]. Vorzeichen +1, Aufwand bleibt positiv.
+				CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "ABSCHREIBUNG" )
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Sonstiger Ertrag und Aufwand' = ```
+				// Zweck: Sonstiger Ertrag und Aufwand im Filterkontext. Geht in den EBIT ein.
+				// Quelle: [Bewegung Sachposten], Bucket SONSTIGER_ERTRAG_AUFWAND aus DimKonto[bucket]. Vorzeichen -1, Ertrag im Bericht positiv.
+				CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "SONSTIGER_ERTRAG_AUFWAND" )
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Zins und Finanz' = ```
+				// Zweck: Zins und Finanz im Filterkontext. Steht unter dem EBIT, die Merkzeile zur Fehlbuchung ist darin enthalten.
+				// Quelle: [Bewegung Sachposten], Bucket ZINS_FINANZ aus DimKonto[bucket]. Vorzeichen -1.
+				CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "ZINS_FINANZ" )
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Steuer' = ```
+				// Zweck: Steuer im Filterkontext. Steht unter dem EBIT.
+				// Quelle: [Bewegung Sachposten], Bucket STEUER aus DimKonto[bucket]. Vorzeichen -1.
+				CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "STEUER" )
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Nicht zugeordnet' = ```
+				// Zweck: GuV-Konten ohne Zeile in der Zuordnung. Steht unter dem EBIT.
+				// Quelle: [Bewegung Sachposten], Bucket NICHT_ZUGEORDNET aus DimKonto. Vorzeichen -1, wie ein Ertragskonto.
+				CALCULATE ( [Bewegung Sachposten], DimKonto[bucket] = "NICHT_ZUGEORDNET" )
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Lagerzugang Verrechnung' = ```
+				// Zweck: Lagerzugang ohne Einkaufsrechnung im Filterkontext. Im Bericht steht der Betrag positiv.
+				// Quelle: FactWertposten[KostenAnFibu], Artikelpostenart Positive Adjmt. oder Output, Vergleich ohne Großschreibung. Vorzeichen im Bericht plus. Das Habenvorzeichen für den Wareneinsatz ist minus diese Summe. Leer bleibt leer.
+				CALCULATE (
+					SUM ( FactWertposten[KostenAnFibu] ),
+					   KEEPFILTERS ( FILTER ( ALL ( DimDatum[Datum] ), DimDatum[Datum] <= [Stichtag] ) ),
+					FILTER (
+						ALL ( FactWertposten[Artikelpostenart] ),
+						LOWER ( FactWertposten[Artikelpostenart] )
+							IN { "positive adjmt.", "output" }
+					)
+				)
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Wareneinsatz' = ```
+				// Zweck: Wareneinsatz im Filterkontext, nur auf Summenebene. FactWertposten hat keine Beziehung zu DimKonto, deshalb auf Kontoebene [Netto Wareneinsatz] nehmen.
+				// Quelle: [Netto Wareneinsatz] minus den Lagerzugang mit Habenvorzeichen. Der Bericht zeigt den Lagerzugang positiv, das Habenvorzeichen ist minus diese Summe. Vorzeichen der Nettobewegung +1.
+				VAR Netto = [Netto Wareneinsatz]
+				VAR ZugangHaben = - [Lagerzugang Verrechnung]
+				RETURN
+					Netto - ZugangHaben
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Rohertrag' = ```
+				// Zweck: Merkzeile im Filterkontext. Wird im EBIT nicht noch einmal addiert.
+				// Quelle: [Umsatz] minus [Wareneinsatz]. Vorzeichen steckt in den beiden Bausteinen.
+				[Umsatz] - [Wareneinsatz]
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'EBIT' = ```
+				// Zweck: Betriebsergebnis im Filterkontext. Zins, Steuer, Lagerzugang und nicht zugeordnete Konten stehen darunter.
+				// Quelle: [Umsatz] plus [Sonstiger Ertrag und Aufwand] minus [Wareneinsatz] minus [Betriebsaufwand] minus [Abschreibung]. Vorzeichen steckt in den Bausteinen.
+				[Umsatz]
+					+ [Sonstiger Ertrag und Aufwand]
+					- [Wareneinsatz]
+					- [Betriebsaufwand]
+					- [Abschreibung]
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Ergebnis GuV' = ```
+				// Zweck: Vorzeichenrichtiges Ergebnis der zugeordneten GuV-Konten. Die Wareneinsatzkonten gehen einmal als Nettobewegung ein.
+				// Quelle: [EBIT] plus [Zins und Finanz] plus [Steuer] plus [Lagerzugang Verrechnung] plus [Nicht zugeordnet]. Der Lagerzugang kommt hier wieder dazu, nachdem der Wareneinsatz ihn aus der Nettobewegung genommen hat. Vorzeichen steckt in den Bausteinen.
+				[EBIT]
+					+ [Zins und Finanz]
+					+ [Steuer]
+					+ [Lagerzugang Verrechnung]
+					+ [Nicht zugeordnet]
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Offene Forderungen' = ```
+				// Zweck: Offene Forderungen zum Berichtsende. Das ist ein Bestand, nicht die Bewegung des Monats.
+				// Quelle: FactDebitorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01. Vorzeichen wie in den Posten, Soll bleibt positiv. Leer bleibt leer.
+				VAR Ende = [Berichtsende]
+				RETURN
+					CALCULATE (
+						SUMX (
+							FILTER (
+								ADDCOLUMNS (
+									VALUES ( FactDebitorenposten[Postennr] ),
+									"@Rest", CALCULATE ( SUM ( FactDebitorenposten[Betrag] ) )
+								),
+								ABS ( [@Rest] ) >= 0.01
+							),
+							[@Rest]
+						),
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] <= Ende
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Verbindlichkeiten' = ```
+				// Zweck: Offene Verbindlichkeiten zum Berichtsende, im Bericht positiv.
+				// Quelle: FactKreditorenposten[Betrag] je Postennr, Buchungsdatum bis [Berichtsende], Rest ab 0,01. Die Posten stehen im Haben. Mal minus 1 dreht das Vorzeichen und lässt einen leeren Wert leer.
+				VAR Ende = [Berichtsende]
+				VAR Summe =
+					CALCULATE (
+						SUMX (
+							FILTER (
+								ADDCOLUMNS (
+									VALUES ( FactKreditorenposten[Postennr] ),
+									"@Rest", CALCULATE ( SUM ( FactKreditorenposten[Betrag] ) )
+								),
+								ABS ( [@Rest] ) >= 0.01
+							),
+							[@Rest]
+						),
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] <= Ende
+					)
+				RETURN
+					Summe * -1
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Bestandswert' = ```
+				// Zweck: Bestandswert zum Berichtsende. Eine bekannte Differenz zur Saldenliste bleibt stehen.
+				// Quelle: Summe FactWertposten[EinstandsbetragTatsächlich], Buchungsdatum bis [Berichtsende]. Vorzeichen wie in den Wertposten, Bestand im Soll positiv. Leer bleibt leer.
+				VAR Ende = [Berichtsende]
+				RETURN
+					CALCULATE (
+						SUM ( FactWertposten[EinstandsbetragTatsächlich] ),
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] <= Ende
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '01 Basis'
+
+		measure 'Endsaldo Bericht' = ```
+				// Zweck: Eine Definition des vorzeichenrichtigen Endsaldos der GuV-Buchungskonten am Datum im Filter.
+				// Quelle: FactSaldenliste[SaldoSoll] minus FactSaldenliste[SaldoHaben], mal DimKonto[vorzeichen]. Kontoart Buchung, damit Überschrift, Summe, Von-Summe und Bis-Summe draußen bleiben. Vorzeichen aus DimKonto. Leer bleibt leer.
+				SUMX (
+					FILTER (
+						DimKonto,
+						DimKonto[Kontoart] = "Buchung"
+							&& DimKonto[BilanzGuV] = "GuV"
+							&& NOT ISBLANK ( DimKonto[vorzeichen] )
+					),
+					DimKonto[vorzeichen]
+						* CALCULATE (
+							SUM ( FactSaldenliste[SaldoSoll] )
+								- SUM ( FactSaldenliste[SaldoHaben] )
+						)
+				)
+				```
+			isHidden
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Saldenliste Bewegung' = ```
+				// Zweck: Eine Bewegung der Saldenliste für Monat, YTD und Jahr. Endsaldo am Berichtsende minus Endsaldo am Tag vor dem ersten Datum im Filter.
+				// Quelle: [Endsaldo Bericht]. Im September ist der Vortag der 31.08., im Fenster ab dem 1. Januar der 31.12. des Vorjahres. Vorzeichen aus DimKonto.
+				VAR Ende = [Berichtsende]
+				VAR Vortag = MIN ( DimDatum[Datum] ) - 1
+				RETURN
+					CALCULATE (
+						[Endsaldo Bericht],
+						REMOVEFILTERS ( DimDatum ),
+						DimDatum[Datum] = Ende
+					)
+						- CALCULATE (
+							[Endsaldo Bericht],
+							REMOVEFILTERS ( DimDatum ),
+							DimDatum[Datum] = Vortag
+						)
+				```
+			isHidden
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Abstimmung Bericht' = ```
+				// Zweck: Berichtswert der Zeile in Abstimmzeile. Jede Kennzahl bleibt die Definition aus 01 Basis.
+				// Quelle: SWITCH auf SELECTEDVALUE von Abstimmzeile[Kennzahl]. Vorzeichen steckt in den Basis-Measures.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Umsatz", [Umsatz],
+					"Wareneinsatz", [Wareneinsatz],
+					"Rohertrag", [Rohertrag],
+					"Betriebsaufwand", [Betriebsaufwand],
+					"Abschreibung", [Abschreibung],
+					"Sonstiger Ertrag und Aufwand", [Sonstiger Ertrag und Aufwand],
+					"EBIT", [EBIT],
+					"Zins und Finanz", [Zins und Finanz],
+					"Nicht zugeordnet", [Nicht zugeordnet],
+					"Ergebnis GuV", [Ergebnis GuV],
+					"Offene Forderungen", [Offene Forderungen],
+					"Verbindlichkeiten", [Verbindlichkeiten],
+					"Bestandswert", [Bestandswert]
+				)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Abstimmung Saldenliste' = ```
+				// Zweck: Saldenliste zur Zeile in Abstimmzeile. Dieselben Formeln wie in 01 Basis, die GuV-Bausteine kommen aus [Saldenliste Bewegung].
+				// Quelle: Endsalden mal DimKonto[vorzeichen]. Kontrollkonten aus config\reconciliation.yaml: Forderungen 1202 und 1203, Verbindlichkeiten 3301 und 3302 im Bericht positiv, Lager 1001, 1101 und 1102. Vorzeichen wie in den Basis-Measures.
+				VAR Umsatz =
+					CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "UMSATZ" )
+				VAR Netto =
+					CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "WARENEINSATZ" )
+				VAR ZugangHaben = - [Lagerzugang Verrechnung]
+				VAR Wareneinsatz = Netto - ZugangHaben
+				VAR Betrieb =
+					CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "BETRIEBSAUFWAND" )
+				VAR Abschreibung =
+					CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "ABSCHREIBUNG" )
+				VAR Sonstig =
+					CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "SONSTIGER_ERTRAG_AUFWAND" )
+				VAR Ebit =
+					Umsatz + Sonstig - Wareneinsatz - Betrieb - Abschreibung
+				VAR Zins =
+					CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "ZINS_FINANZ" )
+				VAR Steuer =
+					CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "STEUER" )
+				VAR Nicht =
+					CALCULATE ( [Saldenliste Bewegung], DimKonto[bucket] = "NICHT_ZUGEORDNET" )
+				VAR Ergebnis =
+					Ebit + Zins + Steuer + [Lagerzugang Verrechnung] + Nicht
+				VAR Ende = [Berichtsende]
+				VAR Forderungen =
+					CALCULATE (
+						SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+						REMOVEFILTERS ( FactSaldenliste ),
+						REMOVEFILTERS ( DimDatum ),
+						REMOVEFILTERS ( DimKonto ),
+						DimDatum[Datum] = Ende,
+						DimKonto[Kontonr] IN { "1202", "1203" },
+						DimKonto[Kontoart] = "Buchung"
+					)
+				VAR Verbindlichkeiten =
+					CALCULATE (
+						SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+						REMOVEFILTERS ( FactSaldenliste ),
+						REMOVEFILTERS ( DimDatum ),
+						REMOVEFILTERS ( DimKonto ),
+						DimDatum[Datum] = Ende,
+						DimKonto[Kontonr] IN { "3301", "3302" },
+						DimKonto[Kontoart] = "Buchung"
+					) * -1
+				VAR Bestand =
+					CALCULATE (
+						SUM ( FactSaldenliste[SaldoSoll] ) - SUM ( FactSaldenliste[SaldoHaben] ),
+						REMOVEFILTERS ( FactSaldenliste ),
+						REMOVEFILTERS ( DimDatum ),
+						REMOVEFILTERS ( DimKonto ),
+						DimDatum[Datum] = Ende,
+						DimKonto[Kontonr] IN { "1001", "1101", "1102" },
+						DimKonto[Kontoart] = "Buchung"
+					)
+				RETURN
+					SWITCH (
+						SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+						"Umsatz", Umsatz,
+						"Wareneinsatz", Wareneinsatz,
+						"Rohertrag", Umsatz - Wareneinsatz,
+						"Betriebsaufwand", Betrieb,
+						"Abschreibung", Abschreibung,
+						"Sonstiger Ertrag und Aufwand", Sonstig,
+						"EBIT", Ebit,
+						"Zins und Finanz", Zins,
+						"Nicht zugeordnet", Nicht,
+						"Ergebnis GuV", Ergebnis,
+						"Offene Forderungen", Forderungen,
+						"Verbindlichkeiten", Verbindlichkeiten,
+						"Bestandswert", Bestand
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Abstimmung Differenz' = ```
+				// Zweck: Bericht minus Saldenliste der gewählten Zeile. Ein Rest bleibt stehen. Ohne Zeile bleibt das Measure leer.
+				// Quelle: COALESCE der beiden Abstimmungswerte auf 0, nur in Differenz und Status. Toleranz 0,00. Vorzeichen ist in beiden Wegen dasselbe.
+				VAR Kennzahl = SELECTEDVALUE ( Abstimmzeile[Kennzahl] )
+				RETURN
+					IF (
+						ISBLANK ( Kennzahl ),
+						BLANK (),
+						COALESCE ( [Abstimmung Bericht], 0 )
+							- COALESCE ( [Abstimmung Saldenliste], 0 )
+					)
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'
+
+		measure 'Abstimmung Status' = ```
+				// Zweck: Status der gewählten Zeile. Ohne Zeile bleibt er leer.
+				// Quelle: config\reconciliation.yaml, bekannte_differenzen, Prüfung P8, Betrag -240,00, Beleg 108210, nur bei Kennzahl Bestandswert. 0,00 ist abgeglichen, -240,00 ist erklärt, sonst Differenz. Vergleich auf Cent.
+				VAR Kennzahl = SELECTEDVALUE ( Abstimmzeile[Kennzahl] )
+				VAR Differenz = ROUND ( COALESCE ( [Abstimmung Differenz], 0 ), 2 )
+				RETURN
+					IF (
+						ISBLANK ( Kennzahl ),
+						BLANK (),
+						SWITCH (
+							TRUE (),
+							Differenz = 0, "abgeglichen",
+							Kennzahl = "Bestandswert" && Differenz = -240, "erklärt",
+							"Differenz"
+						)
+					)
+				```
+			displayFolder: '06 Abstimmung'

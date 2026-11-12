@@ -1,0 +1,50 @@
+createOrReplace
+	
+	table Faelligkeitsklasse
+
+		column Klasse
+			dataType: string
+			summarizeBy: none
+			sourceColumn: [Klasse]
+			sortByColumn: Sortierung
+
+		column Sortierung
+			dataType: int64
+			isHidden
+			formatString: 0
+			summarizeBy: none
+			sourceColumn: [Sortierung]
+
+		column VonTage
+			dataType: int64
+			isHidden
+			formatString: 0
+			summarizeBy: none
+			sourceColumn: [VonTage]
+
+		column BisTage
+			dataType: int64
+			isHidden
+			formatString: 0
+			summarizeBy: none
+			sourceColumn: [BisTage]
+
+		partition Faelligkeitsklasse = calculated
+			mode: import
+			source = ```
+					// Zweck: Fälligkeitsklassen für offene Posten. Jede offene Rechnung fällt in genau eine Klasse.
+					// Quelle: feste Tagesgrenzen, nicht aus Business Central. VonTage und BisTage sind inklusive. Tage sind INT von Berichtsende minus Fälligkeit.
+					DATATABLE (
+						"Klasse", STRING,
+						"Sortierung", INTEGER,
+						"VonTage", INTEGER,
+						"BisTage", INTEGER,
+						{
+							{ "nicht fällig", 1, -99999, 0 },
+							{ "1 bis 30 Tage", 2, 1, 30 },
+							{ "31 bis 60 Tage", 3, 31, 60 },
+							{ "61 bis 90 Tage", 4, 61, 90 },
+							{ "über 90 Tage", 5, 91, 99999 }
+						}
+					)
+					```

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "a4c8e1b07d3f6925c0e8",
+  "displayName": "02 GuV",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "c2f7d1b50a38e6942d15",
+      "target": "e4b9f3d72c50a8164f37",
+      "type": "NoFilter"
+    },
+    {
+      "source": "d3a8e2c61b49f7053e26",
+      "target": "e4b9f3d72c50a8164f37",
+      "type": "NoFilter"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'Konto Abweichung' = ```
+				// Zweck: Betrag der Bewegungsdifferenz plus Betrag der Saldodifferenz. Beide Reste zählen, auch wenn das Vorzeichen verschieden ist.
+				// Quelle: ABS von Konto Bewegung Differenz plus ABS von Konto Saldo Differenz. Vorzeichen keines, das Ergebnis bleibt positiv.
+				ABS ( [Konto Bewegung Differenz] )
+					+ ABS ( [Konto Saldo Differenz] )
+				```
+			formatString: "#,0.00"
+			displayFolder: '06 Abstimmung'

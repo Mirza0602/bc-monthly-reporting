@@ -1,0 +1,326 @@
+table FactWertposten
+	lineageTag: 028e01bf-3e5b-4ebd-b584-64f448872eea
+
+	column Eintragsnr
+		dataType: int64
+		formatString: 0
+		lineageTag: d184238c-7221-47b6-a7a1-29473c45b730
+		summarizeBy: sum
+		sourceColumn: Eintragsnr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Buchungsdatum
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: eaa29be9-6949-4d24-a027-2759d86d6fb7
+		summarizeBy: none
+		sourceColumn: Buchungsdatum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Artikelnr
+		dataType: string
+		isHidden
+		lineageTag: 53eee7e3-1a6d-4cfb-ad01-e4638b0f782b
+		summarizeBy: none
+		sourceColumn: Artikelnr
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DimensionSetID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 092a6ecf-62d3-4fab-8647-ee3311e2cc4d
+		summarizeBy: count
+		sourceColumn: DimensionSetID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lagerort
+		dataType: string
+		lineageTag: f2ee1e9d-dac4-4b4c-a7a0-9deb8f273f9a
+		summarizeBy: none
+		sourceColumn: Lagerort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Menge
+		dataType: double
+		lineageTag: bea80250-7026-407e-9f36-458141dcb67e
+		summarizeBy: sum
+		sourceColumn: Menge
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column EinstandsbetragTatsächlich
+		dataType: double
+		lineageTag: b6500473-68e9-49b9-9519-2ffa87bdf131
+		summarizeBy: sum
+		sourceColumn: EinstandsbetragTatsächlich
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column EinstandsbetragErwartet
+		dataType: double
+		lineageTag: 16504724-dff5-474d-b468-590df05b5918
+		summarizeBy: sum
+		sourceColumn: EinstandsbetragErwartet
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column KostenAnFibu
+		dataType: double
+		lineageTag: 572a2a2e-68d7-4564-a69a-c0903faa2b1f
+		summarizeBy: sum
+		sourceColumn: KostenAnFibu
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Verkaufsbetrag
+		dataType: double
+		lineageTag: d2fb391f-0294-4d75-8900-17e9b90a179e
+		summarizeBy: sum
+		sourceColumn: Verkaufsbetrag
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Kundennr
+		dataType: string
+		isHidden
+		lineageTag: c1ddb9da-ef1d-4391-9295-2763f6bfb628
+		summarizeBy: none
+		sourceColumn: Kundennr
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Belegnr
+		dataType: string
+		lineageTag: 85308523-4ab1-4b3b-bd2c-dfccf91a5627
+		summarizeBy: none
+		sourceColumn: Belegnr
+
+		annotation SummarizationSetBy = Automatic
+
+	column ArtikelpostenNr
+		dataType: int64
+		formatString: 0
+		lineageTag: 0e0879f3-e4fa-4c41-9ed8-3757ee960999
+		summarizeBy: sum
+		sourceColumn: ArtikelpostenNr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Artikelpostenart
+		dataType: string
+		lineageTag: 2bbc0f78-bfa6-4f33-bf31-ed5eabef6e97
+		summarizeBy: none
+		sourceColumn: Artikelpostenart
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactWertposten = m
+		mode: import
+		source =
+				// Quelle: microsoft/analytics/v1.0, salesValueEntries vereinigt mit itemValueEntries.
+				// Filter: keiner. pStichtag filtert keine Zeile.
+				// Schlüssel: Eintragsnr (entryNo), nach der Vereinigung eindeutig.
+				// Erwartete Zeilenzahl: 878
+				// AP-05 Stufe 2, neu: Spalte Artikelpostenart, Typ text, aus itemLedgerEntryType der Artikelwertposten. Verkaufswertposten-Zweig setzt null. Gruppierung weiter nur über Eintragsnr, Zeilenzahl bleibt 878.
+				// Abweichung von B2: Menge ist invoicedQuantity des Wertpostens. ArtikelpostenNr hängt nur an den Verkaufswertposten. Snapshot 24.10.2026: Verkauf 532, Artikel 878, Schnitt 532, nur Verkauf 0, nur Artikel 346. costAmountActual und invoicedQuantity stimmen auf den 532 gemeinsamen Nummern. Verkaufsbetrag und Kundennr kommen vom Verkauf, sonst leer. Einstandsbetrag bleibt wie in BC, negativ bei Verkauf.
+				let
+				    Inhalt = fnQuelle("microsoft/analytics/v1.0"),
+				    Erster = (liste as list) as any =>
+				        let
+				            Gefuellt = List.RemoveNulls(liste)
+				        in
+				            if List.IsEmpty(Gefuellt) then null else List.First(Gefuellt),
+				    Datum = (wert as any) as nullable date => if wert = null then null else Date.From(wert),
+				    Zahl = (wert as any) as nullable number => if wert = null then null else Number.From(wert),
+				    Ganz = (wert as any) as nullable number => if wert = null then null else Int64.From(wert),
+				    TextOderLeer = (wert as any) as nullable text =>
+				        let
+				            Textwert = if wert = null then null else Text.Trim(Text.From(wert))
+				        in
+				            if Textwert = null or Textwert = "" then null else Textwert,
+				    ArtikelBasis = Table.RenameColumns(
+				        Table.SelectColumns(
+				            Inhalt{[Name = "itemValueEntries"]}[Data],
+				            {
+				                "entryNo",
+				                "postingDate",
+				                "itemNo",
+				                "dimensionSetID",
+				                "locationCode",
+				                "invoicedQuantity",
+				                "costAmountActual",
+				                "costAmountExpected",
+				                "costPostedToGL",
+				                // AP-05 Stufe 2, neu: Artikelpostenart nur aus den Artikelwertposten.
+				                "itemLedgerEntryType"
+				            }
+				        ),
+				        {
+				            {"entryNo", "Eintragsnr"},
+				            {"postingDate", "Buchungsdatum"},
+				            {"itemNo", "Artikelnr"},
+				            {"dimensionSetID", "DimensionSetID"},
+				            {"locationCode", "Lagerort"},
+				            {"invoicedQuantity", "Menge"},
+				            {"costAmountActual", "EinstandsbetragTatsächlich"},
+				            {"costAmountExpected", "EinstandsbetragErwartet"},
+				            {"costPostedToGL", "KostenAnFibu"},
+				            // AP-05 Stufe 2, neu.
+				            {"itemLedgerEntryType", "Artikelpostenart"}
+				        }
+				    ),
+				    Artikel = Table.AddColumn(
+				        Table.AddColumn(
+				            Table.AddColumn(
+				                Table.AddColumn(ArtikelBasis, "Verkaufsbetrag", each null),
+				                "Kundennr",
+				                each null
+				            ),
+				            "Belegnr",
+				            each null
+				        ),
+				        "ArtikelpostenNr",
+				        each null
+				    ),
+				    VerkaufBasis = Table.RenameColumns(
+				        Table.SelectColumns(
+				            Inhalt{[Name = "salesValueEntries"]}[Data],
+				            {
+				                "entryNo",
+				                "postingDate",
+				                "itemNo",
+				                "dimensionSetID",
+				                "locationCode",
+				                "invoicedQuantity",
+				                "costAmountActual",
+				                "costPostedToGL",
+				                "salesAmountActual",
+				                "customerNo",
+				                "documentNo",
+				                "itemLedgerEntryNo"
+				            }
+				        ),
+				        {
+				            {"entryNo", "Eintragsnr"},
+				            {"postingDate", "Buchungsdatum"},
+				            {"itemNo", "Artikelnr"},
+				            {"dimensionSetID", "DimensionSetID"},
+				            {"locationCode", "Lagerort"},
+				            {"invoicedQuantity", "Menge"},
+				            {"costAmountActual", "EinstandsbetragTatsächlich"},
+				            {"costPostedToGL", "KostenAnFibu"},
+				            {"salesAmountActual", "Verkaufsbetrag"},
+				            {"customerNo", "Kundennr"},
+				            {"documentNo", "Belegnr"},
+				            {"itemLedgerEntryNo", "ArtikelpostenNr"}
+				        }
+				    ),
+				    // AP-05 Stufe 2, neu: Verkaufswertposten-Zweig setzt Artikelpostenart auf null, Typ text.
+				    Verkauf = Table.AddColumn(
+				        Table.AddColumn(VerkaufBasis, "EinstandsbetragErwartet", each null),
+				        "Artikelpostenart",
+				        each null,
+				        type text
+				    ),
+				    Spalten = {
+				        "Eintragsnr",
+				        "Buchungsdatum",
+				        "Artikelnr",
+				        "DimensionSetID",
+				        "Lagerort",
+				        "Menge",
+				        "EinstandsbetragTatsächlich",
+				        "EinstandsbetragErwartet",
+				        "KostenAnFibu",
+				        "Verkaufsbetrag",
+				        "Kundennr",
+				        "Belegnr",
+				        "ArtikelpostenNr",
+				        // AP-05 Stufe 2, neu.
+				        "Artikelpostenart"
+				    },
+				    ArtikelGleich = Table.TransformColumns(
+				        Table.SelectColumns(Artikel, Spalten),
+				        {{"Eintragsnr", each Int64.From(_), Int64.Type}}
+				    ),
+				    VerkaufGleich = Table.TransformColumns(
+				        Table.SelectColumns(Verkauf, Spalten),
+				        {{"Eintragsnr", each Int64.From(_), Int64.Type}}
+				    ),
+				    // Artikel zuerst. Gemeinsame Beträge stimmen überein, fehlende Verkaufsfelder bleiben null und fallen in Erster heraus.
+				    // AP-05 Stufe 2: Artikelpostenart kommt von den Artikelwertposten. Im Verkaufszweig ist sie null und fällt in Erster heraus.
+				    Vereinigt = Table.Combine({ArtikelGleich, VerkaufGleich}),
+				    Gruppiert = Table.Group(
+				        Vereinigt,
+				        {"Eintragsnr"},
+				        {
+				            {"Buchungsdatum", each Erster([Buchungsdatum]), type any},
+				            {"Artikelnr", each Erster([Artikelnr]), type any},
+				            {"DimensionSetID", each Erster([DimensionSetID]), type any},
+				            {"Lagerort", each Erster([Lagerort]), type any},
+				            {"Menge", each Erster([Menge]), type any},
+				            {"EinstandsbetragTatsächlich", each Erster([EinstandsbetragTatsächlich]), type any},
+				            {"EinstandsbetragErwartet", each Erster([EinstandsbetragErwartet]), type any},
+				            {"KostenAnFibu", each Erster([KostenAnFibu]), type any},
+				            {"Verkaufsbetrag", each Erster([Verkaufsbetrag]), type any},
+				            {"Kundennr", each Erster([Kundennr]), type any},
+				            {"Belegnr", each Erster([Belegnr]), type any},
+				            {"ArtikelpostenNr", each Erster([ArtikelpostenNr]), type any},
+				            // AP-05 Stufe 2, neu. Typ text.
+				            {"Artikelpostenart", each Erster([Artikelpostenart]), type text}
+				        }
+				    ),
+				    Ergebnis = Table.Sort(
+				        Table.TransformColumns(
+				            Gruppiert,
+				            {
+				                {"Eintragsnr", each Ganz(_), Int64.Type},
+				                {"Buchungsdatum", each Datum(_), type date},
+				                {"Artikelnr", each TextOderLeer(_), type text},
+				                {"DimensionSetID", each Ganz(_), Int64.Type},
+				                {"Lagerort", each TextOderLeer(_), type text},
+				                {"Menge", each Zahl(_), type number},
+				                {"EinstandsbetragTatsächlich", each Zahl(_), type number},
+				                {"EinstandsbetragErwartet", each Zahl(_), type number},
+				                {"KostenAnFibu", each Zahl(_), type number},
+				                {"Verkaufsbetrag", each Zahl(_), type number},
+				                {"Kundennr", each TextOderLeer(_), type text},
+				                {"Belegnr", each TextOderLeer(_), type text},
+				                {"ArtikelpostenNr", each Ganz(_), Int64.Type},
+				                // AP-05 Stufe 2, neu. Typ text.
+				                {"Artikelpostenart", each TextOderLeer(_), type text}
+				            }
+				        ),
+				        {{"Eintragsnr", Order.Ascending}}
+				    )
+				in
+				    Ergebnis
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,72 @@
+# Parameter der Prüfungen P1 bis P9.
+# stichtag leer: der Stichtag kommt aus manifest.json des Snapshots.
+# --month setzt den Stichtag des Protokolls auf das Monatsende.
+
+stichtag: null
+toleranz: "0.00"
+
+konten:
+  forderungen:
+    pruefung: P6
+    nummern:
+      - "1202"
+      - "1203"
+    quelle: BC-Einrichtung
+    status: verifiziert
+    hinweis: Debitorenbuchungsgruppen.
+  verbindlichkeiten:
+    pruefung: P7
+    nummern:
+      - "3301"
+      - "3302"
+    quelle: BC-Einrichtung
+    status: verifiziert
+    hinweis: Kreditorenbuchungsgruppen.
+  lager:
+    pruefung: P8
+    nummern:
+      - "1001"
+      - "1101"
+      - "1102"
+    quelle: BC-Einrichtung
+    status: verifiziert
+    hinweis: "Lagerbuchung Einrichtung. Lagerkorrekturkonto der Buchungsmatrix HANDEL ist 5021. Erklärt die Habenbuchung des Anfangsbestands 2025 auf 5021 (Befund a)."
+  pruefkonten:
+    pruefung: P8
+    nummern:
+      - "1085"
+    erwartet: "0.00"
+    quelle: BC-Einrichtung
+    status: verifiziert
+    hinweis: Erwarteter Saldo 0,00.
+
+bekannte_differenzen:
+  - pruefung: P8
+    betrag: "-240.00"
+    beleg: "108210"
+    artikel: "CC-1000"
+    ursache: "Allgemeine Buchungsmatrix, Produktbuchungsgruppe HANDEL: Wareneinkaufskonto 1102 (EU, EXPORT, INLAND), Direkte Kosten Verrech.-Konto 1102. Bei Lagerartikeln hebt die Lagerbuchung den Einkauf auf 1102 auf. CC-1000 ist ein Nicht-Lagerartikel ohne Lagerbuchung, daher bleibt der Einkauf auf 1102 stehen. Einrichtungsfehler der Demofirma."
+    quelle: "BC Seite 314 Buchungsmatrix Einrichtung, geprüft von Mirza am 24.10.2026"
+    status: erklaert
+
+pruefungen:
+  - id: P1
+    name: Summe Soll gleich Summe Haben
+  - id: P2
+    name: Nettoveränderung im Monat je Konto
+  - id: P3
+    name: Kumulierter Saldo je Konto
+  - id: P4
+    name: Umsatz
+  - id: P5
+    name: EBIT
+  - id: P5b
+    name: Wareneinsatz gegen Verkaufswertposten
+  - id: P6
+    name: Offene Forderungen
+  - id: P7
+    name: Verbindlichkeiten
+  - id: P8
+    name: Bestandswert
+  - id: P9
+    name: Zeilenzahlen Extraktor gegen manifest

@@ -1,0 +1,47 @@
+entryNo,parentEntryNo,description,presentationOrder,siblingSequenceNo,indentation,accountCategory,incomeBalance,additionalReportDefinition,systemGenerated,hasChildren
+1,0,Anlagen,0010000,10000,0,Assets,Balance Sheet, ,True,True
+2,1,Kurzfristiges Umlaufvermögen,0010000020000,20000,1,Assets,Balance Sheet, ,False,True
+3,2,Bar,0010000020000030000,30000,2,Assets,Balance Sheet,Cash Accounts,False,False
+4,2,Debitoren,0010000020000040000,40000,2,Assets,Balance Sheet,Operating Activities,False,False
+5,2,Vorausbezahlte Aufwendungen,0010000020000050000,50000,2,Assets,Balance Sheet,Operating Activities,False,False
+6,2,Lagerbestand,0010000020000060000,60000,2,Assets,Balance Sheet,Operating Activities,False,False
+7,1,Anlagen,0010000070000,70000,1,Assets,Balance Sheet, ,False,True
+8,7,Ausstattung,0010000070000080000,80000,2,Assets,Balance Sheet,Investing Activities,False,False
+9,7,Kumulierte Abschreibungen,0010000070000090000,90000,2,Assets,Balance Sheet,Investing Activities,False,False
+10,0,Verbindlichkeiten,1100000,100000,0,Liabilities,Balance Sheet, ,True,True
+11,10,Kurzfristige Verbindlichkeiten,1100000110000,110000,1,Liabilities,Balance Sheet,Operating Activities,False,False
+12,10,Lohnverbindlichkeiten,1100000120000,120000,1,Liabilities,Balance Sheet,Operating Activities,False,False
+13,10,Langfristige Verbindlichkeiten,1100000130000,130000,1,Liabilities,Balance Sheet,Financing Activities,False,False
+14,0,Eigenkapital,2140000,140000,0,Equity,Balance Sheet, ,True,True
+15,14,Stammaktien,2140000150000,150000,1,Equity,Balance Sheet, ,False,False
+16,14,Nicht ausgeschüttete Gewinne,2140000160000,160000,1,Equity,Balance Sheet,Retained Earnings,False,False
+17,14,Verteilungen an Anteilseigner,2140000170000,170000,1,Equity,Balance Sheet,Distribution to Shareholders,False,False
+18,0,Einnahmen,3180000,180000,0,Income,Income Statement, ,True,True
+19,18,"Einnahmen, Services",3180000190000,190000,1,Income,Income Statement, ,False,False
+20,18,"Einnahmen, Produktverkäufe",3180000200000,200000,1,Income,Income Statement, ,False,False
+21,18,"Einnahmen, Projekte",3180000210000,210000,1,Income,Income Statement, ,False,False
+22,18,Verkaufsrabatte,3180000220000,220000,1,Income,Income Statement, ,False,False
+23,18,Retouren und Rückstellungen,3180000230000,230000,1,Income,Income Statement, ,False,False
+24,18,"Einnahmen, Zinsen",3180000240000,240000,1,Income,Income Statement, ,False,False
+25,18,Projektverkäufe Gegenkonto,3180000250000,250000,1,Income,Income Statement, ,False,False
+26,0,Wareneinsatz,4260000,260000,0,Cost of Goods Sold,Income Statement, ,True,True
+27,26,Arbeit,4260000270000,270000,1,Cost of Goods Sold,Income Statement, ,False,False
+28,26,Materialien,4260000280000,280000,1,Cost of Goods Sold,Income Statement, ,False,False
+29,26,Gewährte Rabatte,4260000290000,290000,1,Cost of Goods Sold,Income Statement, ,False,False
+30,26,Projektkosten,4260000300000,300000,1,Cost of Goods Sold,Income Statement, ,False,False
+31,0,Ausgaben,5310000,310000,0,Expense,Income Statement, ,True,True
+32,31,Mietausgaben,5310000320000,320000,1,Expense,Income Statement, ,False,False
+33,31,Werbeausgaben,5310000330000,330000,1,Expense,Income Statement, ,False,False
+34,31,Zinsaufwendungen,5310000340000,340000,1,Expense,Income Statement, ,False,False
+35,31,Gebühren,5310000350000,350000,1,Expense,Income Statement, ,False,False
+36,31,Versicherungsausgaben,5310000360000,360000,1,Expense,Income Statement, ,False,False
+37,31,Lohnkosten,5310000370000,370000,1,Expense,Income Statement, ,False,False
+38,31,Lohnnebenkosten,5310000380000,380000,1,Expense,Income Statement, ,False,False
+39,31,Ausgaben für Gehälter,5310000390000,390000,1,Expense,Income Statement, ,False,False
+40,31,Ausgaben für Reparaturen und Instandhaltung,5310000400000,400000,1,Expense,Income Statement, ,False,False
+41,31,Ausgaben für Energieversorgung,5310000410000,410000,1,Expense,Income Statement, ,False,False
+42,31,Sonstige Einnahmen und Ausgaben,5310000420000,420000,1,Expense,Income Statement, ,False,False
+43,31,Steueraufwand,5310000430000,430000,1,Expense,Income Statement, ,False,False
+44,31,Reisespesen,5310000440000,440000,1,Expense,Income Statement, ,False,False
+45,31,Kraftfahrzeugkosten,5310000450000,450000,1,Expense,Income Statement, ,False,False
+46,31,Forderungsverluste,5310000460000,460000,1,Expense,Income Statement, ,False,False

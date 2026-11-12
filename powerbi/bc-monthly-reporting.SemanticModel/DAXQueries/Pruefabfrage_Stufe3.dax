@@ -1,0 +1,148 @@
+// Prüfabfrage AP-05 Stufe 3. Je Kennzahl und Item eine Zeile mit Ist, Soll, Differenz. Filter 09/2026.
+// Monat und YTD aus Protokoll 2026-09, Vormonat aus Protokoll 2026-08.
+// Vorjahr: Sachposten aus denselben Formeln wie reconcile 2025-09. Kein Protokoll, Saldenliste ohne 31.01.2025, Formeln Differenz 0,00.
+// Plan und Delta sind Formeln aus diesen Sollwerten, Planfaktor 1,05. Bestand hat keinen Plan. 63 Zeilen.
+EVALUATE
+VAR Faktor = 1.05
+VAR Basis =
+    ADDCOLUMNS (
+        CROSSJOIN (
+            DATATABLE (
+                "Zeile", STRING,
+                "ZeileNr", INTEGER,
+                {
+                    { "Umsatz", 1 },
+                    { "Wareneinsatz", 2 },
+                    { "Rohertrag", 3 },
+                    { "EBIT", 4 },
+                    { "Ergebnis GuV", 5 },
+                    { "Offene Forderungen", 6 },
+                    { "Bestandswert", 7 }
+                }
+            ),
+            DATATABLE (
+                "Auswahl", STRING,
+                "AuswahlNr", INTEGER,
+                {
+                    { "Monat", 1 },
+                    { "YTD", 2 },
+                    { "Vormonat", 3 },
+                    { "Vorjahr Monat", 4 },
+                    { "Vorjahr YTD", 5 },
+                    { "Plan (Demo) Monat", 6 },
+                    { "Plan (Demo) YTD", 7 },
+                    { "Δ VJ Monat", 8 },
+                    { "Δ VJ YTD", 9 }
+                }
+            )
+        ),
+        "MonatSoll",
+            SWITCH (
+                [Zeile],
+                "Umsatz", 6966,
+                "Wareneinsatz", 5434,
+                "Rohertrag", 1532,
+                "EBIT", -8528,
+                "Ergebnis GuV", -8528,
+                "Offene Forderungen", 68041.07,
+                "Bestandswert", 2266906.50
+            ),
+        "YTDSoll",
+            SWITCH (
+                [Zeile],
+                "Umsatz", 362007.38,
+                "Wareneinsatz", 260374.20,
+                "Rohertrag", 101633.18,
+                "EBIT", 86973.18,
+                "Ergebnis GuV", 60728.35,
+                "Offene Forderungen", 68041.07,
+                "Bestandswert", 2266906.50
+            ),
+        "VormonatSoll",
+            SWITCH (
+                [Zeile],
+                "Umsatz", 54759.64,
+                "Wareneinsatz", 42313.80,
+                "Rohertrag", 12445.84,
+                "EBIT", 12445.84,
+                "Ergebnis GuV", 12445.84,
+                "Offene Forderungen", 68041.07,
+                "Bestandswert", 2228990.50
+            ),
+        "VJMonatSoll",
+            SWITCH (
+                [Zeile],
+                "Umsatz", 33478.70,
+                "Wareneinsatz", 26112.60,
+                "Rohertrag", 7366.10,
+                "EBIT", 7366.10,
+                "Ergebnis GuV", 7366.10,
+                "Offene Forderungen", 0,
+                "Bestandswert", 2190821.60
+            ),
+        "VJYTDSoll",
+            SWITCH (
+                [Zeile],
+                "Umsatz", 409265.30,
+                "Wareneinsatz", 319224.20,
+                "Rohertrag", 90041.10,
+                "EBIT", 90041.10,
+                "Ergebnis GuV", 2275606.60,
+                "Offene Forderungen", 0,
+                "Bestandswert", 2190821.60
+            )
+    )
+VAR Zeilen =
+    ADDCOLUMNS (
+        Basis,
+        "Soll",
+            SWITCH (
+                [Auswahl],
+                "Monat", [MonatSoll],
+                "YTD", [YTDSoll],
+                "Vormonat", [VormonatSoll],
+                "Vorjahr Monat", [VJMonatSoll],
+                "Vorjahr YTD", [VJYTDSoll],
+                "Plan (Demo) Monat",
+                    IF (
+                        [Zeile] IN { "Offene Forderungen", "Bestandswert" },
+                        BLANK (),
+                        [VJMonatSoll] * Faktor
+                    ),
+                "Plan (Demo) YTD",
+                    IF (
+                        [Zeile] IN { "Offene Forderungen", "Bestandswert" },
+                        BLANK (),
+                        [VJYTDSoll] * Faktor
+                    ),
+                "Δ VJ Monat", [MonatSoll] - [VJMonatSoll],
+                "Δ VJ YTD", [YTDSoll] - [VJYTDSoll]
+            ),
+        "Ist",
+            VAR Zeile = [Zeile]
+            VAR Auswahl = [Auswahl]
+            RETURN
+                CALCULATE (
+                    SWITCH (
+                        Zeile,
+                        "Umsatz", [Umsatz],
+                        "Wareneinsatz", [Wareneinsatz],
+                        "Rohertrag", [Rohertrag],
+                        "EBIT", [EBIT],
+                        "Ergebnis GuV", [Ergebnis GuV],
+                        "Offene Forderungen", [Offene Forderungen],
+                        "Bestandswert", [Bestandswert]
+                    ),
+                    Zeitauswahl[Zeitauswahl] = Auswahl,
+                    DimDatum[Jahr] = 2026,
+                    DimDatum[Monat] = 9
+                )
+    )
+VAR Mit =
+    ADDCOLUMNS (
+        Zeilen,
+        "Differenz", COALESCE ( [Ist], 0 ) - COALESCE ( [Soll], 0 )
+    )
+RETURN
+    Mit
+ORDER BY [ZeileNr], [AuswahlNr]

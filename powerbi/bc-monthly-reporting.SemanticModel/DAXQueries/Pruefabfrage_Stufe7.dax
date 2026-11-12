@@ -1,0 +1,308 @@
+// Prüfabfrage AP-06 Stufe B, Seite 2 GuV. Berichtsmonat 09/2026, Stichtag 30.09.2026.
+// Erstes Ergebnis: 10 Zeilen, Beträge. Zweites Ergebnis: 4 Farbzeilen, Hex-Text.
+// Zeitauswahl nur innerhalb der Measures. Soll aus dem Abstimmprotokoll 2026-09.
+// GuV Δ VJ und GuV Δ Plan der Zeile Umsatz gleich den Karten auf Seite 1.
+// Summe der Betriebsaufwand-Konten je Abteilung gleich [Betriebsaufwand]. Nicht zugeordnet bleibt in der Summe.
+// Farbe Umsatz: Ertrag. Δ VJ ist 6.966 minus 33.478,70, also negativ, Soll #A94F0A. Δ Plan ist 6.966 minus 33.478,70 mal 1,05, ebenfalls negativ, Soll #A94F0A.
+// Farbe Betriebsaufwand: Aufwand. Soll ist #A94F0A, wenn [GuV Δ VJ] bzw. [GuV Δ Plan] größer als 0 ist, sonst #1E2733. Blank und 0 bleiben #1E2733.
+EVALUATE
+VAR UmsatzMonat = 6966
+VAR WareneinsatzMonat = 5434
+VAR RohertragMonat = 1532
+VAR BetriebMonat = 10060
+VAR EbitMonat = -8528
+VAR UmsatzYtd = 362007.38
+VAR EbitYtd = 86973.18
+VAR UmsatzDeltaVj =
+    CALCULATE (
+        [Umsatz Δ VJ],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9
+    )
+VAR UmsatzDeltaPlan =
+    CALCULATE (
+        [Umsatz Δ Plan],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9
+    )
+VAR GuVUmsatzDeltaVj =
+    CALCULATE (
+        [GuV Δ VJ],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        REMOVEFILTERS ( Abstimmzeile ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9,
+        Abstimmzeile[Kennzahl] = "Umsatz"
+    )
+VAR GuVUmsatzDeltaPlan =
+    CALCULATE (
+        [GuV Δ Plan],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        REMOVEFILTERS ( Abstimmzeile ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9,
+        Abstimmzeile[Kennzahl] = "Umsatz"
+    )
+VAR BetriebGesamt =
+    CALCULATE (
+        [Betriebsaufwand],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        REMOVEFILTERS ( DimDimensionsSet ),
+        REMOVEFILTERS ( DimKonto ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9
+    )
+VAR SummeAbteilung =
+    CALCULATE (
+        SUMX (
+            VALUES ( DimDimensionsSet[AbteilungName] ),
+            SUMX (
+                FILTER (
+                    ALL ( DimKonto ),
+                    DimKonto[Kontoart] = "Buchung"
+                        && DimKonto[bucket] = "BETRIEBSAUFWAND"
+                ),
+                [Betriebsaufwand]
+            )
+        ),
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        REMOVEFILTERS ( DimDimensionsSet ),
+        REMOVEFILTERS ( DimKonto ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9
+    )
+VAR Zeilen =
+    DATATABLE (
+        "Nr", INTEGER,
+        "Zeile", STRING,
+        {
+            { 1, "Umsatz Monat" },
+            { 2, "Wareneinsatz Monat" },
+            { 3, "Rohertrag Monat" },
+            { 4, "Betriebsaufwand Monat" },
+            { 5, "EBIT Monat" },
+            { 6, "Umsatz YTD" },
+            { 7, "EBIT YTD" },
+            { 8, "Umsatz Δ VJ gegen Seite 1" },
+            { 9, "Umsatz Δ Plan gegen Seite 1" },
+            { 10, "Betriebsaufwand je Abteilung" }
+        }
+    )
+VAR Mit =
+    ADDCOLUMNS (
+        Zeilen,
+        "Ist",
+            VAR Kennung = [Zeile]
+            VAR Kennzahltext =
+                SWITCH (
+                    Kennung,
+                    "Umsatz Monat", "Umsatz",
+                    "Umsatz YTD", "Umsatz",
+                    "Wareneinsatz Monat", "Wareneinsatz",
+                    "Rohertrag Monat", "Rohertrag",
+                    "Betriebsaufwand Monat", "Betriebsaufwand",
+                    "EBIT Monat", "EBIT",
+                    "EBIT YTD", "EBIT"
+                )
+            RETURN
+                SWITCH (
+                    TRUE (),
+                    Kennung = "Umsatz Δ VJ gegen Seite 1", GuVUmsatzDeltaVj,
+                    Kennung = "Umsatz Δ Plan gegen Seite 1", GuVUmsatzDeltaPlan,
+                    Kennung = "Betriebsaufwand je Abteilung", SummeAbteilung,
+                    CALCULATE (
+                        SWITCH (
+                            Kennung,
+                            "Umsatz Monat", [GuV Monat],
+                            "Wareneinsatz Monat", [GuV Monat],
+                            "Rohertrag Monat", [GuV Monat],
+                            "Betriebsaufwand Monat", [GuV Monat],
+                            "EBIT Monat", [GuV Monat],
+                            "Umsatz YTD", [GuV YTD],
+                            "EBIT YTD", [GuV YTD]
+                        ),
+                        REMOVEFILTERS ( DimDatum ),
+                        REMOVEFILTERS ( Zeitauswahl ),
+                        REMOVEFILTERS ( Abstimmzeile ),
+                        DimDatum[Jahr] = 2026,
+                        DimDatum[Monat] = 9,
+                        Abstimmzeile[Kennzahl] = Kennzahltext
+                    )
+                ),
+        "Soll",
+            SWITCH (
+                [Zeile],
+                "Umsatz Monat", UmsatzMonat,
+                "Wareneinsatz Monat", WareneinsatzMonat,
+                "Rohertrag Monat", RohertragMonat,
+                "Betriebsaufwand Monat", BetriebMonat,
+                "EBIT Monat", EbitMonat,
+                "Umsatz YTD", UmsatzYtd,
+                "EBIT YTD", EbitYtd,
+                "Umsatz Δ VJ gegen Seite 1", UmsatzDeltaVj,
+                "Umsatz Δ Plan gegen Seite 1", UmsatzDeltaPlan,
+                "Betriebsaufwand je Abteilung", BetriebGesamt
+            )
+    )
+VAR Ergebnis =
+    ADDCOLUMNS (
+        Mit,
+        "Abweichung", COALESCE ( [Ist], 0 ) - COALESCE ( [Soll], 0 )
+    )
+RETURN
+    Ergebnis
+ORDER BY [Nr]
+
+// Farbe. Umsatz ist Ertrag, ein negativer Rohwert ist ungünstig. Betriebsaufwand ist Aufwand, ein positiver Rohwert ist ungünstig.
+EVALUATE
+VAR Signal = "#A94F0A"
+VAR Textfarbe = "#1E2733"
+VAR GuVUmsatzDeltaVj =
+    CALCULATE (
+        [GuV Δ VJ],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        REMOVEFILTERS ( Abstimmzeile ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9,
+        Abstimmzeile[Kennzahl] = "Umsatz"
+    )
+VAR GuVUmsatzDeltaPlan =
+    CALCULATE (
+        [GuV Δ Plan],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        REMOVEFILTERS ( Abstimmzeile ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9,
+        Abstimmzeile[Kennzahl] = "Umsatz"
+    )
+VAR GuVBetriebDeltaVj =
+    CALCULATE (
+        [GuV Δ VJ],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        REMOVEFILTERS ( Abstimmzeile ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9,
+        Abstimmzeile[Kennzahl] = "Betriebsaufwand"
+    )
+VAR GuVBetriebDeltaPlan =
+    CALCULATE (
+        [GuV Δ Plan],
+        REMOVEFILTERS ( DimDatum ),
+        REMOVEFILTERS ( Zeitauswahl ),
+        REMOVEFILTERS ( Abstimmzeile ),
+        DimDatum[Jahr] = 2026,
+        DimDatum[Monat] = 9,
+        Abstimmzeile[Kennzahl] = "Betriebsaufwand"
+    )
+VAR FarbeUmsatzVj =
+    IF (
+        ISBLANK ( GuVUmsatzDeltaVj ) || GuVUmsatzDeltaVj = 0,
+        Textfarbe,
+        IF ( GuVUmsatzDeltaVj < 0, Signal, Textfarbe )
+    )
+VAR FarbeUmsatzPlan =
+    IF (
+        ISBLANK ( GuVUmsatzDeltaPlan ) || GuVUmsatzDeltaPlan = 0,
+        Textfarbe,
+        IF ( GuVUmsatzDeltaPlan < 0, Signal, Textfarbe )
+    )
+VAR FarbeBetriebVj =
+    IF (
+        ISBLANK ( GuVBetriebDeltaVj ) || GuVBetriebDeltaVj = 0,
+        Textfarbe,
+        IF ( GuVBetriebDeltaVj > 0, Signal, Textfarbe )
+    )
+VAR FarbeBetriebPlan =
+    IF (
+        ISBLANK ( GuVBetriebDeltaPlan ) || GuVBetriebDeltaPlan = 0,
+        Textfarbe,
+        IF ( GuVBetriebDeltaPlan > 0, Signal, Textfarbe )
+    )
+VAR Zeilen =
+    DATATABLE (
+        "Nr", INTEGER,
+        "Zeile", STRING,
+        {
+            { 11, "Umsatz Farbe VJ" },
+            { 12, "Umsatz Farbe Plan" },
+            { 13, "Betriebsaufwand Farbe VJ" },
+            { 14, "Betriebsaufwand Farbe Plan" }
+        }
+    )
+VAR Mit =
+    ADDCOLUMNS (
+        Zeilen,
+        "Ist",
+            VAR Kennung = [Zeile]
+            RETURN
+                SWITCH (
+                    Kennung,
+                    "Umsatz Farbe VJ",
+                        CALCULATE (
+                            [GuV Farbe VJ],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( Abstimmzeile ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            Abstimmzeile[Kennzahl] = "Umsatz"
+                        ),
+                    "Umsatz Farbe Plan",
+                        CALCULATE (
+                            [GuV Farbe Plan],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( Abstimmzeile ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            Abstimmzeile[Kennzahl] = "Umsatz"
+                        ),
+                    "Betriebsaufwand Farbe VJ",
+                        CALCULATE (
+                            [GuV Farbe VJ],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( Abstimmzeile ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            Abstimmzeile[Kennzahl] = "Betriebsaufwand"
+                        ),
+                    "Betriebsaufwand Farbe Plan",
+                        CALCULATE (
+                            [GuV Farbe Plan],
+                            REMOVEFILTERS ( DimDatum ),
+                            REMOVEFILTERS ( Zeitauswahl ),
+                            REMOVEFILTERS ( Abstimmzeile ),
+                            DimDatum[Jahr] = 2026,
+                            DimDatum[Monat] = 9,
+                            Abstimmzeile[Kennzahl] = "Betriebsaufwand"
+                        )
+                ),
+        "Soll",
+            SWITCH (
+                [Zeile],
+                "Umsatz Farbe VJ", FarbeUmsatzVj,
+                "Umsatz Farbe Plan", FarbeUmsatzPlan,
+                "Betriebsaufwand Farbe VJ", FarbeBetriebVj,
+                "Betriebsaufwand Farbe Plan", FarbeBetriebPlan
+            )
+    )
+VAR Ergebnis =
+    ADDCOLUMNS (
+        Mit,
+        "Abweichung", IF ( [Ist] = [Soll], 0, 1 )
+    )
+RETURN
+    Ergebnis
+ORDER BY [Nr]

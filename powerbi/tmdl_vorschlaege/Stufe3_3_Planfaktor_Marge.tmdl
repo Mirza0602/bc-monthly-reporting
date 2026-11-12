@@ -1,0 +1,19 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'Planfaktor' = ```
+				// Zweck: Faktor für den Demo-Plan. Jede Kennzahl wird damit aus dem Vorjahr abgeleitet.
+				// Quelle: Konstante 1,05. Demo-Plan, kein BC-Budget. Vorzeichen: keines.
+				1.05
+				```
+			formatString: "0.00"
+			displayFolder: '03 Abweichung'
+
+		measure 'Rohertragsmarge' = ```
+				// Zweck: Rohertrag im Verhältnis zum Umsatz. Monat, YTD, Vorjahr und Plan nutzen diese Definition.
+				// Quelle: DIVIDE ( [Rohertrag], [Umsatz] ). Vorzeichen steckt in den Bausteinen.
+				DIVIDE ( [Rohertrag], [Umsatz] )
+				```
+			formatString: "0.0%"
+			displayFolder: '01 Basis'

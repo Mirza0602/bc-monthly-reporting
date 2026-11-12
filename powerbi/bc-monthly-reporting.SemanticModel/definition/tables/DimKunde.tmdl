@@ -1,0 +1,89 @@
+table DimKunde
+	lineageTag: c119f1ad-d192-4eea-a14a-566515e85d41
+
+	column Kundennr
+		dataType: string
+		lineageTag: 31d695b5-5299-41ee-ae7d-3163af551100
+		summarizeBy: none
+		sourceColumn: Kundennr
+
+		annotation SummarizationSetBy = Automatic
+
+	column Name
+		dataType: string
+		lineageTag: c8c63985-4ece-4f8b-9479-dcb3a3d93c58
+		summarizeBy: none
+		sourceColumn: Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kundengruppe
+		dataType: string
+		lineageTag: 10135044-6d6d-4928-9663-4cf3c46088a2
+		summarizeBy: none
+		sourceColumn: Kundengruppe
+
+		annotation SummarizationSetBy = Automatic
+
+	column Land
+		dataType: string
+		lineageTag: d6ac0036-5246-4cfe-9714-fcb792abaa77
+		summarizeBy: none
+		sourceColumn: Land
+
+		annotation SummarizationSetBy = Automatic
+
+	column Debitorenbuchungsgruppe
+		dataType: string
+		lineageTag: d4284481-c728-45ca-ace0-fd57f3e4bdfa
+		summarizeBy: none
+		sourceColumn: Debitorenbuchungsgruppe
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimKunde = m
+		mode: import
+		source =
+				// Quelle: microsoft/analytics/v1.0, customers.
+				// Filter: keiner.
+				// Schlüssel: Kundennr (customerNo).
+				// Erwartete Zeilenzahl: 5
+				// Abweichung von B2: Zahlungsbedingung steht nicht an analytics customers und entfällt. Kundengruppe ist customerPriceGroup, Debitorenbuchungsgruppe ist customerPostingGroup.
+				let
+				    Inhalt = fnQuelle("microsoft/analytics/v1.0"),
+				    Roh = Inhalt{[Name = "customers"]}[Data],
+				    Ergebnis = Table.TransformColumnTypes(
+				        Table.RenameColumns(
+				            Table.SelectColumns(
+				                Roh,
+				                {
+				                    "customerNo",
+				                    "customerName",
+				                    "customerPriceGroup",
+				                    "countryRegionCode",
+				                    "customerPostingGroup"
+				                }
+				            ),
+				            {
+				                {"customerNo", "Kundennr"},
+				                {"customerName", "Name"},
+				                {"customerPriceGroup", "Kundengruppe"},
+				                {"countryRegionCode", "Land"},
+				                {"customerPostingGroup", "Debitorenbuchungsgruppe"}
+				            }
+				        ),
+				        {
+				            {"Kundennr", type text},
+				            {"Name", type text},
+				            {"Kundengruppe", type text},
+				            {"Land", type text},
+				            {"Debitorenbuchungsgruppe", type text}
+				        }
+				    )
+				in
+				    Ergebnis
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

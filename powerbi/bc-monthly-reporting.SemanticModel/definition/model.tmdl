@@ -1,0 +1,37 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: de-DE
+	maxParallelismPerRefresh: 1
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode","DaxQueryView_Desktop","TMDLView_Desktop","CalcGroup"]
+
+annotation PBI_QueryOrder = ["pUmgebung","pMandant","pStichtag","pRepoPfad","fnQuelle","fnBetrag","DimDatum","DimKonto","DimDimensionsSet","DimKunde","DimLieferant","DimArtikel","FactSachposten","FactDebitorenposten","FactKreditorenposten","FactWertposten","FactSaldenliste"]
+
+ref table pStichtag
+ref table DimKunde
+ref table DimDatum
+ref table DimKonto
+ref table DimDimensionsSet
+ref table DimLieferant
+ref table DimArtikel
+ref table FactKreditorenposten
+ref table FactDebitorenposten
+ref table FactSachposten
+ref table FactWertposten
+ref table FactSaldenliste
+ref table Abstimmzeile
+ref table Kennzahlen
+ref table Zeitauswahl
+ref table Bruecke
+ref table Faelligkeitsklasse
+
+ref cultureInfo en-US
+

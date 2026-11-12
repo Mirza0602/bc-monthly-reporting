@@ -1,0 +1,49 @@
+createOrReplace
+
+	ref table Kennzahlen
+
+		measure 'GuV Signalrichtung' = ```
+				// Zweck: Richtung der GuV-Zeile für die Signalfarbe. Die Regel steht nur hier.
+				// Quelle: Abstimmzeile[Kennzahl]. Aufwand liefert 1, ein Anstieg ist ungünstig. Ertrag liefert -1, ein Rückgang ist ungünstig. Zeilen ohne Regel bleiben leer.
+				SWITCH (
+					SELECTEDVALUE ( Abstimmzeile[Kennzahl] ),
+					"Wareneinsatz", 1,
+					"Betriebsaufwand", 1,
+					"Abschreibung", 1,
+					"Umsatz", -1,
+					"Rohertrag", -1,
+					"EBIT", -1,
+					"Sonstiger Ertrag und Aufwand", -1
+				)
+				```
+			formatString: 0
+			isHidden
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV Farbe VJ' = ```
+				// Zweck: Signalfarbe der Abweichung zum Vorjahr. Nur eine ungünstige Abweichung wird Signal, sonst die Textfarbe.
+				// Quelle: [GuV Δ VJ] mal [GuV Signalrichtung]. Blank und 0 bleiben #1E2733. Der Vergleich nutzt den Rohwert, nicht die Anzeige. 0,4 bleibt ungleich 0 und damit ungünstig, auch wenn das Format #,0 eine 0 zeigt.
+				VAR Delta = [GuV Δ VJ]
+				VAR Richtung = [GuV Signalrichtung]
+				VAR HatAbweichung =
+					NOT ISBLANK ( Richtung )
+						&& NOT ISBLANK ( Delta )
+						&& Delta <> 0
+				RETURN
+					IF ( HatAbweichung && Delta * Richtung > 0, "#A94F0A", "#1E2733" )
+				```
+			displayFolder: '08 GuV Seite 2'
+
+		measure 'GuV Farbe Plan' = ```
+				// Zweck: Signalfarbe der Abweichung zum Plan. Dieselbe Regel wie bei [GuV Farbe VJ].
+				// Quelle: [GuV Δ Plan] mal [GuV Signalrichtung]. Blank, 0 und der Rohwert 0,4 gelten wie bei [GuV Farbe VJ].
+				VAR Delta = [GuV Δ Plan]
+				VAR Richtung = [GuV Signalrichtung]
+				VAR HatAbweichung =
+					NOT ISBLANK ( Richtung )
+						&& NOT ISBLANK ( Delta )
+						&& Delta <> 0
+				RETURN
+					IF ( HatAbweichung && Delta * Richtung > 0, "#A94F0A", "#1E2733" )
+				```
+			displayFolder: '08 GuV Seite 2'

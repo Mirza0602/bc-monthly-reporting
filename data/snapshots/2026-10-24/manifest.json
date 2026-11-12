@@ -1,0 +1,384 @@
+{
+  "stand": "24.10.2026",
+  "runDate": "2026-10-24",
+  "stichtag": "2026-09-30",
+  "environment": "Production",
+  "entities": [
+    {
+      "entity": "generalLedgerEntries",
+      "route": "v2.0",
+      "rows": 4384,
+      "fetchedAt": "2026-10-24T14:12:44+02:00",
+      "seconds": 2.422,
+      "parquet": "v2__generalLedgerEntries.parquet",
+      "csvSample": "v2__generalLedgerEntries.sample.csv"
+    },
+    {
+      "entity": "accounts",
+      "route": "v2.0",
+      "rows": 221,
+      "fetchedAt": "2026-10-24T14:12:46+02:00",
+      "seconds": 0.15,
+      "parquet": "v2__accounts.parquet",
+      "csvSample": "v2__accounts.sample.csv"
+    },
+    {
+      "entity": "dimensions",
+      "route": "v2.0",
+      "rows": 7,
+      "fetchedAt": "2026-10-24T14:12:47+02:00",
+      "seconds": 0.073,
+      "parquet": "v2__dimensions.parquet",
+      "csvSample": "v2__dimensions.sample.csv"
+    },
+    {
+      "entity": "dimensionValues",
+      "route": "v2.0",
+      "rows": 29,
+      "fetchedAt": "2026-10-24T14:12:47+02:00",
+      "seconds": 0.07,
+      "parquet": "v2__dimensionValues.parquet",
+      "csvSample": "v2__dimensionValues.sample.csv"
+    },
+    {
+      "entity": "customers",
+      "route": "v2.0",
+      "rows": 5,
+      "fetchedAt": "2026-10-24T14:12:47+02:00",
+      "seconds": 0.144,
+      "parquet": "v2__customers.parquet",
+      "csvSample": "v2__customers.sample.csv"
+    },
+    {
+      "entity": "vendors",
+      "route": "v2.0",
+      "rows": 8,
+      "fetchedAt": "2026-10-24T14:12:47+02:00",
+      "seconds": 0.11,
+      "parquet": "v2__vendors.parquet",
+      "csvSample": "v2__vendors.sample.csv"
+    },
+    {
+      "entity": "items",
+      "route": "v2.0",
+      "rows": 80,
+      "fetchedAt": "2026-10-24T14:12:47+02:00",
+      "seconds": 0.157,
+      "parquet": "v2__items.parquet",
+      "csvSample": "v2__items.sample.csv"
+    },
+    {
+      "entity": "itemCategories",
+      "route": "v2.0",
+      "rows": 16,
+      "fetchedAt": "2026-10-24T14:12:47+02:00",
+      "seconds": 0.083,
+      "parquet": "v2__itemCategories.parquet",
+      "csvSample": "v2__itemCategories.sample.csv"
+    },
+    {
+      "entity": "incomeStatementGeneralLedgerEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 1022,
+      "fetchedAt": "2026-10-24T14:12:47+02:00",
+      "seconds": 0.211,
+      "parquet": "analytics__incomeStatementGeneralLedgerEntries.parquet",
+      "csvSample": "analytics__incomeStatementGeneralLedgerEntries.sample.csv"
+    },
+    {
+      "entity": "balanceSheetGeneralLedgerEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 3362,
+      "fetchedAt": "2026-10-24T14:12:47+02:00",
+      "seconds": 0.442,
+      "parquet": "analytics__balanceSheetGeneralLedgerEntries.parquet",
+      "csvSample": "analytics__balanceSheetGeneralLedgerEntries.sample.csv"
+    },
+    {
+      "entity": "closingGeneralLedgerEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 0,
+      "fetchedAt": "2026-10-24T14:12:48+02:00",
+      "seconds": 0.072,
+      "parquet": "analytics__closingGeneralLedgerEntries.parquet",
+      "csvSample": "analytics__closingGeneralLedgerEntries.sample.csv"
+    },
+    {
+      "entity": "customerLedgerEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 1145,
+      "fetchedAt": "2026-10-24T14:12:48+02:00",
+      "seconds": 0.337,
+      "parquet": "analytics__customerLedgerEntries.parquet",
+      "csvSample": "analytics__customerLedgerEntries.sample.csv"
+    },
+    {
+      "entity": "vendorLedgerEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 869,
+      "fetchedAt": "2026-10-24T14:12:48+02:00",
+      "seconds": 0.266,
+      "parquet": "analytics__vendorLedgerEntries.parquet",
+      "csvSample": "analytics__vendorLedgerEntries.sample.csv"
+    },
+    {
+      "entity": "salesValueEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 532,
+      "fetchedAt": "2026-10-24T14:12:49+02:00",
+      "seconds": 0.194,
+      "parquet": "analytics__salesValueEntries.parquet",
+      "csvSample": "analytics__salesValueEntries.sample.csv"
+    },
+    {
+      "entity": "purchaseValueEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 285,
+      "fetchedAt": "2026-10-24T14:12:49+02:00",
+      "seconds": 0.124,
+      "parquet": "analytics__purchaseValueEntries.parquet",
+      "csvSample": "analytics__purchaseValueEntries.sample.csv"
+    },
+    {
+      "entity": "itemValueEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 878,
+      "fetchedAt": "2026-10-24T14:12:49+02:00",
+      "seconds": 0.178,
+      "parquet": "analytics__itemValueEntries.parquet",
+      "csvSample": "analytics__itemValueEntries.sample.csv"
+    },
+    {
+      "entity": "itemLedgerEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 826,
+      "fetchedAt": "2026-10-24T14:12:49+02:00",
+      "seconds": 0.234,
+      "parquet": "analytics__itemLedgerEntries.parquet",
+      "csvSample": "analytics__itemLedgerEntries.sample.csv"
+    },
+    {
+      "entity": "generalLedgerAccounts",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 221,
+      "fetchedAt": "2026-10-24T14:12:49+02:00",
+      "seconds": 0.094,
+      "parquet": "analytics__generalLedgerAccounts.parquet",
+      "csvSample": "analytics__generalLedgerAccounts.sample.csv"
+    },
+    {
+      "entity": "generalLedgerAccountCategories",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 46,
+      "fetchedAt": "2026-10-24T14:12:49+02:00",
+      "seconds": 0.096,
+      "parquet": "analytics__generalLedgerAccountCategories.parquet",
+      "csvSample": "analytics__generalLedgerAccountCategories.sample.csv"
+    },
+    {
+      "entity": "accountCategories",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 26,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.079,
+      "parquet": "analytics__accountCategories.parquet",
+      "csvSample": "analytics__accountCategories.sample.csv"
+    },
+    {
+      "entity": "dimensions",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 1,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.086,
+      "parquet": "analytics__dimensions.parquet",
+      "csvSample": "analytics__dimensions.sample.csv"
+    },
+    {
+      "entity": "generalLedgerBudgets",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 0,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.067,
+      "parquet": "analytics__generalLedgerBudgets.parquet",
+      "csvSample": "analytics__generalLedgerBudgets.sample.csv"
+    },
+    {
+      "entity": "generalLedgerBudgetEntries",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 0,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.072,
+      "parquet": "analytics__generalLedgerBudgetEntries.parquet",
+      "csvSample": "analytics__generalLedgerBudgetEntries.sample.csv"
+    },
+    {
+      "entity": "customers",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 5,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.076,
+      "parquet": "analytics__customers.parquet",
+      "csvSample": "analytics__customers.sample.csv"
+    },
+    {
+      "entity": "vendors",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 8,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.074,
+      "parquet": "analytics__vendors.parquet",
+      "csvSample": "analytics__vendors.sample.csv"
+    },
+    {
+      "entity": "items",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 80,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.1,
+      "parquet": "analytics__items.parquet",
+      "csvSample": "analytics__items.sample.csv"
+    },
+    {
+      "entity": "itemCategories",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 16,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.074,
+      "parquet": "analytics__itemCategories.parquet",
+      "csvSample": "analytics__itemCategories.sample.csv"
+    },
+    {
+      "entity": "salespersonPurchasers",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 7,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.08,
+      "parquet": "analytics__salespersonPurchasers.parquet",
+      "csvSample": "analytics__salespersonPurchasers.sample.csv"
+    },
+    {
+      "entity": "locations",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 10,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.089,
+      "parquet": "analytics__locations.parquet",
+      "csvSample": "analytics__locations.sample.csv"
+    },
+    {
+      "entity": "dynamicDimensions",
+      "route": "microsoft/analytics/v1.0",
+      "rows": 103,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 0.077,
+      "parquet": "analytics__dynamicDimensions.parquet",
+      "csvSample": "analytics__dynamicDimensions.sample.csv"
+    },
+    {
+      "entity": "trialBalances",
+      "route": "v2.0",
+      "rows": 3315,
+      "fetchedAt": "2026-10-24T14:12:50+02:00",
+      "seconds": 9.192,
+      "parquet": "v2__trialBalances.parquet",
+      "csvSample": "v2__trialBalances.sample.csv",
+      "periods": 15,
+      "periodStart": "2024-01-01",
+      "periodEnd": "2026-09-30"
+    }
+  ],
+  "checks": {
+    "p1": "0.00",
+    "incomeStatementRows": 1022,
+    "balanceSheetRows": 3362,
+    "generalLedgerEntriesRows": 4384,
+    "populationGap": 0,
+    "movementDiffs": [],
+    "balanceDiffs": [],
+    "trialSideGaps": [
+      {
+        "periodEnd": "2024-12-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2025-08-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2025-09-30",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2025-10-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2025-11-30",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2025-12-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-01-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-02-28",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-03-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-04-30",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-05-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-06-30",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-07-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-08-31",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      },
+      {
+        "periodEnd": "2026-09-30",
+        "movementGap": "0.00",
+        "balanceGap": "0.00"
+      }
+    ]
+  },
+  "company": "CRONUS DE",
+  "yearAnchor": {
+    "periodStart": "2024-01-01",
+    "periodEnd": "2024-12-31",
+    "fetchedAt": "2026-10-24T18:28:19+02:00",
+    "seconds": 0.788,
+    "rows": 221
+  }
+}
